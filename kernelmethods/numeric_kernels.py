@@ -1,8 +1,9 @@
 
-from kernelmethods.base import BaseKernelFunction
-
 import numpy as np
 from scipy.sparse import issparse
+
+from kernelmethods.base import BaseKernelFunction
+from kernelmethods.utils import check_input_arrays
 
 class PolyKernel(BaseKernelFunction):
     """Polynomial kernel function"""
@@ -21,7 +22,7 @@ class PolyKernel(BaseKernelFunction):
 
         """
 
-        super().__init__('polynomial')
+        super().__init__(name='polynomial')
 
         # TODO implement param check
         self.degree = degree
@@ -32,14 +33,10 @@ class PolyKernel(BaseKernelFunction):
 
         # TODO should we check x and y are of same dimension?
 
-        if issparse(x):
-            return np.array(x.dot(y.T).todense()) ** self.degree
+        # TODO special handling for sparse arrays
+        #   (e.g. custom dot product) might be more efficient
 
-        # ** is faster than math.pow() or np.power()
-        if not hasattr(x, "shape"):
-            return (self.b + x * y) ** self.degree
-        else:
-            return (self.b + x.dot(y.T)) ** self.degree
+        return (self.b + x.dot(y.T)) ** self.degree
 
     def __str__(self):
         """human readable repr"""
