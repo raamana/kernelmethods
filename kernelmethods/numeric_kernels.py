@@ -8,7 +8,7 @@ from kernelmethods.utils import check_input_arrays
 class PolyKernel(BaseKernelFunction):
     """Polynomial kernel function"""
 
-    def __init__(self, degree=2, b=0):
+    def __init__(self, degree=2, b=0, skip_input_checks=False):
         """
         Constructor
 
@@ -20,6 +20,11 @@ class PolyKernel(BaseKernelFunction):
         b : float
             intercept
 
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
         """
 
         super().__init__(name='polynomial')
@@ -28,10 +33,13 @@ class PolyKernel(BaseKernelFunction):
         self.degree = degree
         self.b = b
 
+        self.skip_input_checks = skip_input_checks
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
-        # TODO should we check x and y are of same dimension?
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
         # TODO special handling for sparse arrays
         #   (e.g. custom dot product) might be more efficient
