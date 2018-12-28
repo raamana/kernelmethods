@@ -185,8 +185,8 @@ class KernelMatrix(object):
             raise KMAccessError('Invalid attempt to access the kernel matrix '
                                 '-: must supply two [sets/ranges of] indices in a tuple!')
 
-        set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0])
-        set_two, are_all_selected_dim_two = self._get_indices_in_sample(index_obj[1])
+        set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0], dim=0)
+        set_two, are_all_selected_dim_two = self._get_indices_in_sample(index_obj[1], dim=1)
 
         # below code prevents user from [VERY] inefficiently computing
         # the entire kernel matrix with KM[:,:],
@@ -196,7 +196,7 @@ class KernelMatrix(object):
         else:
             return self._compute_for_index_combinations(set_one, set_two)
 
-    def _get_indices_in_sample(self, index_obj_per_dim):
+    def _get_indices_in_sample(self, index_obj_per_dim, dim):
         """
         Turn an index or slice object on a given dimension
         into a set of row indices into sample the kernel matrix is attached to.
