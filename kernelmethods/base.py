@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from collections import Iterable
 from itertools import product as iter_product
@@ -18,6 +17,7 @@ class KMAccessError(KernelMatrixException):
     """Error to indicate invalid access to the kernel matrix!"""
     pass
 
+
 class BaseKernelFunction(ABC):
     """Abstract base class for kernel functions.
 
@@ -26,6 +26,7 @@ class BaseKernelFunction(ABC):
     2. to have a name and a str representation
 
     """
+
 
     def __init__(self, name):
         """
@@ -40,9 +41,11 @@ class BaseKernelFunction(ABC):
 
         self.name = name
 
+
     @abstractmethod
     def __call__(self, x, y):
         """Actual computation!"""
+
 
     @abstractmethod
     def __str__(self):
@@ -102,6 +105,7 @@ class KernelMatrix(object):
 
     """
 
+
     def __init__(self,
                  kernel,
                  name='KernelMatrix'):
@@ -150,26 +154,31 @@ class KernelMatrix(object):
 
         return self._populate_fully(fill_lower_tri=True).todense()
 
+
     @property
     def full_sparse(self):
         """Kernel matrix populated in upper tri in sparse array format."""
 
         return self._populate_fully(fill_lower_tri=False)
 
+
     def diag(self):
         """Returns the diagonal of the kernel matrix"""
 
         return np.array([self._eval_kernel(idx, idx) for idx in range(self.num_samples)])
+
 
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
 
         return self.kernel(self._features(idx_one), self._features(idx_two))
 
+
     def _features(self, index):
         """Returns the sample [features] corresponding to a given index."""
 
-        return self.sample[index,:]
+        return self.sample[index, :]
+
 
     def __getitem__(self, index_obj):
         """
@@ -185,8 +194,10 @@ class KernelMatrix(object):
             raise KMAccessError('Invalid attempt to access the kernel matrix '
                                 '-: must supply two [sets/ranges of] indices in a tuple!')
 
-        set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0], dim=0)
-        set_two, are_all_selected_dim_two = self._get_indices_in_sample(index_obj[1], dim=1)
+        set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0],
+                                                                        dim=0)
+        set_two, are_all_selected_dim_two = self._get_indices_in_sample(index_obj[1],
+                                                                        dim=1)
 
         # below code prevents user from [VERY] inefficiently computing
         # the entire kernel matrix with KM[:,:],
@@ -195,6 +206,7 @@ class KernelMatrix(object):
             return self._populate_fully(fill_lower_tri=True)
         else:
             return self._compute_for_index_combinations(set_one, set_two)
+
 
     def _get_indices_in_sample(self, index_obj_per_dim, dim):
         """
@@ -214,7 +226,7 @@ class KernelMatrix(object):
             if index_obj_per_dim is None:
                 are_all_selected = True
             _slice_index_list = index_obj_per_dim.indices(self.num_samples)
-            indices = list(range(*_slice_index_list)) # *list expands it as args
+            indices = list(range(*_slice_index_list))  # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable):
             indices = map(int, index_obj_per_dim)
         else:
@@ -224,7 +236,7 @@ class KernelMatrix(object):
                                 ''.format(num_samples=self.num_samples))
 
         # enforcing constraints
-        if any([ index >= self.num_samples or index < 0 for index in indices]):
+        if any([index >= self.num_samples or index < 0 for index in indices]):
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
                                 ' Some indices in {} are out of range: '
                                 ' for each of the two dimensions of size {num_samples},'
@@ -243,14 +255,15 @@ class KernelMatrix(object):
 
         return indices, are_all_selected
 
+
     def _compute_for_index_combinations(self, set_one, set_two):
         """Computes value of kernel matrix for all combinations of given set of indices"""
 
         output = np.array([self._eval_kernel(idx_one, idx_two)
                            for idx_one, idx_two in iter_product(set_one, set_two)],
                           dtype=self.sample.dtype)
-
         return output
+
 
     def _populate_fully(self, fill_lower_tri=False):
         """Applies the kernel function on all pairs of points in a sample.
