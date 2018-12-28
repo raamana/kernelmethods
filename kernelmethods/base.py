@@ -96,7 +96,7 @@ class KernelFromCallable(BaseKernelFunction):
     __repr__ = __str__
 
 
-class BaseKernelMatrix(object):
+class KernelMatrix(object):
     """
     The KernelMatrix class.
 
