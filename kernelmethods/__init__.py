@@ -2,9 +2,12 @@
 
 """Top-level package for kernelmethods."""
 
-__all__ = ['PolyKernel', 'BaseKernelFunction']
+__all__ = ['PolyKernel', 'BaseKernelFunction',
+           'KernelMatrix',
+           'KernelMatrixException', 'KMAccessError']
 
-from kernelmethods.base import BaseKernelFunction
+from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
+    KernelMatrixException, KMAccessError
 from kernelmethods.numeric_kernels import PolyKernel
 
 from ._version import get_versions
