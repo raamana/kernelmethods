@@ -226,10 +226,11 @@ class KernelMatrix(object):
         # enforcing constraints
         if any([ index >= self.num_samples or index < 0 for index in indices]):
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
-                                ' For each of the two dimensions of size {num_samples},'
-                                ' only int, slice or iterable objects are allowed,'
-                                ' whose values must all be >=0 and < {num_samples}'
-                                ''.format(num_samples=self.num_samples))
+                                ' Some indices in {} are out of range: '
+                                ' for each of the two dimensions of size {num_samples},'
+                                ' index values must all be >=0 and < {num_samples}'
+                                ''.format(indices, num_samples=self.num_samples))
+
 
         # removing duplicates and sorting
         indices = sorted(list(set(indices)))
