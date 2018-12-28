@@ -295,3 +295,15 @@ class KernelMatrix(object):
             output[idx_lower_tri] = output.T[idx_lower_tri]
 
         return output
+
+
+    def __str__(self):
+        """human readable presentation"""
+
+        return """{}: {} on sample {}""".format(self.name,
+                                                str(self.kernel), self.sample.shape)
+
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
