@@ -220,8 +220,7 @@ class KernelMatrix(object):
         else:
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
                                 ' For each of the two dimensions of size {num_samples},'
-                                ' only int, slice or iterable objects are allowed,'
-                                ' whose values must all be >=0 and < {num_samples}'
+                                ' only int, slice or iterable objects are allowed!'
                                 ''.format(num_samples=self.num_samples))
 
         # enforcing constraints
