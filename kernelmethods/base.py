@@ -213,7 +213,8 @@ class KernelMatrix(object):
         elif isinstance(index_obj_per_dim, slice):
             if index_obj_per_dim is None:
                 are_all_selected = True
-            indices = index_obj_per_dim.indices(self.num_samples)
+            _slice_index_list = index_obj_per_dim.indices(self.num_samples)
+            indices = list(range(*_slice_index_list)) # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable):
             indices = map(int, index_obj_per_dim)
         else:
