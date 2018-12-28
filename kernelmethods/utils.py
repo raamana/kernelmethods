@@ -58,3 +58,31 @@ def ensure_ndarray_1d(array, ensure_dtype=np.number):
                          ''.format(array.dtype, ensure_dtype))
 
     return array
+
+
+def check_callable(input_func, min_num_args=2):
+    """Ensures input func is callable, and can accept a min # args"""
+
+    if not callable(input_func):
+        raise TypeError('Input function must be callable!')
+
+    from inspect import signature
+    # would not work for C/builtin functions such as numpy.dot
+    func_signature = signature(input_func)
+
+    if len(func_signature.parameters) < min_num_args:
+        raise TypeError('Input func must accept atleast {} inputs'.format(min_num_args))
+
+    return input_func
+
+
+def get_callable_name(input_func, name=None):
+    """Provide a callable name"""
+
+    if name is None:
+        if hasattr(input_func, '__name__'):
+            return input_func.__name__
+        else:
+            return ''
+    else:
+        return str(name)
