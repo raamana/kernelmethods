@@ -1,6 +1,8 @@
 
 from abc import ABC, abstractmethod
 from collections import Iterable
+from itertools import product as iter_product
+
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -240,11 +242,9 @@ class BaseKernelMatrix(object):
     def _compute_for_index_combinations(self, set_one, set_two):
         """Computes value of kernel matrix for all combinations of given set of indices"""
 
-        output = np.array((len(set_one), len(set_two)), dtype=self.sample.dtype)
-
-        for idx_one, sample_idx_one in enumerate(set_one):
-            for idx_two, sample_idx_two in enumerate(set_two):
-                output[idx_one, idx_two] = self._eval_kernel(sample_idx_one, sample_idx_two)
+        output = np.array([self._eval_kernel(idx_one, idx_two)
+                           for idx_one, idx_two in iter_product(set_one, set_two)],
+                          dtype=self.sample.dtype)
 
         return output
 
