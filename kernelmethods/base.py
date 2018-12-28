@@ -231,6 +231,9 @@ class KernelMatrix(object):
                                 ' index values must all be >=0 and < {num_samples}'
                                 ''.format(indices, num_samples=self.num_samples))
 
+        # slice object returns empty list if all specified are out of range
+        if len(indices) == 0:
+            raise KMAccessError('No samples were selected in dim {}'.format(dim))
 
         # removing duplicates and sorting
         indices = sorted(list(set(indices)))
