@@ -1,6 +1,6 @@
 
-from scipy.sparse import issparse
 import numpy as np
+from scipy.sparse import issparse
 
 def check_input_arrays(x, y, ensure_dtype=np.number):
     """
@@ -26,8 +26,8 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
 
     """
 
-    x = ensure_ndarray_1d(x, ensure_dtype)
-    y = ensure_ndarray_1d(y, ensure_dtype)
+    x = ensure_ndarray_1D(x, ensure_dtype)
+    y = ensure_ndarray_1D(y, ensure_dtype)
 
     if x.size != y.size:
         raise ValueError('x (n={}) and y (n={}) differ in size! '
@@ -43,15 +43,28 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
     return x, y
 
 
-def ensure_ndarray_1d(array, ensure_dtype=np.number):
+def ensure_ndarray_2D(array, ensure_dtype=np.number):
     """Converts the input to a numpy array and ensure it is 1D."""
+
+    return ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=2)
+
+
+def ensure_ndarray_1D(array, ensure_dtype=np.number):
+    """Converts the input to a numpy array and ensure it is 1D."""
+
+    return ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=1)
+
+
+def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
+    """Converts the input to a numpy array and ensure it is of specified dim."""
 
     if not isinstance(array, np.ndarray):
         array = np.squeeze(np.asarray(array))
 
-    if array.ndim > 1:
-        raise ValueError('array must be 1-dimensional! '
-                         'It has {} dims with shape {}'.format(array.ndim, array.shape))
+    if array.ndim != ensure_num_dim:
+        raise ValueError('array must be {}-dimensional! '
+                         'It has {} dims with shape {} '
+                         ''.format(ensure_num_dim, array.ndim, array.shape))
 
     if not np.issubdtype(array.dtype, ensure_dtype):
         raise ValueError('input data type {} is not compatible with the required {}'
