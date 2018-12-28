@@ -1,5 +1,20 @@
 
 from abc import ABC, abstractmethod
+from collections import Iterable
+import numpy as np
+from scipy.sparse import csr_matrix
+
+from kernelmethods.utils import check_callable, ensure_ndarray_2D, get_callable_name
+
+
+class KernelMatrixException(Exception):
+    """Allows to distinguish improper use of KernelMatrix from other code exceptions"""
+    pass
+
+
+class KMAccessError(KernelMatrixException):
+    """Error to indicate invalid access to the kernel matrix!"""
+    pass
 
 class BaseKernelFunction(ABC):
     """Abstract base class for kernel functions.
