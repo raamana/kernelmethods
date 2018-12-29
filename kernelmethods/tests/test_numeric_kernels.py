@@ -46,6 +46,9 @@ def test_kernel_design(sample_dim):
         if not isinstance(result, Number):
             raise ValueError('result from {} is not a number!'.format(kernel.name))
 
+        if kernel(y, x) != result:
+            raise ValueError('{} is not symmetric!'.format(kernel.name))
+
         # only numeric data is accepted and other dtypes must raise an error
         for non_num in ['string',
                         (True, False, True),
