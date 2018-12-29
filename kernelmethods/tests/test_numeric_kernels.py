@@ -22,6 +22,28 @@ def gen_random_array(dim):
     return np.random.rand(dim)
 
 
+def test_for_all_kernels(kernel, sample_dim):
+    """Common tests that all kernels must pass."""
+
+    x = gen_random_array(sample_dim)
+    y = gen_random_array(sample_dim)
+
+    try:
+        result = kernel(x, y)
+    except Exception:
+        raise RuntimeError('{} unable to calculate!\n'
+                           ' on x {}\n y{}'.format(kernel, x, y))
+
+    if not isinstance(result, Number):
+        raise ValueError('result {} of type {} is not a number!\n'
+                         'x={}\ny={}\nkernel={}\n'
+                         ''.format(result, type(result), x, y, kernel))
+
+    if kernel(y, x) != result:
+        raise ValueError('{} is not symmetric!'
+                         'x={}\n y={}\n kernel={}\n'.format(kernel.name, x, y, kernel))
+
+
 @hyp_settings(max_examples=10)
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]))
 def test_kernel_design(sample_dim):
@@ -41,18 +63,6 @@ def test_kernel_design(sample_dim):
         if not hasattr(kernel, 'name'):
             raise TypeError('{} does not have name attribute!'.format(kernel))
 
-        try:
-            result = kernel(x, y)
-        except Exception:
-            raise SyntaxError('{} is not callable!'.format(kernel.name))
-
-        if not isinstance(result, Number):
-            raise ValueError('result {} of type {} from {} kernel is not a number!'
-                             ''.format(result, type(result), kernel.name))
-
-        if kernel(y, x) != result:
-            raise ValueError('{} is not symmetric!'.format(kernel.name))
-
         # only numeric data is accepted and other dtypes must raise an error
         for non_num in ['string',
                         (True, False, True),
@@ -69,24 +79,8 @@ def test_kernel_design(sample_dim):
 def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
     """Tests specific for Polynomial kernel."""
 
-    # TODO input sparse arrays for test
-    x = gen_random_array(sample_dim)
-    y = gen_random_array(sample_dim)
     poly = PolyKernel(degree=poly_degree, b=poly_intercept)
-
-    try:
-        result = poly(x, y)
-    except RuntimeWarning:
-        raise RuntimeWarning('RunTime warning for:\n'
-                             ' x={}\n y={}\n kernel={}\n'.format(x, y, poly))
-    except Exception:
-        raise Exception('unanticipated exception:\n'
-                        ' x={}\n y={}\n kernel={}\n'.format(x, y, poly))
-
-    if not isinstance(result, Number):
-        raise ValueError('poly kernel result {} is not a number!\n'
-                         'x={}\ny={}\nkernel={}\n'
-                         ''.format(result, x, y, poly))
+    test_for_all_kernels(poly, sample_dim)
 
 
 @hyp_settings(max_examples=200)
@@ -96,22 +90,6 @@ def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
 def test_gaussian_kernel(sample_dim, sigma):
     """Tests specific for Polynomial kernel."""
 
-    # TODO input sparse arrays for test
-    x = gen_random_array(sample_dim)
-    y = gen_random_array(sample_dim)
     gaussian = GaussianKernel(sigma=sigma)
-
-    try:
-        result = gaussian(x, y)
-    except RuntimeWarning:
-        raise RuntimeWarning('RunTime warning for:\n'
-                             ' x={}\n y={}\n kernel={}\n'.format(x, y, gaussian))
-    except Exception:
-        raise Exception('unanticipated exception:\n'
-                        ' x={}\n y={}\n kernel={}\n'.format(x, y, gaussian))
-
-    if not isinstance(result, Number):
-        raise ValueError('gaussian kernel result {} is not a number!\n'
-                         'x={}\ny={}\nkernel={}\n'
-                         ''.format(result, x, y, gaussian))
+    test_for_all_kernels(gaussian, sample_dim)
 
