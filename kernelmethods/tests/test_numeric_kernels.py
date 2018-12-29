@@ -22,7 +22,7 @@ def gen_random_array(dim):
     return np.random.rand(dim)
 
 
-@hyp_settings(max_examples=100)
+@hyp_settings(max_examples=10)
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]))
 def test_kernel_design(sample_dim):
     """
@@ -61,7 +61,7 @@ def test_kernel_design(sample_dim):
                 _ = kernel(non_num, non_num)
 
 
-@hyp_settings(max_examples=1000)
+@hyp_settings(max_examples=200)
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_polynomial_degree[0], range_polynomial_degree[1]),
        strategies.floats(min_value=0, max_value=np.Inf,
@@ -89,7 +89,7 @@ def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
                          ''.format(result, x, y, poly))
 
 
-@hyp_settings(max_examples=1000)
+@hyp_settings(max_examples=200)
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.floats(min_value=0, max_value=np.Inf,
                          allow_nan=False, allow_infinity=False))
