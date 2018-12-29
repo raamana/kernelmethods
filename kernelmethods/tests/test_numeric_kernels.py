@@ -6,6 +6,7 @@ from hypothesis import given, strategies
 from hypothesis import settings as hyp_settings
 
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
+from kernelmethods.utils import check_callable
 
 default_feature_dim = 10
 range_feature_dim = [10, 10000]
@@ -32,10 +33,10 @@ def test_kernel_design(sample_dim):
 
     """
 
-    x = gen_random_array(sample_dim)
-    y = gen_random_array(sample_dim)
-
     for kernel in SupportedKernels:
+
+        # must be callable with 2 args
+        check_callable(kernel, min_num_args=2)
 
         if not hasattr(kernel, 'name'):
             raise TypeError('{} does not have name attribute!'.format(kernel))
