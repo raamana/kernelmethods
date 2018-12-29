@@ -99,3 +99,8 @@ def get_callable_name(input_func, name=None):
             return ''
     else:
         return str(name)
+
+_float_eps = np.finfo('float').eps
+
+def _ensure_min_eps(x):
+    return  np.maximum(_float_eps, x)

@@ -3,7 +3,11 @@ import numpy as np
 from scipy.sparse import issparse
 
 from kernelmethods.base import BaseKernelFunction
-from kernelmethods.utils import check_input_arrays
+from kernelmethods.utils import check_input_arrays, _ensure_min_eps
+
+# TODO special handling for sparse arrays
+#   (e.g. custom dot product during kernel evaluation might be more efficient
+
 
 class PolyKernel(BaseKernelFunction):
     """Polynomial kernel function"""
@@ -40,9 +44,6 @@ class PolyKernel(BaseKernelFunction):
 
         if not self.skip_input_checks:
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
-
-        # TODO special handling for sparse arrays
-        #   (e.g. custom dot product) might be more efficient
 
         return (self.b + x.dot(y.T)) ** self.degree
 
