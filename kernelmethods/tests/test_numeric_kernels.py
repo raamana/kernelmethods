@@ -19,6 +19,7 @@ SupportedKernels = (GaussianKernel(), PolyKernel())
 def gen_random_array(dim):
     """To better control precision and type of floats"""
 
+    # TODO input sparse arrays for test
     return np.random.rand(dim)
 
 
