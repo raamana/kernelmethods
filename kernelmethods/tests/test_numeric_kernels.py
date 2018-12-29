@@ -23,7 +23,7 @@ def gen_random_array(dim):
     return np.random.rand(dim)
 
 
-def test_for_all_kernels(kernel, sample_dim):
+def _test_for_all_kernels(kernel, sample_dim):
     """Common tests that all kernels must pass."""
 
     x = gen_random_array(sample_dim)
@@ -81,7 +81,7 @@ def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
     """Tests specific for Polynomial kernel."""
 
     poly = PolyKernel(degree=poly_degree, b=poly_intercept)
-    test_for_all_kernels(poly, sample_dim)
+    _test_for_all_kernels(poly, sample_dim)
 
 
 @hyp_settings(max_examples=200)
@@ -92,5 +92,5 @@ def test_gaussian_kernel(sample_dim, sigma):
     """Tests specific for Polynomial kernel."""
 
     gaussian = GaussianKernel(sigma=sigma)
-    test_for_all_kernels(gaussian, sample_dim)
+    _test_for_all_kernels(gaussian, sample_dim)
 
