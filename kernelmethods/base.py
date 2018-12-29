@@ -103,6 +103,10 @@ class KernelMatrix(object):
     """
     The KernelMatrix class.
 
+    KM[i,j] --> kernel between samples i and j
+    KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
+        where KM_ij = kernel between samples set_i(i) and set_j(j)
+
     """
 
 
