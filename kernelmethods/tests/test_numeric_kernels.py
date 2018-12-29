@@ -46,7 +46,8 @@ def test_kernel_design(sample_dim):
             raise SyntaxError('{} is not callable!'.format(kernel.name))
 
         if not isinstance(result, Number):
-            raise ValueError('result from {} is not a number!'.format(kernel.name))
+            raise ValueError('result {} of type {} from {} kernel is not a number!'
+                             ''.format(result, type(result), kernel.name))
 
         if kernel(y, x) != result:
             raise ValueError('{} is not symmetric!'.format(kernel.name))
