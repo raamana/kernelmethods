@@ -5,13 +5,15 @@ from pytest import raises, warns
 from hypothesis import given, strategies
 from hypothesis import settings as hyp_settings
 
-from kernelmethods.numeric_kernels import PolyKernel
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
 
 default_feature_dim = 10
 range_feature_dim = [10, 10000]
 range_polynomial_degree = [1, 10]
 
-SupportedKernels = (PolyKernel(), )
+# choosing skip_input_checks=False will speed up test runs
+# default values for parameters
+SupportedKernels = (GaussianKernel(), PolyKernel())
 
 def gen_random_array(dim):
     """To better control precision and type of floats"""
@@ -83,3 +85,31 @@ def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
         raise ValueError('poly kernel result {} is not a number!\n'
                          'x={}\ny={}\nkernel={}\n'
                          ''.format(result, x, y, poly))
+
+
+@hyp_settings(max_examples=1000)
+@given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
+       strategies.floats(min_value=0, max_value=np.Inf,
+                         allow_nan=False, allow_infinity=False))
+def test_gaussian_kernel(sample_dim, sigma):
+    """Tests specific for Polynomial kernel."""
+
+    # TODO input sparse arrays for test
+    x = gen_random_array(sample_dim)
+    y = gen_random_array(sample_dim)
+    gaussian = GaussianKernel(sigma=sigma)
+
+    try:
+        result = gaussian(x, y)
+    except RuntimeWarning:
+        raise RuntimeWarning('RunTime warning for:\n'
+                             ' x={}\n y={}\n kernel={}\n'.format(x, y, gaussian))
+    except Exception:
+        raise Exception('unanticipated exception:\n'
+                        ' x={}\n y={}\n kernel={}\n'.format(x, y, gaussian))
+
+    if not isinstance(result, Number):
+        raise ValueError('gaussian kernel result {} is not a number!\n'
+                         'x={}\ny={}\nkernel={}\n'
+                         ''.format(result, x, y, gaussian))
+
