@@ -248,8 +248,8 @@ class KernelMatrix(object):
                 are_all_selected = True
             _slice_index_list = index_obj_per_dim.indices(self.num_samples)
             indices = list(range(*_slice_index_list))  # *list expands it as args
-        elif isinstance(index_obj_per_dim, Iterable):
-            indices = map(int, index_obj_per_dim)
+        elif isinstance(index_obj_per_dim, Iterable) and \
+            not isinstance(index_obj_per_dim, str):
             indices = list(map(int, index_obj_per_dim))
         else:
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
