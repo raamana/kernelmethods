@@ -6,8 +6,11 @@ from kernelmethods.base import KernelMatrix
 import numpy as np
 from scipy.linalg import eigh, LinAlgError
 import warnings
+import traceback
 
-def is_positive_semidefinite(input_matrix, tolerance=1e-8):
+def is_positive_semidefinite(input_matrix,
+                             tolerance=1e-6,
+                             verbose=False):
     """
     Tests whether a given matrix is PSD.
 
@@ -34,12 +37,19 @@ def is_positive_semidefinite(input_matrix, tolerance=1e-8):
     try:
         eig_values = eigh(sym_matrix, eigvals_only=True)
     except LinAlgError:
+        if verbose:
+            traceback.print_exc()
         print('LinAlgError raised - eigen value computation failed --> not PSD')
         psd = False
     except:
-        warnings.warn('Unknown exception during eigen value computation  --> not PSD')
+        if verbose:
+            traceback.print_exc()
+        warnings.warn('Unknown exception during eigen value computation --> not PSD')
         psd = False
     else:
+        if verbose:
+            print('Smallest eigen values are:\n'
+                  '{}'.format(eig_values[:min(10,len(eig_values))]))
         if any(eig_values < -tolerance): # notice the negative sign before tolerance
             psd = False
         else:
