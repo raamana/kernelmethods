@@ -6,7 +6,7 @@
 import pytest
 
 
-from kernelmethods import kernelmethods
+from kernelmethods import operations
 
 
 @pytest.fixture
