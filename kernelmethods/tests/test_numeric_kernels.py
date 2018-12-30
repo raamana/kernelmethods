@@ -9,12 +9,15 @@ from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
 from kernelmethods.utils import check_callable
 
 default_feature_dim = 10
-range_feature_dim = [10, 10000]
+range_feature_dim = [10, 500]
+range_num_samples = [50, 500]
+
 range_polynomial_degree = [1, 10]
 
 # choosing skip_input_checks=False will speed up test runs
 # default values for parameters
 SupportedKernels = (GaussianKernel(), PolyKernel())
+num_tests_psd_kernel = 5
 
 def gen_random_array(dim):
     """To better control precision and type of floats"""
