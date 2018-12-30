@@ -12,11 +12,12 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [ ]
+requirements = ['scipy',
+                'numpy']
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest', ]
+test_requirements = ['pytest', ] + requirements
 
 setup(name='kernelmethods',
     version=versioneer.get_version(),
