@@ -288,10 +288,9 @@ class KernelMatrix(object):
     def _compute_for_index_combinations(self, set_one, set_two):
         """Computes value of kernel matrix for all combinations of given set of indices"""
 
-        output = np.array([self._eval_kernel(idx_one, idx_two)
+        return np.array([self._eval_kernel(idx_one, idx_two)
                            for idx_one, idx_two in iter_product(set_one, set_two)],
-                          dtype=self.sample.dtype)
-        return output
+                          dtype=self.sample.dtype).reshape(len(set_one), len(set_two))
 
 
     def _populate_fully(self, fill_lower_tri=False):
