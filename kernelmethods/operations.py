@@ -40,7 +40,7 @@ def is_positive_semidefinite(input_matrix, tolerance=1e-8):
         warnings.warn('Unknown exception during eigen value computation  --> not PSD')
         psd = False
     else:
-        if any(eig_values < tolerance):
+        if any(eig_values < -tolerance): # notice the negative sign before tolerance
             psd = False
         else:
             psd = True
