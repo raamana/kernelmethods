@@ -3,7 +3,7 @@ from collections import Iterable
 from itertools import product as iter_product
 
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 
 from kernelmethods.utils import check_callable, ensure_ndarray_2D, get_callable_name
 
@@ -287,8 +287,6 @@ class KernelMatrix(object):
         """
 
         # kernel matrix is symmetric - so we need only to STORE half the matrix!
-        output = csr_matrix((self.num_samples, self.num_samples),
-                            dtype=self.sample.dtype)
 
         try:
             for idx_one in range(self.num_samples):
@@ -307,6 +305,8 @@ class KernelMatrix(object):
             output[idx_lower_tri] = output.T[idx_lower_tri]
 
         return output
+            self._full_km = lil_matrix((self.num_samples, self.num_samples),
+                                       dtype=self.sample.dtype)
 
 
     def __str__(self):
