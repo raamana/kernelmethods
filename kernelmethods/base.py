@@ -135,7 +135,9 @@ class KernelMatrix(object):
 
 
     def attach_to(self, sample):
-        """Attach this kernel to a given sample
+        """Attach this kernel to a given sample.
+
+        Any previous evaluations to other samples and their results will be reset.
 
         Parameters
         ----------
@@ -150,9 +152,16 @@ class KernelMatrix(object):
         self.shape = (self.num_samples, self.num_samples)
 
         self._populated_fully = False
+        self._lower_tri_km_filled = False
+
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
         self._km_dict = dict()
+        # debugging and efficiency measurement purposes
+        # for a given sample (of size n),
+        #   number of kernel evals must never be more than n+ n*(n-1)/2 (or n(n+1)/2)
+        #   regardless of the number of times different forms of KM are accessed!
+        self._num_ker_eval = 0
 
 
     @property
@@ -287,26 +296,35 @@ class KernelMatrix(object):
         """
 
         # kernel matrix is symmetric - so we need only to STORE half the matrix!
-
-        try:
-            for idx_one in range(self.num_samples):
-                # kernel matrix is symmetric - so we need only compute half the matrix!
-                # computing the kernel for diagonal elements i,i as well
-                #   if not change index_two starting point to index_one+1
-                for idx_two in range(idx_one, self.num_samples):
-                    output[idx_one, idx_two] = self._eval_kernel(idx_one, idx_two)
-        except:
-            self._populated_fully = False
-        else:
-            self._populated_fully = True
-
-        if fill_lower_tri:
-            idx_lower_tri = np.tril_indices(self.num_samples)
-            output[idx_lower_tri] = output.T[idx_lower_tri]
-
-        return output
+        # as we are computing the full matrix anyways, it's better to keep a copy
+        #   to avoid recomputing it for each access of self.full* attributes
+        if not self._populated_fully and not hasattr(self, '_full_km'):
             self._full_km = lil_matrix((self.num_samples, self.num_samples),
                                        dtype=self.sample.dtype)
+
+            try:
+                for idx_one in range(self.num_samples):
+                    # kernel matrix is symmetric - so we need only compute half the matrix!
+                    # computing the kernel for diagonal elements i,i as well
+                    #   if not change index_two starting point to index_one+1
+                    for idx_two in range(idx_one, self.num_samples):
+                        self._full_km[idx_one, idx_two] = self._eval_kernel(idx_one,
+                                                                            idx_two)
+            except:
+                self._populated_fully = False
+            else:
+                self._populated_fully = True
+
+        if fill_lower_tri and not self._lower_tri_km_filled:
+            try:
+                idx_lower_tri = np.tril_indices(self.num_samples)
+                self._full_km[idx_lower_tri] = self._full_km.T[idx_lower_tri]
+            except:
+                self._lower_tri_km_filled = False
+            else:
+                self._lower_tri_km_filled = True
+
+        return self._full_km
 
 
     def __str__(self):
