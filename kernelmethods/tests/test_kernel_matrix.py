@@ -2,9 +2,11 @@
 
 import numpy as np
 from scipy.sparse import issparse
+from scipy.linalg import eigh
 from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
 from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
+from kernelmethods.operations import is_PSD
 
 num_samples = 50 # 9
 sample_dim = 3 # 2
@@ -24,6 +26,11 @@ def test_symmetry():
 
     if not np.isclose(km_dense, km_dense.T).all():
         print('KM not symmetric')
+
+def test_PSD():
+
+    if not is_PSD(km_dense):
+        raise ValueError('this kernel matrix is not PSD!')
 
 def test_get_item():
 
@@ -108,3 +115,4 @@ def test_internal_flags_on_recompute():
         raise ValueError('flag _lower_tri_km_filled not set to True '
                          'upon recompute with fill_lower_tri=True')
 
+test_PSD()
