@@ -187,12 +187,18 @@ class KernelMatrix(object):
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
 
-        first_idx, second_idx = min(idx_one, idx_two), max(idx_one, idx_two)
-        if not (first_idx, second_idx) in self._km_dict:
-            self._km_dict[(first_idx, second_idx)] = \
-                self.kernel(self.sample[first_idx, :], self.sample[second_idx, :])
+        # maintaining only upper triangular parts
+        #   by ensuring the first index is always <= second index
+        if idx_one > idx_two:
+            idx_one, idx_two = idx_two, idx_one
+        # above is more efficient than below:
+        #  idx_one, idx_two = min(idx_one, idx_two), max(idx_one, idx_two)
+
+        if not (idx_one, idx_two) in self._km_dict:
+            self._km_dict[(idx_one, idx_two)] = \
+                self.kernel(self.sample[idx_one, :], self.sample[idx_two, :])
             self._num_ker_eval += 1
-        return self._km_dict[(first_idx, second_idx)]
+        return self._km_dict[(idx_one, idx_two)]
 
 
     def _features(self, index):
