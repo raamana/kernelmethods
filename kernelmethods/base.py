@@ -250,6 +250,7 @@ class KernelMatrix(object):
             indices = list(range(*_slice_index_list))  # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable):
             indices = map(int, index_obj_per_dim)
+            indices = list(map(int, index_obj_per_dim))
         else:
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
                                 ' For each of the two dimensions of size {num_samples},'
