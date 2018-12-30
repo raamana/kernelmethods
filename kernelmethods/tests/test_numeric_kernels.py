@@ -29,6 +29,12 @@ def gen_random_array(dim):
     # TODO input sparse arrays for test
     return np.random.rand(dim)
 
+def gen_random_sample(dim, num):
+    """To better control precision and type of floats"""
+
+    # TODO input sparse arrays for test
+    return np.random.rand(dim, num)
+
 
 def _test_for_all_kernels(kernel, sample_dim):
     """Common tests that all kernels must pass."""
@@ -95,10 +101,13 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples):
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
               timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
+       strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.integers(range_polynomial_degree[0], range_polynomial_degree[1]),
        strategies.floats(min_value=0, max_value=np.Inf,
                          allow_nan=False, allow_infinity=False))
 def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
+def test_polynomial_kernel(sample_dim, num_samples,
+                           poly_degree, poly_intercept):
     """Tests specific for Polynomial kernel."""
 
     poly = PolyKernel(degree=poly_degree, b=poly_intercept)
@@ -110,8 +119,9 @@ def test_polynomial_kernel(sample_dim, poly_degree, poly_intercept):
               timeout=unlimited, suppress_health_check=HealthCheck.all())
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.floats(min_value=0, max_value=np.Inf,
+       strategies.integers(range_num_samples[0], range_num_samples[1]),
                          allow_nan=False, allow_infinity=False))
-def test_gaussian_kernel(sample_dim, sigma):
+def test_gaussian_kernel(sample_dim, num_samples, sigma):
     """Tests specific for Polynomial kernel."""
 
     gaussian = GaussianKernel(sigma=sigma)
