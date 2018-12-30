@@ -14,6 +14,8 @@ range_num_samples = [50, 500]
 
 range_polynomial_degree = [1, 10]
 
+np.random.seed(42)
+
 # choosing skip_input_checks=False will speed up test runs
 # default values for parameters
 SupportedKernels = (GaussianKernel(), PolyKernel())
