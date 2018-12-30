@@ -150,6 +150,9 @@ class KernelMatrix(object):
         self.shape = (self.num_samples, self.num_samples)
 
         self._populated_fully = False
+        # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
+        #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
+        self._km_dict = dict()
 
 
     @property
@@ -175,7 +178,12 @@ class KernelMatrix(object):
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
 
-        return self.kernel(self._features(idx_one), self._features(idx_two))
+        first_idx, second_idx = min(idx_one, idx_two), max(idx_one, idx_two)
+        if not (first_idx, second_idx) in self._km_dict:
+            self._km_dict[(first_idx, second_idx)] = \
+                self.kernel(self.sample[first_idx, :], self.sample[second_idx, :])
+            self._num_ker_eval += 1
+        return self._km_dict[(first_idx, second_idx)]
 
 
     def _features(self, index):
