@@ -153,6 +153,8 @@ class KernelMatrix(object):
 
         self._populated_fully = False
         self._lower_tri_km_filled = False
+        if hasattr(self, '_full_km'):
+            delattr(self, '_full_km')
 
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
