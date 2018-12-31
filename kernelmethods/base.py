@@ -345,3 +345,19 @@ class KernelMatrix(object):
     # aliasing them to __str__ for now
     __format__ = __str__
     __repr__ = __str__
+
+
+    # TODO implement arithmetic operations on kernel matrices
+    def __add__(self, other):
+        """Addition"""
+        raise NotImplementedError()
+
+
+    def __mul__(self, other):
+        """Multiplication"""
+        raise NotImplementedError()
+
+
+    def __sub__(self, other):
+        """Subtraction"""
+        raise NotImplementedError()
