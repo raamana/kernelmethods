@@ -101,3 +101,40 @@ class GaussianKernel(BaseKernelFunction):
     # aliasing them to __str__ for now
     __format__ = __str__
     __repr__ = __str__
+
+
+class LinearKernel(BaseKernelFunction):
+    """Linear kernel function"""
+
+    def __init__(self, skip_input_checks=False):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
+        """
+
+        super().__init__(name='LinearKernel')
+        self.skip_input_checks = skip_input_checks
+
+    def __call__(self, x, y):
+        """Actual implementation of kernel func"""
+
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+
+        return x.dot(y.T)
+
+    def __str__(self):
+        """human readable repr"""
+
+        return self.name
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
