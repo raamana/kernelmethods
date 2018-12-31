@@ -108,7 +108,7 @@ def test_polynomial_kernel(sample_dim, num_samples,
                            poly_degree, poly_intercept):
     """Tests specific for Polynomial kernel."""
 
-    poly = PolyKernel(degree=poly_degree, b=poly_intercept)
+    poly = PolyKernel(degree=poly_degree, b=poly_intercept, skip_input_checks=False)
     _test_for_all_kernels(poly, sample_dim)
     _test_func_is_valid_kernel(poly, sample_dim, num_samples)
 
@@ -122,7 +122,7 @@ def test_polynomial_kernel(sample_dim, num_samples,
 def test_gaussian_kernel(sample_dim, num_samples, sigma):
     """Tests specific for Polynomial kernel."""
 
-    gaussian = GaussianKernel(sigma=sigma)
+    gaussian = GaussianKernel(sigma=sigma, skip_input_checks=False)
     _test_for_all_kernels(gaussian, sample_dim)
     _test_func_is_valid_kernel(gaussian, sample_dim, num_samples)
 
