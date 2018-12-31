@@ -102,7 +102,7 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples):
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.integers(range_polynomial_degree[0], range_polynomial_degree[1]),
-       strategies.floats(min_value=0, max_value=1e8,
+       strategies.floats(min_value=0, max_value=1e3,
                          allow_nan=False, allow_infinity=False))
 def test_polynomial_kernel(sample_dim, num_samples,
                            poly_degree, poly_intercept):
