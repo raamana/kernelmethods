@@ -21,7 +21,7 @@ np.random.seed(42)
 # choosing skip_input_checks=False will speed up test runs
 # default values for parameters
 SupportedKernels = (GaussianKernel(), PolyKernel(), LinearKernel())
-num_tests_psd_kernel = 50
+num_tests_psd_kernel = 10
 
 def gen_random_array(dim):
     """To better control precision and type of floats"""
@@ -29,11 +29,11 @@ def gen_random_array(dim):
     # TODO input sparse arrays for test
     return np.random.rand(dim)
 
-def gen_random_sample(dim, num):
+def gen_random_sample(num_samples, sample_dim):
     """To better control precision and type of floats"""
 
     # TODO input sparse arrays for test
-    return np.random.rand(dim, num)
+    return np.random.rand(num_samples, sample_dim)
 
 
 def _test_for_all_kernels(kernel, sample_dim):
@@ -91,7 +91,7 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples):
     """
 
     KM = KernelMatrix(kernel, name='TestKM')
-    KM.attach_to(gen_random_sample(sample_dim, num_samples))
+    KM.attach_to(gen_random_sample(num_samples, sample_dim))
     is_psd = is_positive_semidefinite(KM, verbose=True)
     if not is_psd:
         raise ValueError('{} is not PSD'.format(str(KM)))
