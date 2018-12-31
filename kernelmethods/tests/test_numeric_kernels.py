@@ -5,7 +5,7 @@ from pytest import raises, warns
 from hypothesis import given, strategies, unlimited
 from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
 from kernelmethods.utils import check_callable
 from kernelmethods.base import KernelMatrix
 from kernelmethods.operations import is_positive_semidefinite
@@ -20,8 +20,8 @@ np.random.seed(42)
 
 # choosing skip_input_checks=False will speed up test runs
 # default values for parameters
-SupportedKernels = (GaussianKernel(), PolyKernel())
-num_tests_psd_kernel = 5
+SupportedKernels = (GaussianKernel(), PolyKernel(), LinearKernel())
+num_tests_psd_kernel = 50
 
 def gen_random_array(dim):
     """To better control precision and type of floats"""
@@ -126,4 +126,16 @@ def test_gaussian_kernel(sample_dim, num_samples, sigma):
     _test_for_all_kernels(gaussian, sample_dim)
     _test_func_is_valid_kernel(gaussian, sample_dim, num_samples)
 
-test_polynomial_kernel()
+@hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
+              timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
+       strategies.integers(range_num_samples[0], range_num_samples[1]))
+def test_linear_kernel(sample_dim, num_samples):
+    """Tests specific for Polynomial kernel."""
+
+    linear = LinearKernel(skip_input_checks=False)
+    _test_for_all_kernels(linear, sample_dim)
+    _test_func_is_valid_kernel(linear, sample_dim, num_samples)
+
+# test_polynomial_kernel()
+test_linear_kernel()
