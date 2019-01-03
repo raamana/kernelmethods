@@ -339,7 +339,7 @@ class KernelMatrix(object):
     def __str__(self):
         """human readable presentation"""
 
-        return "{}:{} on sample {}".format(self.name, str(self.kernel), self.sample.shape)
+        return "{}: {} on sample {}".format(self.name, str(self.kernel), self.sample.shape)
 
 
     # aliasing them to __str__ for now

@@ -119,7 +119,7 @@ class LinearKernel(BaseKernelFunction):
 
         """
 
-        super().__init__(name='LinearKernel')
+        super().__init__(name='linear')
         self.skip_input_checks = skip_input_checks
 
     def __call__(self, x, y):
