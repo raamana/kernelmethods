@@ -4,7 +4,7 @@ import numpy as np
 from scipy.sparse import issparse
 from scipy.linalg import eigh
 from pytest import raises
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
 from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
 from kernelmethods.operations import is_PSD
 
@@ -96,7 +96,7 @@ def test_reset_flags_on_new_attach():
         raise ValueError('counter _num_ker_eval > 0 upon reset!')
     if hasattr(km, '_full_km'):
         raise ValueError('_full_km from previous run is not cleared!')
-    if len(km._km_dict) > 0:
+    if len(km._KM) > 0:
         raise ValueError('internal dict not empty upon reset!')
 
 def test_internal_flags_on_recompute():
@@ -109,7 +109,7 @@ def test_internal_flags_on_recompute():
         raise ValueError('unexpected value for counter _num_ker_eval upon recompute!')
     if not hasattr(km, '_full_km'):
         raise ValueError('_full_km is not populated yet!')
-    if len(km._km_dict)!=max_num_elements:
+    if len(km._KM)!=max_num_elements:
         raise ValueError('internal dict not empty upon recompute!')
     if not km._lower_tri_km_filled:
         raise ValueError('flag _lower_tri_km_filled not set to True '
