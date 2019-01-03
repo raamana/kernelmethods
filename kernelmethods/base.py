@@ -454,3 +454,112 @@ class KernelMatrixPrecomputed(object):
 
 VALID_KERNEL_MATRIX_TYPES = (KernelMatrix, KernelMatrixPrecomputed, np.ndarray)
 
+
+class KernelSet(object):
+    """Container class to manage a set of KernelMatrix instances."""
+
+
+    def __init__(self, km_set):
+        """Constructor."""
+
+        self._km_set = list()
+        # to denote no KM has been added yet
+        self._num_km = 0
+
+        # type must be Sequence (not just Iterable)
+        #   as we need to index it from 1 (second element in the Iterable)
+        if isinstance(km_set, Sequence):
+            # adding the first kernel by itself
+            # needed for compatibility tests
+            self._initialize(km_set[0])
+
+            # add the remaining if they are compatible
+            for km in km_set[1:]:
+                self.append(km)
+
+        elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
+            self.append(km_set)
+        else:
+            raise TypeError('Unknown type of input matrix! Must be one of:\n'
+                            '{}'.format(VALID_KERNEL_MATRIX_TYPES))
+
+
+    def _initialize(self, KM):
+        """Method to initialize and set key compatibility parameters"""
+
+        if isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
+            self._km_set.append(KM)
+            self._num_samples = KM.size
+        elif isinstance(KM, np.ndarray):
+            self._km_set.append(KernelMatrixPrecomputed(KM))
+            self._num_samples = KM.shape[0]
+
+
+    @property
+    def size(self):
+        """Number of kernel matrices in this set"""
+
+        return len(self._km_set)
+
+    @property
+    def num_samples(self):
+        """Number of samples in each individual kernel matrix """
+
+        return self._num_samples
+
+
+    def __len__(self):
+        """Returns the number of kernels in this set"""
+
+        return len(self._km_set)
+
+
+    def append(self, KM):
+        """
+        Method to add a new kernel to the set.
+
+        Checks to ensure the new KM is compatible in size to the existing set.
+        """
+
+        if not isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
+            KM = KernelMatrixPrecomputed(KM)
+
+        if self._num_samples != KM.num_samples:
+            raise KMSetAdditionError('Dimension of this KM {} is incompatible '
+                                     'with KMSet of {}! '
+                                     ''.format(KM.num_samples, self.num_samples))
+
+        self._km_set.append(KM)
+
+
+    def __str__(self):
+        """Human readable repr"""
+
+        return "KernelSet({} kernels, {} samples):\n\t{} " \
+               "".format(self.size, self.num_samples,
+                         "\n\t".join(map(str, self._km_set)))
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
+
+    def __iter__(self):
+        """Making an iterable."""
+
+        for index in range(self.size):
+            yield self._km_set[index]
+
+
+    def extend(self, another_km_set):
+        """Combines two sets into one"""
+
+        if not isinstance(another_km_set, KernelSet):
+            raise KMSetAdditionError('Input is not a KernelSet!'
+                                     'Build a KernelSet() first.')
+
+        if another_km_set.num_samples != self.num_samples:
+            raise ValueError('The two KernelSets are not compatible (in size: # samples)')
+
+        for km in another_km_set:
+            self.append(km)
+
