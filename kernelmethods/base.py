@@ -196,6 +196,7 @@ class KernelMatrix(object):
         return self._populate_fully(fill_lower_tri=False)
 
 
+    @property
     def diag(self):
         """Returns the diagonal of the kernel matrix"""
 
