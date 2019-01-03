@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections import Iterable, Sequence
 from itertools import product as iter_product
 
 import numpy as np
 from scipy.sparse import lil_matrix
 
-from kernelmethods.utils import check_callable, ensure_ndarray_2D, get_callable_name
+from kernelmethods.utils import check_callable, ensure_ndarray_2D, \
+    get_callable_name, not_symmetric
 
 
 class KernelMatrixException(Exception):

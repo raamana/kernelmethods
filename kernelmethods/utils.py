@@ -104,3 +104,11 @@ _float_eps = np.finfo('float').eps
 
 def _ensure_min_eps(x):
     return  np.maximum(_float_eps, x)
+
+def not_symmetric(matrix):
+    """Returns true if matrix is not symmetric."""
+
+    if not np.isclose(matrix, matrix.T).all():
+        return True
+    else:
+        return False
