@@ -451,3 +451,6 @@ class KernelMatrixPrecomputed(object):
     __format__ = __str__
     __repr__ = __str__
 
+
+VALID_KERNEL_MATRIX_TYPES = (KernelMatrix, KernelMatrixPrecomputed, np.ndarray)
+
