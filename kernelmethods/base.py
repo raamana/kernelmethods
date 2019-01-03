@@ -158,7 +158,7 @@ class KernelMatrix(object):
 
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
-        self._km_dict = dict()
+        self._KM = dict()
         # debugging and efficiency measurement purposes
         # for a given sample (of size n),
         #   number of kernel evals must never be more than n+ n*(n-1)/2 (or n(n+1)/2)
@@ -196,11 +196,11 @@ class KernelMatrix(object):
         # above is more efficient than below:
         #  idx_one, idx_two = min(idx_one, idx_two), max(idx_one, idx_two)
 
-        if not (idx_one, idx_two) in self._km_dict:
-            self._km_dict[(idx_one, idx_two)] = \
+        if not (idx_one, idx_two) in self._KM:
+            self._KM[(idx_one, idx_two)] = \
                 self.kernel(self.sample[idx_one, :], self.sample[idx_two, :])
             self._num_ker_eval += 1
-        return self._km_dict[(idx_one, idx_two)]
+        return self._KM[(idx_one, idx_two)]
 
 
     def _features(self, index):
@@ -291,8 +291,8 @@ class KernelMatrix(object):
         """Computes value of kernel matrix for all combinations of given set of indices"""
 
         return np.array([self._eval_kernel(idx_one, idx_two)
-                           for idx_one, idx_two in iter_product(set_one, set_two)],
-                          dtype=self.sample.dtype).reshape(len(set_one), len(set_two))
+                         for idx_one, idx_two in iter_product(set_one, set_two)],
+                        dtype=self.sample.dtype).reshape(len(set_one), len(set_two))
 
 
     def _populate_fully(self, fill_lower_tri=False):
