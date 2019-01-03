@@ -484,7 +484,7 @@ class KernelSet(object):
                 self.append(km)
 
         elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
-            self.append(km_set)
+            self._initialize(km_set)
         else:
             raise TypeError('Unknown type of input matrix! Must be one of:\n'
                             '{}'.format(VALID_KERNEL_MATRIX_TYPES))
