@@ -57,6 +57,10 @@ class BaseKernelFunction(ABC):
     def __str__(self):
         """Representation"""
 
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
+
 
 class KernelFromCallable(BaseKernelFunction):
     """Class to create a custom kernel from a given callable."""

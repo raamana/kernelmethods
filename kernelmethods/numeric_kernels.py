@@ -52,10 +52,6 @@ class PolyKernel(BaseKernelFunction):
 
         return "{}(degree={},b={})".format(self.name, self.degree, self.b)
 
-    # aliasing them to __str__ for now
-    __format__ = __str__
-    __repr__ = __str__
-
 
 class GaussianKernel(BaseKernelFunction):
     """Polynomial kernel function"""
@@ -98,10 +94,6 @@ class GaussianKernel(BaseKernelFunction):
 
         return "{}(sigma={})".format(self.name, self.sigma)
 
-    # aliasing them to __str__ for now
-    __format__ = __str__
-    __repr__ = __str__
-
 
 class LinearKernel(BaseKernelFunction):
     """Linear kernel function"""
@@ -135,6 +127,3 @@ class LinearKernel(BaseKernelFunction):
 
         return self.name
 
-    # aliasing them to __str__ for now
-    __format__ = __str__
-    __repr__ = __str__
