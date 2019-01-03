@@ -18,7 +18,7 @@ target_labels = np.random.choice(target_label_set, num_samples)
 km = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
 
 km.attach_to(sample_data)
-km_dense = km.full_dense # this will force computation of full KM
+km_dense = km.full # this will force computation of full KM
 
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
@@ -74,7 +74,7 @@ def test_random_submatrix_access():
 
 def test_diag():
 
-    if len(km.diag()) != num_samples:
+    if len(km.diag) != num_samples:
         raise ValueError('KM diagonal does not have N elements!')
 
 def test_sparsity():
@@ -82,7 +82,7 @@ def test_sparsity():
     if not issparse(km.full_sparse):
         raise TypeError('error in sparse format access of KM : it is not sparse')
 
-    if issparse(km.full_dense):
+    if issparse(km.full):
         raise TypeError('error in dense format access of KM : it is sparse!')
 
 def test_reset_flags_on_new_attach():
@@ -102,7 +102,7 @@ def test_reset_flags_on_new_attach():
 def test_internal_flags_on_recompute():
 
     km.attach_to(sample_data) # reset first
-    new_dense = km.full_dense # recompute
+    new_dense = km.full # recompute
     if not km._populated_fully:
         raise ValueError('flag _populated_fully not set to True upon recompute')
     if km._num_ker_eval != max_num_ker_eval:

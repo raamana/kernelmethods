@@ -189,7 +189,7 @@ class KernelMatrix(object):
 
 
     @property
-    def full_dense(self):
+    def full(self):
         """Fully populated kernel matrix in dense ndarray format."""
 
         return self._populate_fully(fill_lower_tri=True).todense()

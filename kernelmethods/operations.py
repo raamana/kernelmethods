@@ -22,7 +22,7 @@ def is_positive_semidefinite(input_matrix,
     """
 
     if isinstance(input_matrix, KernelMatrix):
-        sym_matrix = input_matrix.full_dense
+        sym_matrix = input_matrix.full
     else:
         sym_matrix = input_matrix
 
