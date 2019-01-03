@@ -378,3 +378,76 @@ class KernelMatrix(object):
     def __sub__(self, other):
         """Subtraction"""
         raise NotImplementedError()
+
+
+class KernelMatrixPrecomputed(object):
+    """Convenience decorator for kernel matrices in ndarray or simple matrix format."""
+
+
+    def __init__(self, matrix, name=None):
+        """Constructor"""
+
+        try:
+            if not isinstance(matrix, np.ndarray):
+                matrix = np.array(matrix)
+        except:
+            raise ValueError('Input matrix is not convertible to numpy array!')
+
+        if matrix.ndim != 2 or not_symmetric(matrix):
+            raise ValueError('Input matrix appears to be NOT 2D or symmetric! '
+                             'Symmetry is needed for a valid kernel.')
+
+        self._KM = matrix
+        self.num_samples = self._KM.shape[0]
+
+        if name is None:
+            self.name = 'Precomputed'
+        else:
+            self.name = str(name)
+
+
+    def __len__(self):
+        """size of kernel matrix"""
+
+        return self.size
+
+
+    @property
+    def size(self):
+        """size of kernel matrix"""
+
+        return self._KM.shape[0]
+
+
+    @property
+    def full(self):
+        """Returns the full kernel matrix (in dense format, as its already precomputed)"""
+        return self._KM
+
+
+    @property
+    def diag(self):
+        """Returns the diagonal of the kernel matrix"""
+
+        return self._KM.diagonal()
+
+
+    def __getitem__(self, index_obj):
+        """Access the matrix"""
+
+        try:
+            return self._KM[index_obj]
+        except:
+            raise KMAccessError('Invalid attempt to access the 2D kernel matrix!')
+
+
+    def __str__(self):
+        """human readable presentation"""
+
+        return "{}(num_samples={})".format(self.name, self.num_samples)
+
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
+
