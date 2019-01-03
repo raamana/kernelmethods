@@ -18,6 +18,11 @@ class KMAccessError(KernelMatrixException):
     pass
 
 
+class KMSetAdditionError(KernelMatrixException):
+    """Error to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
+    pass
+
+
 class BaseKernelFunction(ABC):
     """Abstract base class for kernel functions.
 
