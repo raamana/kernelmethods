@@ -133,6 +133,9 @@ class KernelMatrix(object):
         self.kernel = kernel
         self.name = name
 
+        # to ensure we can always query the size attribute
+        self.num_samples = None
+
 
     def attach_to(self, sample):
         """Attach this kernel to a given sample.
@@ -164,6 +167,19 @@ class KernelMatrix(object):
         #   number of kernel evals must never be more than n+ n*(n-1)/2 (or n(n+1)/2)
         #   regardless of the number of times different forms of KM are accessed!
         self._num_ker_eval = 0
+
+
+    @property
+    def size(self):
+        """Specifies the size of the KernelMatrix (num_samples in dataset)"""
+
+        return self.num_samples
+
+
+    def __len__(self):
+        """Convenience wrapper for .size attribute, to enable use of len(KernelMatrix)"""
+
+        return self.size
 
 
     @property
