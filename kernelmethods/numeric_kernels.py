@@ -95,6 +95,45 @@ class GaussianKernel(BaseKernelFunction):
         return "{}(sigma={})".format(self.name, self.sigma)
 
 
+class LaplacianKernel(BaseKernelFunction):
+    """Laplacian kernel function"""
+
+    def __init__(self, gamma=1.0, skip_input_checks=False):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        gamma : float
+            scale factor
+
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
+        """
+
+        super().__init__(name='laplacian')
+
+        self.gamma = gamma
+
+        self.skip_input_checks = skip_input_checks
+
+    def __call__(self, x, y):
+        """Actual implementation of kernel func"""
+
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+
+        return np.exp(-self.gamma * np.sum(np.abs(x - y)))
+
+    def __str__(self):
+        """human readable repr"""
+
+        return "{}(gamma={})".format(self.name, self.gamma)
+
+
 class LinearKernel(BaseKernelFunction):
     """Linear kernel function"""
 
