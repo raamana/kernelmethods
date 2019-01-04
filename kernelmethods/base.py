@@ -661,6 +661,29 @@ class KernelSet(object):
             yield self._km_set[index]
 
 
+    def attach_to(self, sample):
+        """Attach this kernel to a given sample.
+
+        Any previous evaluations to other samples and their results will be reset.
+
+        Parameters
+        ----------
+        sample : ndarray
+            Input sample to operate on
+            Must be 2D of shape (num_samples, num_features)
+
+        """
+
+        self.sample = ensure_ndarray_2D(sample)
+        if self._num_samples is not None and sample.shape[0] != self._num_samples:
+            raise ValueError('Number of samples in input differ from this KernelSet')
+        else:
+            self._num_samples = sample.shape[0]
+
+        for index in range(self.size):
+            self._km_set[index].attach_to(sample)
+
+
     def extend(self, another_km_set):
         """Combines two sets into one"""
 
