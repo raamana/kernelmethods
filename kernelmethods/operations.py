@@ -3,6 +3,7 @@
 """Kernel methods module."""
 
 import numpy as np
+from numpy import multiply as elem_wise_multiply
 from scipy.linalg import eigh, LinAlgError
 import warnings
 import traceback
@@ -85,6 +86,34 @@ def center_km(KM):
     Ic = np.eye(n_rows) - (one_oneT/n_rows)
 
     return Ic.dot(KM).dot(Ic)
+
+
+def frobenius_product(A, B):
+    """Computes the Frobenious product between two matrices of equal dimension.
+
+    <A, B>_F is equal to the sum of element-wise products between A and B.
+
+    .. math::
+        <\mathbf{A}, \mathbf{B}>_F = \sum_{i, j} \mathbf{A}_{ij} \mathbf{B}_{ij}
+
+    """
+
+    if A.shape != B.shape:
+        raise ValueError('Dimensions of the two matrices must be the same '
+                         'to compute Frobenious product! They differ: {}, {}'
+                         ''.format(A.shape, B.shape))
+
+    return np.sum(elem_wise_multiply(A, B), axis=None)
+
+
+def frobenius_norm(A):
+    """Computes the Frobenius norm of a matrix A.
+
+    It is the square root of the Frobenius product with itself.
+
+    """
+
+    return np.sqrt(frobenius_product(A, A))
 
 
 def eval_similarity(km_one, km_two):
