@@ -49,6 +49,12 @@ class KernelBucket(KernelSet):
                 self.append(KernelMatrix(kernel_func(**{param_name:val})))
 
 
+class PredictiveModelFromKernelMatrix(KernelMatrix):
+    """Class to turn a given kernel into a predictive model"""
+
+    raise NotImplementedError()
+
+
 def is_positive_semidefinite(input_matrix,
                              tolerance=1e-6,
                              verbose=False):
