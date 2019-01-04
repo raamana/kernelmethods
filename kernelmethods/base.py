@@ -5,6 +5,7 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import lil_matrix
 
+from kernelmethods.operations import center_km
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 
@@ -176,6 +177,7 @@ class KernelMatrix(object):
         self._lower_tri_km_filled = False
         if hasattr(self, '_full_km'):
             delattr(self, '_full_km')
+        self._is_centered = False
 
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
@@ -212,6 +214,26 @@ class KernelMatrix(object):
         """Kernel matrix populated in upper tri in sparse array format."""
 
         return self._populate_fully(fill_lower_tri=False)
+
+
+    def center(self):
+        """Method to center the kernel matrix"""
+
+        if not self._populated_fully:
+            self._full_km = self._populate_fully(fill_lower_tri=True, dense_fmt=True)
+
+        self._centered = center_km(self._full_km)
+        self._is_centered = True
+
+
+    @property
+    def centered(self):
+        """Exposes the centered version of the kernel matrix"""
+
+        if not self._is_centered:
+            self.center()
+
+        return self._centered
 
 
     @property
