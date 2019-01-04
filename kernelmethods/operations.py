@@ -116,7 +116,7 @@ def frobenius_norm(A):
     return np.sqrt(frobenius_product(A, A))
 
 
-def alignment_centered(km_one, km_two):
+def alignment_centered(km_one, km_two, centered_already=False):
     """
     Computes the centered alignment between two kernel matrices
 
@@ -133,8 +133,12 @@ def alignment_centered(km_one, km_two):
                          'to compute their alignment! They differ: {}, {}'
                          ''.format(km_one.shape, km_two.shape))
 
-    kC_one = center_km(km_one)
-    kC_two = center_km(km_two)
+    if not centered_already:
+        kC_one = center_km(km_one)
+        kC_two = center_km(km_two)
+    else:
+        kC_one = km_one
+        kC_two = km_two
 
     fnorm_one = frobenius_norm(kC_one)
     fnorm_two = frobenius_norm(kC_two)
