@@ -481,7 +481,7 @@ class KernelSet(object):
 
         self._km_set = list()
         # to denote no KM has been added yet
-        self._num_km = 0
+        self._is_init = False
 
         # type must be Sequence (not just Iterable)
         #   as we need to index it from 1 (second element in the Iterable)
@@ -504,12 +504,17 @@ class KernelSet(object):
     def _initialize(self, KM):
         """Method to initialize and set key compatibility parameters"""
 
-        if isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
-            self._km_set.append(KM)
-            self._num_samples = KM.size
-        elif isinstance(KM, np.ndarray):
-            self._km_set.append(KernelMatrixPrecomputed(KM))
-            self._num_samples = KM.shape[0]
+        if not self._is_init:
+            self._km_set = list()
+
+            if isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
+                self._km_set.append(KM)
+                self._num_samples = KM.size
+            elif isinstance(KM, np.ndarray):
+                self._km_set.append(KernelMatrixPrecomputed(KM))
+                self._num_samples = KM.shape[0]
+
+            self._is_init = True
 
 
     @property
@@ -517,6 +522,7 @@ class KernelSet(object):
         """Number of kernel matrices in this set"""
 
         return len(self._km_set)
+
 
     @property
     def num_samples(self):
