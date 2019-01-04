@@ -156,6 +156,7 @@ class KernelMatrix(object):
         # to ensure we can always query the size attribute
         self.num_samples = None
         self.sample = None
+        self._reset()
 
 
     def attach_to(self, sample):
@@ -174,6 +175,13 @@ class KernelMatrix(object):
         self.sample = ensure_ndarray_2D(sample)
         self.num_samples = self.sample.shape[0]
         self.shape = (self.num_samples, self.num_samples)
+
+        # cleanup old flags and reset to ensure fresh slate for this sample
+        self._reset()
+
+
+    def _reset(self):
+        """Convenience routine to reset internal state"""
 
         self._populated_fully = False
         self._lower_tri_km_filled = False
