@@ -745,3 +745,49 @@ class CompositeKernel(ABC):
     __format__ = __str__
     __repr__ = __str__
 
+
+class SumKernel(CompositeKernel):
+    """Class to define and compute a weighted sum kernel from a KernelSet"""
+
+    def __init__(self, km_set, name='SumKernel'):
+        """Constructor."""
+
+        super().__init__(km_set, name=name)
+
+    def fit(self, kernel_weights=None):
+        """Computes the sum kernel"""
+
+        if kernel_weights is None:
+            kernel_weights = np.ones(self.km_set.size)
+        else:
+            kernel_weights = ensure_ndarray_1D(kernel_weights)
+            if kernel_weights.size != self.km_set.size:
+                raise ValueError('Incompatible set of kernel_weights given.'
+                                 'Must be an array of length exactly {}'
+                                 ''.format(self.km_set.size))
+
+        self.KM = np.zeros((self.num_samples, self.num_samples))
+        for weight, km in zip(kernel_weights, self.km_set):
+            self.KM = self.KM + weight * km.full
+
+        self._is_fitted = True
+
+
+class ProductKernel(CompositeKernel):
+    """Class to define and compute a Product kernel from a KernelSet"""
+
+    def __init__(self, km_set, name='ProductKernel'):
+        """Constructor."""
+
+        super().__init__(km_set, name=name)
+
+
+    def fit(self):
+        """Computes the product kernel."""
+
+        self.KM = np.ones((self.num_samples, self.num_samples))
+        for km in self.km_set:
+            self.KM = self.KM * km.full  # * is element-wise multiplication here
+
+        self._is_fitted = True
+
