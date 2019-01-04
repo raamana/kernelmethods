@@ -474,6 +474,74 @@ class KernelMatrixPrecomputed(object):
     __repr__ = __str__
 
 
+class ConstantKernelMatrix(object):
+    """Custom KM to represent a constant """
+
+
+    def __init__(self, num_samples=None, value=0.0, name=None, dtype='float'):
+
+        self.num_samples = num_samples
+        self.const_value = value
+        self.dtype = dtype
+
+        if name is None:
+            self.name = 'Constant'
+        else:
+            self.name = str(name)
+
+
+    def __len__(self):
+        """size of kernel matrix"""
+
+        return self.size
+
+
+    @property
+    def size(self):
+        """size of kernel matrix"""
+        return self.num_samples
+
+
+    @property
+    def full(self):
+        """Returns the full kernel matrix (in dense format)"""
+
+        if not hasattr(self, '_KM'):
+            self._KM = np.full((self.num_samples, self.num_samples),
+                               fill_value=self.const_value, dtype=self.dtype)
+
+        return self._KM
+
+
+    @property
+    def diag(self):
+        """Returns the diagonal of the kernel matrix"""
+
+        return np.full((self.num_samples,),
+                       fill_value=self.const_value, dtype=self.dtype)
+
+
+    def __getitem__(self, index_obj):
+        """Access the matrix"""
+
+        try:
+            return self._KM[index_obj]
+        except:
+            raise KMAccessError('Invalid attempt to access the 2D kernel matrix!')
+
+
+    def __str__(self):
+        """human readable presentation"""
+
+        return "{}(value={},num_samples={})".format(self.name, self.const_value,
+                                                    self.num_samples)
+
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
+
+
 VALID_KERNEL_MATRIX_TYPES = (KernelMatrix, KernelMatrixPrecomputed, np.ndarray)
 
 
