@@ -484,7 +484,6 @@ class KernelSet(object):
     def __init__(self, km_set):
         """Constructor."""
 
-        self._km_set = list()
         # to denote no KM has been added yet
         self._is_init = False
 
