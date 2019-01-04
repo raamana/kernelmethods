@@ -697,3 +697,51 @@ class KernelSet(object):
         for km in another_km_set:
             self.append(km)
 
+
+class CompositeKernel(ABC):
+    """Class to combine a set of kernels into a composite kernel."""
+
+
+    def __init__(self, km_set, name='Composite'):
+        """Constructor."""
+
+        if not isinstance(km_set, KernelSet):
+            raise TypeError('Input must be a KernelSet')
+
+        if km_set.size < 2:
+            raise ValueError('KernelSet must have atleast 2 kernels')
+
+        if km_set.num_samples is None:
+            raise ValueError('KernelSet is not attached to any sample!')
+
+        self.km_set = km_set
+        self.num_samples = km_set.num_samples
+        self._is_fitted = False
+        self.name = name
+
+
+    @abstractmethod
+    def fit(self):
+        """Abstract methods that needs to be defined later."""
+        pass
+
+
+    @property
+    def composite_KM(self):
+        """Returns the result of composite operation"""
+
+        if self._is_fitted:
+            return self.KM
+        else:
+            raise ValueError('{} is not fitted yet!'.format(self.name))
+
+
+    def __str__(self):
+        """human readable presentation"""
+
+        return "{}-->{}".format(self.name, str(self.km_set))
+
+    # aliasing them to __str__ for now
+    __format__ = __str__
+    __repr__ = __str__
+
