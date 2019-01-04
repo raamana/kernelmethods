@@ -109,10 +109,33 @@ def is_positive_semidefinite(input_matrix,
 is_PSD = is_positive_semidefinite
 
 
-def center_KM(KM):
-    """Center the given kernel matrix"""
+def center_km(KM):
+    """
+    Center a given kernel matrix.
 
-    pass
+    Implements the definition according to Lemma 1 in Section 2.2 in
+    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
+        "Algorithms for Learning Kernels Based on Centered Alignment",
+        Journal of Machine Learning Research 13(Mar): 795–828.
+    """
+
+    if isinstance(KM, np.ndarray):
+        if KM.shape[0] == KM.shape[1]:
+            n_rows = KM.shape[0]
+        else:
+            raise ValueError('Input matrix is not square!')
+    else:
+        raise ValueError('Unknown format for input matrix -'
+                         'must be a square numpy ndarray')
+
+    # directly initializing one_oneT without going through unnecessary matrix products
+    #   vec_1s = np.ones((n_rows, 1)) # row vector of 1s
+    #   one_oneT = vec_1s.dot(vec_1s.T) # 1 dot 1T
+    one_oneT = np.ones((n_rows, n_rows))
+    Ic = np.eye(n_rows) - (one_oneT/n_rows)
+
+    return Ic.dot(KM).dot(Ic)
+
 
 def eval_similarity(km_one, km_two):
     """Evaluate similarity between two kernel matrices"""
