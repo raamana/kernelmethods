@@ -531,7 +531,8 @@ class KernelSet(object):
         Checks to ensure the new KM is compatible in size to the existing set.
         """
 
-        if not isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
+        if not isinstance(KM, (BaseKernelFunction, KernelMatrix,
+                               KernelMatrixPrecomputed)):
             KM = KernelMatrixPrecomputed(KM)
 
         if self._num_samples != KM.num_samples:
