@@ -3,7 +3,7 @@ from collections import Iterable, Sequence
 from itertools import product as iter_product
 
 import numpy as np
-from scipy.sparse import lil_matrix
+from scipy.sparse import lil_matrix, issparse
 
 from kernelmethods.operations import center_km
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
@@ -58,11 +58,13 @@ class BaseKernelFunction(ABC):
     def __str__(self):
         """Representation"""
 
+
     # aliasing others to __str__ for now
     def __format__(self, _):
         """Representation"""
 
         return self.__str__()
+
 
     def __repr__(self):
         """Representation"""
@@ -206,7 +208,7 @@ class KernelMatrix(object):
     def full(self):
         """Fully populated kernel matrix in dense ndarray format."""
 
-        return self._populate_fully(fill_lower_tri=True).todense()
+        return self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 
 
     @property
@@ -352,7 +354,7 @@ class KernelMatrix(object):
                         dtype=self.sample.dtype).reshape(len(set_one), len(set_two))
 
 
-    def _populate_fully(self, fill_lower_tri=False):
+    def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):
         """Applies the kernel function on all pairs of points in a sample.
 
         CAUTION: this may not always be necessary,
@@ -365,8 +367,12 @@ class KernelMatrix(object):
         # as we are computing the full matrix anyways, it's better to keep a copy
         #   to avoid recomputing it for each access of self.full* attributes
         if not self._populated_fully and not hasattr(self, '_full_km'):
-            self._full_km = lil_matrix((self.num_samples, self.num_samples),
-                                       dtype=self.sample.dtype)
+            if not dense_fmt:
+                self._full_km = lil_matrix((self.num_samples, self.num_samples),
+                                           dtype=self.sample.dtype)
+            else:
+                self._full_km = np.empty((self.num_samples, self.num_samples),
+                                         dtype=self.sample.dtype)
 
             try:
                 for idx_one in range(self.num_samples):
@@ -389,6 +395,9 @@ class KernelMatrix(object):
                 self._lower_tri_km_filled = False
             else:
                 self._lower_tri_km_filled = True
+
+        if issparse(self._full_km) and dense_fmt:
+            self._full_km = self._full_km.todense()
 
         return self._full_km
 
@@ -765,6 +774,7 @@ class CompositeKernel(ABC):
 
         return "{}-->{}".format(self.name, str(self.km_set))
 
+
     # aliasing them to __str__ for now
     __format__ = __str__
     __repr__ = __str__
@@ -773,10 +783,12 @@ class CompositeKernel(ABC):
 class SumKernel(CompositeKernel):
     """Class to define and compute a weighted sum kernel from a KernelSet"""
 
+
     def __init__(self, km_set, name='SumKernel'):
         """Constructor."""
 
         super().__init__(km_set, name=name)
+
 
     def fit(self, kernel_weights=None):
         """Computes the sum kernel"""
@@ -800,6 +812,7 @@ class SumKernel(CompositeKernel):
 class ProductKernel(CompositeKernel):
     """Class to define and compute a Product kernel from a KernelSet"""
 
+
     def __init__(self, km_set, name='ProductKernel'):
         """Constructor."""
 
@@ -819,10 +832,12 @@ class ProductKernel(CompositeKernel):
 class AverageKernel(CompositeKernel):
     """Class to define and compute an Average kernel from a KernelSet"""
 
+
     def __init__(self, km_set, name='AverageKernel'):
         """Constructor."""
 
         super().__init__(km_set, name=name)
+
 
     def fit(self):
         """Computes the average kernel"""
