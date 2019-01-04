@@ -549,11 +549,12 @@ class KernelSet(object):
     """Container class to manage a set of KernelMatrix instances."""
 
 
-    def __init__(self, km_set):
+    def __init__(self, km_set, name='KernelSet'):
         """Constructor."""
 
         # to denote no KM has been added yet
         self._is_init = False
+        self.name = name
 
         # type must be Sequence (not just Iterable)
         #   as we need to index it from 1 (second element in the Iterable)
@@ -645,8 +646,8 @@ class KernelSet(object):
     def __str__(self):
         """Human readable repr"""
 
-        return "KernelSet({} kernels, {} samples):\n\t{} " \
-               "".format(self.size, self.num_samples,
+        return "{}({} kernels, {} samples):\n\t{} " \
+               "".format(self.name, self.size, self.num_samples,
                          "\n\t".join(map(str, self._km_set)))
 
     # aliasing them to __str__ for now
