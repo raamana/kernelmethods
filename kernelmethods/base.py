@@ -57,9 +57,16 @@ class BaseKernelFunction(ABC):
     def __str__(self):
         """Representation"""
 
-    # aliasing them to __str__ for now
-    __format__ = __str__
-    __repr__ = __str__
+    # aliasing others to __str__ for now
+    def __format__(self, _):
+        """Representation"""
+
+        return self.__str__()
+
+    def __repr__(self):
+        """Representation"""
+
+        return self.__str__()
 
 
 class KernelFromCallable(BaseKernelFunction):
