@@ -22,8 +22,8 @@ class KernelBucket(KernelSet):
                  ):
         """constructor"""
 
-        # start with the addition of linear kernel
-        super().__init__(km_set=[LinearKernel(), ],
+        # start with the addition of kernel matrix for linear kernel
+        super().__init__(km_set=[KernelMatrix(LinearKernel()), ],
                          name=name)
         # not attached to a sample yet
         self._num_samples = None
