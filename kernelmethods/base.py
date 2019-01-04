@@ -152,6 +152,7 @@ class KernelMatrix(object):
 
         # to ensure we can always query the size attribute
         self.num_samples = None
+        self.sample = None
 
 
     def attach_to(self, sample):
@@ -373,7 +374,11 @@ class KernelMatrix(object):
     def __str__(self):
         """human readable presentation"""
 
-        return "{}: {} on sample {}".format(self.name, str(self.kernel), self.sample.shape)
+        if self.sample is not None:
+            return "{}: {} on sample {}".format(self.name, str(self.kernel),
+                                                self.sample.shape)
+        else:
+            return "{}: {}".format(self.name, str(self.kernel))
 
 
     # aliasing them to __str__ for now
