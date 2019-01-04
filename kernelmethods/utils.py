@@ -1,6 +1,7 @@
 
 import numpy as np
 from scipy.sparse import issparse
+from kernelmethods import config
 
 def check_input_arrays(x, y, ensure_dtype=np.number):
     """
@@ -112,3 +113,13 @@ def not_symmetric(matrix):
         return True
     else:
         return False
+
+def check_operation_kernel_matrix(operation):
+    """Validates whether input is a valid kernel matrix"""
+
+    opr = operation.lower()
+    if opr not in config.VALID_KERNEL_MATRIX_OPS:
+        raise ValueError('Invalid kernel matrix operation - must be one of:\n{}'
+                         ''.format(config.VALID_KERNEL_MATRIX_OPS))
+
+    return opr
