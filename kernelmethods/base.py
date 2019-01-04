@@ -5,7 +5,7 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import lil_matrix
 
-from kernelmethods.utils import check_callable, ensure_ndarray_2D, \
+from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 
 
@@ -650,9 +650,11 @@ class KernelSet(object):
                "".format(self.name, self.size, self.num_samples,
                          "\n\t".join(map(str, self._km_set)))
 
+
     # aliasing them to __str__ for now
     __format__ = __str__
     __repr__ = __str__
+
 
     def __iter__(self):
         """Making an iterable."""
