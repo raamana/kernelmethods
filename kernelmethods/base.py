@@ -850,3 +850,9 @@ class AverageKernel(CompositeKernel):
         self.KM = self.KM / self.km_set.size
 
         self._is_fitted = True
+
+
+class PredictiveModelFromKernelMatrix(KernelMatrix):
+    """Class to turn a given kernel into a predictive model"""
+
+    pass  # raise NotImplementedError()
