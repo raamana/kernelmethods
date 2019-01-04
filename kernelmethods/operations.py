@@ -68,10 +68,8 @@ def is_positive_semidefinite(input_matrix,
 
     """
 
-    if isinstance(input_matrix, KernelMatrix):
-        sym_matrix = input_matrix.full
-    else:
-        sym_matrix = input_matrix
+    if isinstance(sym_matrix, np.ndarray):
+        raise TypeError('Input matrix must be in numpy array format!')
 
     if sym_matrix.shape[0] != sym_matrix.shape[1]:
         warnings.warn('Input matrix is not square, and hence not PSD')
