@@ -116,6 +116,38 @@ def frobenius_norm(A):
     return np.sqrt(frobenius_product(A, A))
 
 
+def alignment_centered(km_one, km_two):
+    """
+    Computes the centered alignment between two kernel matrices
+
+    (Alignment is computed on centered kernel matrices)
+
+    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in
+    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
+        "Algorithms for Learning Kernels Based on Centered Alignment",
+        Journal of Machine Learning Research 13(Mar): 795–828.
+    """
+
+    if km_one.shape != km_two.shape:
+        raise ValueError('Dimensions of the two matrices must be the same '
+                         'to compute their alignment! They differ: {}, {}'
+                         ''.format(km_one.shape, km_two.shape))
+
+    kC_one = center_km(km_one)
+    kC_two = center_km(km_two)
+
+    fnorm_one = frobenius_norm(kC_one)
+    fnorm_two = frobenius_norm(kC_two)
+
+    if np.isclose(fnorm_one, 0.0):
+        raise ValueError('The Frobenius norm of KM1 is 0. Can not compute alignment!')
+
+    if np.isclose(fnorm_two, 0.0):
+        raise ValueError('The Frobenius norm of KM1 is 0. Can not compute alignment!')
+
+    return frobenius_product(kC_one, kC_two) / (fnorm_one*fnorm_two)
+
+
 def eval_similarity(km_one, km_two):
     """Evaluate similarity between two kernel matrices"""
 
