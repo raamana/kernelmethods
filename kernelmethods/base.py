@@ -561,6 +561,20 @@ class KernelSet(object):
         self._km_set.append(KM)
 
 
+    def __getitem__(self, index):
+        """To retrieve individual kernels"""
+
+        if not isinstance(index, int):
+            raise ValueError('Only integer indices are permitted, '
+                             'accessing one KM at a time')
+
+        if index < 0 or index >= self.size:
+            raise IndexError('Index out of range for KernelSet of size {}'
+                             ''.format(self.size))
+
+        return self._km_set[index]
+
+
     def __str__(self):
         """Human readable repr"""
 
