@@ -793,3 +793,23 @@ class ProductKernel(CompositeKernel):
 
         self._is_fitted = True
 
+
+class AverageKernel(CompositeKernel):
+    """Class to define and compute an Average kernel from a KernelSet"""
+
+    def __init__(self, km_set, name='AverageKernel'):
+        """Constructor."""
+
+        super().__init__(km_set, name=name)
+
+    def fit(self):
+        """Computes the average kernel"""
+
+        self.KM = np.zeros((self.num_samples, self.num_samples))
+        for km in self.km_set:
+            self.KM = self.KM + km.full  # * is element-wise multiplication here
+
+        # dividing by N, to make it an average
+        self.KM = self.KM / self.km_set.size
+
+        self._is_fitted = True
