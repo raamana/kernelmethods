@@ -2,7 +2,9 @@ from kernelmethods import config as cfg
 from kernelmethods.base import KernelSet, KernelMatrix
 from kernelmethods.numeric_kernels import PolyKernel, LinearKernel, GaussianKernel, \
     LaplacianKernel
-
+from kernelmethods.operations import alignment_centered
+from scipy.stats.stats import pearsonr
+import numpy as np
 
 class KernelBucket(KernelSet):
     """
@@ -38,3 +40,36 @@ class KernelBucket(KernelSet):
         if values is not None:
             for val in values:
                 self.append(KernelMatrix(kernel_func(**{param_name:val})))
+
+
+def correlation_km(k1, k2):
+    """Computes correlation coefficient between two kernel matrices"""
+
+    corr_coef, p_val = pearsonr(k1.ravel(), k2.ravel())
+
+    return corr_coef
+
+
+def pairwise_similarity(k_bucket, metric='corr'):
+    """Computes the similarity between all pairs of kernel matrices in a given bucket."""
+
+
+    metric_func = {'corr': correlation_km,
+                   'align': alignment_centered}
+
+    num_kernels = k_bucket.size
+    estimator = metric_func[metric]
+    piarwise_metric = np.full((k_bucket.size, k_bucket.size), fill_value=np.nan)
+    for idx_one in range(num_kernels):
+        # kernel matrix is symmetric
+        for idx_two in range(idx_one+1, num_kernels):
+            piarwise_metric[idx_one, idx_two] = estimator(k_bucket[idx_one].full,
+                                                          k_bucket[idx_two].full)
+
+        # not computing diagonal entries (can also be set to 1 for some metrics)
+
+    # making it symmetric
+    idx_lower_tri = np.tril_indices(num_kernels)
+    piarwise_metric[idx_lower_tri] = piarwise_metric.T[idx_lower_tri]
+
+    return piarwise_metric
