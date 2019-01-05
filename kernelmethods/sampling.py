@@ -1,10 +1,12 @@
-from kernelmethods import config as cfg
-from kernelmethods.base import KernelSet, KernelMatrix
-from kernelmethods.numeric_kernels import PolyKernel, LinearKernel, GaussianKernel, \
-    LaplacianKernel
-from kernelmethods.operations import alignment_centered
-from scipy.stats.stats import pearsonr
 import numpy as np
+from scipy.stats.stats import pearsonr
+
+from kernelmethods import config as cfg
+from kernelmethods.base import KernelMatrix, KernelSet
+from kernelmethods.numeric_kernels import GaussianKernel, LaplacianKernel, LinearKernel, \
+    PolyKernel
+from kernelmethods.operations import alignment_centered
+
 
 class KernelBucket(KernelSet):
     """
@@ -15,6 +17,7 @@ class KernelBucket(KernelSet):
 
 
     """
+
 
     def __init__(self,
                  poly_degree_values=cfg.default_degree_values_poly_kernel,
@@ -34,12 +37,13 @@ class KernelBucket(KernelSet):
         self._add_parametrized_kernels(rbf_sigma_values, GaussianKernel, 'sigma')
         self._add_parametrized_kernels(laplacian_gamma_values, LaplacianKernel, 'gamma')
 
+
     def _add_parametrized_kernels(self, values, kernel_func, param_name):
         """Adds a list of kernels corr. to various values for a given param"""
 
         if values is not None:
             for val in values:
-                self.append(KernelMatrix(kernel_func(**{param_name:val})))
+                self.append(KernelMatrix(kernel_func(**{param_name: val})))
 
 
 def make_kernel_bucket(strategy='exhaustive'):
@@ -72,8 +76,7 @@ def correlation_km(k1, k2):
 def pairwise_similarity(k_bucket, metric='corr'):
     """Computes the similarity between all pairs of kernel matrices in a given bucket."""
 
-
-    metric_func = {'corr': correlation_km,
+    metric_func = {'corr' : correlation_km,
                    'align': alignment_centered}
 
     num_kernels = k_bucket.size
@@ -81,7 +84,7 @@ def pairwise_similarity(k_bucket, metric='corr'):
     piarwise_metric = np.full((k_bucket.size, k_bucket.size), fill_value=np.nan)
     for idx_one in range(num_kernels):
         # kernel matrix is symmetric
-        for idx_two in range(idx_one+1, num_kernels):
+        for idx_two in range(idx_one + 1, num_kernels):
             piarwise_metric[idx_one, idx_two] = estimator(k_bucket[idx_one].full,
                                                           k_bucket[idx_two].full)
 

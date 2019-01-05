@@ -8,7 +8,9 @@ __all__ = ['PolyKernel', 'BaseKernelFunction',
 
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
     KernelMatrixException, KMAccessError
-from kernelmethods.numeric_kernels import PolyKernel
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
+    LinearKernel
+from kernelmethods.sampling import KernelBucket
 
 from ._version import get_versions
 __version__ = get_versions()['version']
