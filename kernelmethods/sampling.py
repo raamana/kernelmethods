@@ -42,6 +42,25 @@ class KernelBucket(KernelSet):
                 self.append(KernelMatrix(kernel_func(**{param_name:val})))
 
 
+def make_kernel_bucket(strategy='exhaustive'):
+    """Generates a candidate kernels based on user preferences."""
+
+    strategy = strategy.lower()
+    if strategy == 'exhaustive':
+        return KernelBucket(name='KBucketExhaustive',
+                            poly_degree_values=cfg.default_degree_values_poly_kernel,
+                            rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
+                            laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel)
+    elif strategy == 'light':
+        return KernelBucket(name='KBucketExhaustive',
+                            poly_degree_values=cfg.light_degree_values_poly_kernel,
+                            rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
+                            laplacian_gamma_values=cfg.light_gamma_values_laplacian_kernel)
+    else:
+        raise ValueError('invalid choice of strategy '
+                         '- must be one of {}'.format(cfg.kernel_bucket_strategies))
+
+
 def correlation_km(k1, k2):
     """Computes correlation coefficient between two kernel matrices"""
 
