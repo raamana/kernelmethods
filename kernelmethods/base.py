@@ -5,7 +5,7 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import lil_matrix, issparse
 
-from kernelmethods.operations import center_km
+from kernelmethods.operations import center_km, is_PSD
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 
@@ -31,6 +31,8 @@ class BaseKernelFunction(ABC):
     Enforces each derived kernel:
     1. to be callable, with two inputs
     2. to have a name and a str representation
+    3. provides a method to check whether the derived kernel function is a valid kernel
+        i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
 
     """
 
@@ -52,6 +54,16 @@ class BaseKernelFunction(ABC):
     @abstractmethod
     def __call__(self, x, y):
         """Actual computation!"""
+
+
+    def is_psd(self):
+        """Tests whether kernel matrix produced via this function is PSD"""
+
+        # passing the instance of the derived class
+        km = KernelMatrix(self)
+
+        km.attach_to(np.random.rand(50, 4)) # random_sample
+        return is_PSD(km.full)
 
 
     @abstractmethod
