@@ -11,7 +11,7 @@ sample_dim = 3 # 2
 target_label_set = [1, 2]
 
 sample_data = np.random.rand(num_samples, sample_dim)
-target_labels = np.random.choice(target_label_set, num_samples)
+target_labels = np.random.choice(target_label_set, (num_samples, 1))
 
 A = np.random.rand(4, 4)
 B = np.random.rand(4, 4)
