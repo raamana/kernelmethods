@@ -20,6 +20,8 @@ km = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
 km.attach_to(sample_data)
 km_dense = km.full # this will force computation of full KM
 
+km.center()
+
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
 def test_symmetry():
@@ -79,6 +81,8 @@ def test_diag():
 
 def test_sparsity():
 
+    # reset!
+    km.attach_to(sample_data)
     if not issparse(km.full_sparse):
         raise TypeError('error in sparse format access of KM : it is not sparse')
 
