@@ -21,7 +21,7 @@ def is_positive_semidefinite(sym_matrix,
 
     """
 
-    if isinstance(sym_matrix, np.ndarray):
+    if not isinstance(sym_matrix, np.ndarray):
         raise TypeError('Input matrix must be in numpy array format!')
 
     if sym_matrix.shape[0] != sym_matrix.shape[1]:
