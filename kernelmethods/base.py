@@ -156,10 +156,11 @@ class KernelMatrix(object):
         # to ensure we can always query the size attribute
         self.num_samples = None
         self.sample = None
+        self.sample_name = None
         self._reset()
 
 
-    def attach_to(self, sample):
+    def attach_to(self, sample, name='sample'):
         """Attach this kernel to a given sample.
 
         Any previous evaluations to other samples and their results will be reset.
@@ -173,6 +174,7 @@ class KernelMatrix(object):
         """
 
         self.sample = ensure_ndarray_2D(sample)
+        self.sample_name = name
         self.num_samples = self.sample.shape[0]
         self.shape = (self.num_samples, self.num_samples)
 
@@ -414,8 +416,8 @@ class KernelMatrix(object):
         """human readable presentation"""
 
         if self.sample is not None:
-            return "{}: {} on sample {}".format(self.name, str(self.kernel),
-                                                self.sample.shape)
+            return "{}: {} on {} {}".format(self.name, str(self.kernel),
+                                            self.sample_name, self.sample.shape)
         else:
             return "{}: {}".format(self.name, str(self.kernel))
 
@@ -702,7 +704,7 @@ class KernelSet(object):
             yield self._km_set[index]
 
 
-    def attach_to(self, sample):
+    def attach_to(self, sample, name='sample'):
         """Attach this kernel to a given sample.
 
         Any previous evaluations to other samples and their results will be reset.
@@ -713,6 +715,9 @@ class KernelSet(object):
             Input sample to operate on
             Must be 2D of shape (num_samples, num_features)
 
+        name : str
+            Identifier for the sample (esp. when multiple are in the same set)
+
         """
 
         self.sample = ensure_ndarray_2D(sample)
@@ -722,7 +727,7 @@ class KernelSet(object):
             self._num_samples = sample.shape[0]
 
         for index in range(self.size):
-            self._km_set[index].attach_to(sample)
+            self._km_set[index].attach_to(sample, name=name)
 
 
     def extend(self, another_km_set):
