@@ -56,12 +56,12 @@ def make_kernel_bucket(strategy='exhaustive'):
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                             laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel)
     elif strategy == 'light':
-        return KernelBucket(name='KBucketExhaustive',
+        return KernelBucket(name='KBucketLight',
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
                             laplacian_gamma_values=cfg.light_gamma_values_laplacian_kernel)
     else:
-        raise ValueError('invalid choice of strategy '
+        raise ValueError('Invalid choice of strategy '
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))
 
 
