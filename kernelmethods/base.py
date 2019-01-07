@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import Iterable, Sequence
 from itertools import product as iter_product
-
+from copy import copy
 import numpy as np
 from scipy.sparse import lil_matrix, issparse
 
@@ -662,6 +662,10 @@ class KernelSet(object):
         if not isinstance(KM, (BaseKernelFunction, KernelMatrix,
                                KernelMatrixPrecomputed)):
             KM = KernelMatrixPrecomputed(KM)
+
+        if not self._is_init and self._num_samples is None:
+            self._num_samples = copy(KM.num_samples)
+            self._is_init = True
 
         if self._num_samples != KM.num_samples:
             raise KMSetAdditionError('Dimension of this KM {} is incompatible '
