@@ -93,7 +93,7 @@ def pairwise_similarity(k_bucket, metric='corr'):
     pairwise_metric = np.full((k_bucket.size, k_bucket.size), fill_value=np.nan)
     for idx_one in range(num_kernels):
         # kernel matrix is symmetric
-        for idx_two in range(idx_one + 1, num_kernels):
+        for idx_two in range(idx_one, num_kernels): # computing i,i as well to be consistent
             pairwise_metric[idx_one, idx_two] = estimator(k_bucket[idx_one].full,
                                                           k_bucket[idx_two].full)
 
