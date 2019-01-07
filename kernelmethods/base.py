@@ -609,45 +609,27 @@ class KernelSet(object):
     """Container class to manage a set of KernelMatrix instances."""
 
 
-    def __init__(self, km_set, name='KernelSet'):
+    def __init__(self, km_set=None, name='KernelSet'):
         """Constructor."""
 
         # to denote no KM has been added yet
         self._is_init = False
         self.name = name
 
-        # type must be Sequence (not just Iterable)
-        #   as we need to index it from 1 (second element in the Iterable)
-        if isinstance(km_set, Sequence):
-            # adding the first kernel by itself
-            # needed for compatibility tests
-            self._initialize(km_set[0])
+        # empty to start with
+        self._km_set = list()
+        self._num_samples = None
 
-            # add the remaining if they are compatible
-            for km in km_set[1:]:
+        if isinstance(km_set, Iterable):
+            for km in km_set:
                 self.append(km)
-
         elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
-            self._initialize(km_set)
+            self.append(km_set)
+        elif km_set is None:
+            pass # do nothing
         else:
             raise TypeError('Unknown type of input matrix! Must be one of:\n'
                             '{}'.format(VALID_KERNEL_MATRIX_TYPES))
-
-
-    def _initialize(self, KM):
-        """Method to initialize and set key compatibility parameters"""
-
-        if not self._is_init:
-            self._km_set = list()
-
-            if isinstance(KM, (KernelMatrix, KernelMatrixPrecomputed)):
-                self._km_set.append(KM)
-                self._num_samples = KM.size
-            elif isinstance(KM, np.ndarray):
-                self._km_set.append(KernelMatrixPrecomputed(KM))
-                self._num_samples = KM.shape[0]
-
-            self._is_init = True
 
 
     @property
