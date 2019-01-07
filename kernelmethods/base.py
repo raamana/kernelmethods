@@ -689,6 +689,17 @@ class KernelSet(object):
         return self._km_set[index]
 
 
+    def take(self, indices, name='Selected'):
+        """Returns a new KernelSet with requested kernels, identified by their indices."""
+
+        new_set = KernelSet(name=name)
+        for idx in indices:
+            # TODO should we add a copy of ith KM, or just a reference? No copy-->accidental changes!
+            new_set.append(self._km_set[idx])
+
+        return new_set
+
+
     def __str__(self):
         """Human readable repr"""
 
