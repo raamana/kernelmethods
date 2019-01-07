@@ -881,6 +881,35 @@ class AverageKernel(CompositeKernel):
         self._is_fitted = True
 
 
+class WeightedAverageKernel(CompositeKernel):
+    """Class to define and compute a weighted verage kernel from a KernelSet"""
+
+
+    def __init__(self,
+                 km_set,
+                 weights,
+                 name='WeightedAverageKernel'):
+        """Constructor."""
+
+        super().__init__(km_set, name=name)
+
+        if self.km_set.size == len(weights):
+            self.weights = ensure_ndarray_1D(weights)
+        else:
+            raise ValueError('Number of weights ({}) supplied differ from the kernel set size ({})'
+                             ''.format(self.km_set.size, len(weights)))
+
+
+    def fit(self):
+        """Computes the weighted average kernel"""
+
+        self.KM = np.zeros((self.num_samples, self.num_samples))
+        for weight, km in zip(self.weights, self.km_set):
+            self.KM = self.KM + weight * km.full
+
+        self._is_fitted = True
+
+
 class PredictiveModelFromKernelMatrix(KernelMatrix):
     """Class to turn a given kernel into a predictive model"""
 
