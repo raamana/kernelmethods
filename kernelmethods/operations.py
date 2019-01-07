@@ -7,6 +7,7 @@ from numpy import multiply as elem_wise_multiply
 from scipy.linalg import eigh, LinAlgError
 import warnings
 import traceback
+from kernelmethods.utils import ensure_ndarray_1D
 
 def is_positive_semidefinite(sym_matrix,
                              tolerance=1e-6,
@@ -157,5 +158,19 @@ def eval_similarity(km_one, km_two):
 
     pass
 
-def linear_comb(km_list, param_list):
-    """Linear combinations of a list of kernels"""
+
+def linear_combination(km_set, weights):
+    """Linear combinations of a given kernel set"""
+
+    if km_set.size == len(weights):
+        weights = ensure_ndarray_1D(weights)
+    else:
+        raise ValueError('Number of weights ({}) supplied differ from the kernel set size ({})'
+                         ''.format(km_set.size, len(weights)))
+
+    # Computes the weighted average kernel
+    KM = np.zeros((km_set.num_samples, km_set.num_samples))
+    for weight, km in zip(weights, km_set):
+        KM = KM + weight * km.full
+
+    return KM
