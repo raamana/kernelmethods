@@ -92,7 +92,7 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples):
 
     KM = KernelMatrix(kernel, name='TestKM')
     KM.attach_to(gen_random_sample(num_samples, sample_dim))
-    is_psd = is_positive_semidefinite(KM, verbose=True)
+    is_psd = is_positive_semidefinite(KM.full, verbose=True)
     if not is_psd:
         raise ValueError('{} is not PSD'.format(str(KM)))
 
