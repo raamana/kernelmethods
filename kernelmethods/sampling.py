@@ -65,6 +65,14 @@ def make_kernel_bucket(strategy='exhaustive'):
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))
 
 
+def ideal_kernel(targets):
+    """Computes the kernel matrix from the given target labels"""
+
+    targets = np.array(targets).reshape((-1, 1))  # row vector
+
+    return targets.dot(targets.T)
+
+
 def correlation_km(k1, k2):
     """Computes correlation coefficient between two kernel matrices"""
 
