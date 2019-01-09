@@ -85,7 +85,7 @@ def test_random_submatrix_access():
 
 def test_diag():
 
-    if len(km.diag) != num_samples:
+    if len(km.diagonal()) != num_samples:
         raise ValueError('KM diagonal does not have N elements!')
 
 def test_sparsity():

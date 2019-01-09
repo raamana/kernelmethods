@@ -300,8 +300,7 @@ class KernelMatrix(object):
         return self._frob_norm
 
 
-    @property
-    def diag(self):
+    def diagonal(self):
         """Returns the diagonal of the kernel matrix"""
 
         return np.array([self._eval_kernel(idx, idx) for idx in range(self._num_samples)])
