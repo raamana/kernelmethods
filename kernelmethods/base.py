@@ -209,6 +209,7 @@ class KernelMatrix(object):
         if hasattr(self, '_full_km'):
             delattr(self, '_full_km')
         self._is_centered = False
+        self._is_normed = False
 
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
@@ -255,6 +256,24 @@ class KernelMatrix(object):
 
         self._centered = center_km(self._full_km)
         self._is_centered = True
+
+
+    def normalize(self, method='cosine'):
+        """
+        Normalize the kernel matrix to have unit diagonal.
+
+        Cosine normalization mplements definition according to Section 5.1 in
+            Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+
+        """
+
+        if not self._populated_fully:
+            self._populate_fully(dense_fmt=True, fill_lower_tri=True)
+
+        self._normed_km = normalize_km(self._full_km)
+        self._is_normed = True
+
+        return self._normed_km
 
 
     @property
