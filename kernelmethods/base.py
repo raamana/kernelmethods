@@ -287,6 +287,18 @@ class KernelMatrix(object):
 
 
     @property
+    def frob_norm(self):
+        """Returns the Frobenius norm of the current kernel matrix"""
+
+        if not self._populated_fully:
+            self._populate_fully(dense_fmt=True, fill_lower_tri=True)
+
+        self._frob_norm = frobenius_norm(self._full_km)
+
+        return self._frob_norm
+
+
+    @property
     def diag(self):
         """Returns the diagonal of the kernel matrix"""
 
