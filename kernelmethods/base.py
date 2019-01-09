@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from collections import Iterable, Sequence
-from itertools import product as iter_product
+from collections import Iterable
 from copy import copy
-import numpy as np
-from scipy.sparse import lil_matrix, issparse
+from itertools import product as iter_product
 
-from kernelmethods.operations import center_km, is_PSD
+import numpy as np
+from scipy.sparse import issparse, lil_matrix
+
+from kernelmethods.operations import center_km, is_PSD, normalize_km
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 
@@ -33,6 +34,7 @@ class BaseKernelFunction(ABC):
     2. to have a name and a str representation
     3. provides a method to check whether the derived kernel function is a valid kernel
         i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
+    4. and that it is symmetric (via tests) as required.
 
     """
 
@@ -62,7 +64,7 @@ class BaseKernelFunction(ABC):
         # passing the instance of the derived class
         km = KernelMatrix(self)
 
-        km.attach_to(np.random.rand(50, 4)) # random_sample
+        km.attach_to(np.random.rand(50, 4))  # random_sample
         return is_PSD(km.full)
 
 
@@ -194,7 +196,7 @@ class KernelMatrix(object):
         self._reset()
 
 
-    @property # this is to prevent accidental change of value
+    @property  # this is to prevent accidental change of value
     def num_samples(self):
         """Returns the number of samples in the sample this kernel is attached to."""
 
@@ -667,7 +669,7 @@ class KernelSet(object):
         elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
             self.append(km_set)
         elif km_set is None:
-            pass # do nothing
+            pass  # do nothing
         else:
             raise TypeError('Unknown type of input matrix! Must be one of:\n'
                             '{}'.format(VALID_KERNEL_MATRIX_TYPES))
@@ -937,8 +939,9 @@ class WeightedAverageKernel(CompositeKernel):
         if self.km_set.size == len(weights):
             self.weights = ensure_ndarray_1D(weights)
         else:
-            raise ValueError('Number of weights ({}) supplied differ from the kernel set size ({})'
-                             ''.format(self.km_set.size, len(weights)))
+            raise ValueError(
+                'Number of weights ({}) supplied differ from the kernel set size ({})'
+                ''.format(self.km_set.size, len(weights)))
 
 
     def fit(self):
