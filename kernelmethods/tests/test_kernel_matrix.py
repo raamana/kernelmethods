@@ -1,6 +1,7 @@
 
 
 import numpy as np
+np.set_printoptions(linewidth=120, precision=4)
 from scipy.sparse import issparse
 from scipy.linalg import eigh
 from pytest import raises
@@ -20,8 +21,6 @@ km = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
 km.attach_to(sample_data)
 km_dense = km.full # this will force computation of full KM
 
-km.center()
-
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
 def test_symmetry():
@@ -33,6 +32,16 @@ def test_PSD():
 
     if not is_PSD(km_dense):
         raise ValueError('this kernel matrix is not PSD!')
+
+def test_normalization():
+
+    km.normalize(method='cosine')
+    if not hasattr(km, 'normed_km'):
+        raise ValueError('Attribute exposing normalized km does not exist!')
+
+    if not np.isclose(km.normed_km.diagonal(), 1.0).all():
+        raise ValueError('One or more diagonal elements of normalized KM != 1.0:\n\t'
+                         '{}'.format(km.normed_km.diagonal()))
 
 def test_get_item():
 
@@ -119,4 +128,4 @@ def test_internal_flags_on_recompute():
         raise ValueError('flag _lower_tri_km_filled not set to True '
                          'upon recompute with fill_lower_tri=True')
 
-test_PSD()
+test_normalization()
