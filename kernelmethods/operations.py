@@ -89,6 +89,34 @@ def center_km(KM):
     return Ic.dot(KM).dot(Ic)
 
 
+def normalize_km(KM, method='cosine'):
+    """
+    Normalize the kernel matrix to have unit diagonal.
+
+    Cosine normalization normalizes the kernel matrix to have unit diagonal.
+        Implements definition according to Section 5.1 in book (Page 113)
+        Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+
+    """
+
+    try:
+        method = method.lower()
+        if method == 'cosine':
+            # D = diag(1./sqrt(diag(K)))
+            # normed_K = D * K * D;
+            _1bySqrtDiag = np.diag(1 / np.sqrt(KM.diagonal()))
+            # notice @ is matrix multiplication operator
+            normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
+        else:
+            raise NotImplementedError('normalization method {} is not implemented'
+                                      'yet!'.format(method))
+    except:
+        raise RuntimeError('Unable to normalize kernel matrix using method {}'
+                           ''.format(method))
+
+    return normed_km
+
+
 def frobenius_product(A, B):
     """Computes the Frobenious product between two matrices of equal dimension.
 
