@@ -293,6 +293,16 @@ class KernelMatrix(object):
         return np.array([self._eval_kernel(idx, idx) for idx in range(self._num_samples)])
 
 
+    @property
+    def normed_km(self):
+        """Access to the normalized kernel matrix."""
+
+        if not self._is_normed:
+            self.normalize()
+
+        return self._normed_km
+
+
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
 
