@@ -249,7 +249,15 @@ class KernelMatrix(object):
     def full(self):
         """Fully populated kernel matrix in dense ndarray format."""
 
-        return self._populate_fully(fill_lower_tri=True, dense_fmt=True)
+        if not self._populated_fully:
+            self._populate_fully(fill_lower_tri=True, dense_fmt=True)
+
+        if self._keep_normed:
+            if not self._is_normed:
+                self.normalize()
+            return self._normed_km
+        else:
+            return self._full_km
 
 
     @property
