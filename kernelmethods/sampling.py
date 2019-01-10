@@ -20,10 +20,11 @@ class KernelBucket(KernelSet):
 
 
     def __init__(self,
+                 name='KernelBucket',
+                 normalize_kernels=True,
                  poly_degree_values=cfg.default_degree_values_poly_kernel,
                  rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                  laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel,
-                 name='KernelBucket',
                  ):
         """constructor"""
 
@@ -32,6 +33,8 @@ class KernelBucket(KernelSet):
                          name=name)
         # not attached to a sample yet
         self._num_samples = None
+
+        self._normalize_kernels = normalize_kernels
 
         self._add_parametrized_kernels(poly_degree_values, PolyKernel, 'degree')
         self._add_parametrized_kernels(rbf_sigma_values, GaussianKernel, 'sigma')
@@ -43,20 +46,24 @@ class KernelBucket(KernelSet):
 
         if values is not None:
             for val in values:
-                self.append(KernelMatrix(kernel_func(**{param_name: val})))
+                self.append(KernelMatrix(kernel_func(**{param_name: val}),
+                                         normalized=self._normalize_kernels))
 
 
-def make_kernel_bucket(strategy='exhaustive'):
+def make_kernel_bucket(strategy='exhaustive',
+                       normalize_kernels=True):
     """Generates a candidate kernels based on user preferences."""
 
     strategy = strategy.lower()
     if strategy == 'exhaustive':
         return KernelBucket(name='KBucketExhaustive',
+                            normalize_kernels=normalize_kernels,
                             poly_degree_values=cfg.default_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                             laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel)
     elif strategy == 'light':
         return KernelBucket(name='KBucketLight',
+                            normalize_kernels=normalize_kernels,
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
                             laplacian_gamma_values=cfg.light_gamma_values_laplacian_kernel)
