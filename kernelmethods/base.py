@@ -293,8 +293,6 @@ class KernelMatrix(object):
             self._normed_km = normalize_km(self._full_km, method=method)
             self._is_normed = True
 
-        return self._normed_km
-
 
     @property
     def centered(self):
