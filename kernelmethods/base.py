@@ -146,6 +146,7 @@ class KernelMatrix(object):
 
     def __init__(self,
                  kernel,
+                 normalized=True,
                  name='KernelMatrix'):
         """
         Constructor.
@@ -154,6 +155,10 @@ class KernelMatrix(object):
         ----------
         kernel : BaseKernelFunction
             kernel function that populates the kernel matrix
+
+        normalized : bool
+            Flag to indicate whether to normalize the kernel matrix
+            Normalization is recommended, unless you have clear reasons not to.
 
         name : str
             short name to describe the nature of the kernel function
@@ -164,7 +169,11 @@ class KernelMatrix(object):
             raise TypeError('Input kernel must be derived from '
                             ' kernelmethods.BaseKernelFunction')
 
+        if not isinstance(normalized, bool):
+            raise TypeError('normalized flag must be True or False')
+
         self.kernel = kernel
+        self._keep_normed = normalized
         self.name = name
 
         # to ensure we can always query the size attribute
@@ -272,8 +281,9 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(dense_fmt=True, fill_lower_tri=True)
 
-        self._normed_km = normalize_km(self._full_km)
-        self._is_normed = True
+        if not self._is_normed:
+            self._normed_km = normalize_km(self._full_km, method=method)
+            self._is_normed = True
 
         return self._normed_km
 
