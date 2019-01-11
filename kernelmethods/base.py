@@ -529,7 +529,7 @@ class KernelMatrix(object):
                     for ix_two in range(ix_one, self.shape[1]): # from second sample!
                         self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
             except:
-                self._populated_fully = False
+                raise RuntimeError('Unable to fully compute the kernel matrix!')
             else:
                 self._populated_fully = True
 
@@ -538,7 +538,7 @@ class KernelMatrix(object):
                 self._full_km[idx_lower_tri] = self._full_km.T[idx_lower_tri]
                 ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
             except:
-                self._lower_tri_km_filled = False
+                raise RuntimeError('Unable to symmetrize the kernel matrix!')
             else:
                 self._lower_tri_km_filled = True
 
