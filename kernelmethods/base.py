@@ -199,7 +199,10 @@ class KernelMatrix(object):
         self._sample = ensure_ndarray_2D(sample)
         self._sample_name = name
         self._num_samples = self._sample.shape[0]
-        self.shape = (self._num_samples, self._num_samples)
+            self._num_samples = self._sample.shape[0]
+            self.shape = (self._num_samples, self._num_samples)
+            self._num_samples = (self._sample.shape[0], self._sample_two.shape[0])
+            self.shape = (self._sample.shape[0], self._sample_two.shape[0])
 
         # cleanup old flags and reset to ensure fresh slate for this sample
         self._reset()
@@ -319,7 +322,7 @@ class KernelMatrix(object):
     def diagonal(self):
         """Returns the diagonal of the kernel matrix"""
 
-        return np.array([self._eval_kernel(idx, idx) for idx in range(self._num_samples)])
+        return np.array([self._eval_kernel(idx, idx) for idx in range(self.shape[0])])
 
 
     @property
@@ -400,25 +403,25 @@ class KernelMatrix(object):
         elif isinstance(index_obj_per_dim, slice):
             if index_obj_per_dim is None:
                 are_all_selected = True
-            _slice_index_list = index_obj_per_dim.indices(self._num_samples)
+            _slice_index_list = index_obj_per_dim.indices(self.shape[dim])
             indices = list(range(*_slice_index_list))  # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable) and \
             not isinstance(index_obj_per_dim, str):
             # TODO no restriction on float: float indices will be rounded down towards 0
             indices = list(map(int, index_obj_per_dim))
         else:
-            raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
-                                ' For each of the two dimensions of size {num_samples},'
-                                ' only int, slice or iterable objects are allowed!'
-                                ''.format(num_samples=self._num_samples))
+            raise KMAccessError('Invalid index method/indices for kernel matrix '
+                                'of shape : {km_shape}.'
+                                ' Only int, slice or iterable objects are allowed!'
+                                ''.format(km_shape=self.shape))
 
         # enforcing constraints
-        if any([index >= self._num_samples or index < 0 for index in indices]):
+        if any([index >= self.shape[dim] or index < 0 for index in indices]):
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
                                 ' Some indices in {} are out of range: '
-                                ' for each of the two dimensions of size {num_samples},'
-                                ' index values must all be >=0 and < {num_samples}'
-                                ''.format(indices, num_samples=self._num_samples))
+                                ' shape : {km_shape},'
+                                ' index values must all be >=0 and < corr. dimension'
+                                ''.format(indices, km_shape=self.shape))
 
         # slice object returns empty list if all specified are out of range
         if len(indices) == 0:
@@ -427,7 +430,7 @@ class KernelMatrix(object):
         # removing duplicates and sorting
         indices = sorted(list(set(indices)))
 
-        if len(indices) == self._num_samples:
+        if len(indices) == self.shape[dim]:
             are_all_selected = True
 
         return indices, are_all_selected
@@ -455,20 +458,18 @@ class KernelMatrix(object):
         #   to avoid recomputing it for each access of self.full* attributes
         if not self._populated_fully and not hasattr(self, '_full_km'):
             if not dense_fmt:
-                self._full_km = lil_matrix((self._num_samples, self._num_samples),
-                                           dtype=self._sample.dtype)
+                self._full_km = lil_matrix(self.shape, dtype=self._sample.dtype)
             else:
-                self._full_km = np.empty((self._num_samples, self._num_samples),
-                                         dtype=self._sample.dtype)
+                self._full_km = np.empty(self.shape, dtype=self._sample.dtype)
 
             try:
-                for idx_one in range(self._num_samples):
                     # kernel matrix is symmetric - so we need only compute half the matrix!
                     # computing the kernel for diagonal elements i,i as well
                     #   if not change index_two starting point to index_one+1
-                    for idx_two in range(idx_one, self._num_samples):
                         self._full_km[idx_one, idx_two] = self._eval_kernel(idx_one,
                                                                             idx_two)
+                for ix_one in range(self.shape[0]): # number of rows!
+                    for ix_two in range(ix_one, self.shape[1]): # from second sample!
             except:
                 self._populated_fully = False
             else:
@@ -476,8 +477,8 @@ class KernelMatrix(object):
 
         if fill_lower_tri and not self._lower_tri_km_filled:
             try:
-                idx_lower_tri = np.tril_indices(self._num_samples)
                 self._full_km[idx_lower_tri] = self._full_km.T[idx_lower_tri]
+                ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
             except:
                 self._lower_tri_km_filled = False
             else:
