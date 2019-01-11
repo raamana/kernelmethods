@@ -527,6 +527,7 @@ class KernelMatrix(object):
                 #   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case
                 for ix_one in range(self.shape[0]): # number of rows!
                     for ix_two in range(ix_one, self.shape[1]): # from second sample!
+                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
             except:
                 self._populated_fully = False
             else:
