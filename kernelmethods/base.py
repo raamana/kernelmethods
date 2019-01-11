@@ -183,27 +183,51 @@ class KernelMatrix(object):
         self._reset()
 
 
-    def attach_to(self, sample, name='sample'):
+    def attach_to(self,
+                  sample_one,
+                  name='sample',
+                  sample_two=None,
+                  name_two=None):
         """Attach this kernel to a given sample.
 
         Any previous evaluations to other samples and their results will be reset.
 
         Parameters
         ----------
-        sample : ndarray
+        sample_one : ndarray
             Input sample to operate on
-            Must be 2D of shape (num_samples, num_features)
+            Must be a 2D dataset of shape (num_samples, num_features)
+                e.g. MLDataset or ndarray
+            When sample_two=None (e.g. during training), sample_two refers to sample_one.
+
+        name : str
+
 
         """
 
-        self._sample = ensure_ndarray_2D(sample)
+        self._sample = ensure_ndarray_2D(sample_one)
         self._sample_name = name
-        self._num_samples = self._sample.shape[0]
+
+        if sample_two is None:
+            self._sample_two = self._sample
+            self._name_two = name
+
             self._num_samples = self._sample.shape[0]
             self.shape = (self._num_samples, self._num_samples)
+            self._two_samples = False
+
+
+        else:
+            self._sample_two = ensure_ndarray_2D(sample_two)
+
+            if self._sample.shape[1] != self._sample_two.shape[1]:
+                raise ValueError('Dimensionalities of the two samples differ!')
+
+            self._name_two = name_two
             self._num_samples = (self._sample.shape[0], self._sample_two.shape[0])
             self.shape = (self._sample.shape[0], self._sample_two.shape[0])
 
+            self._two_samples = True
         # cleanup old flags and reset to ensure fresh slate for this sample
         self._reset()
 
