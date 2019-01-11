@@ -240,7 +240,13 @@ class KernelMatrix(object):
 
     @property  # this is to prevent accidental change of value
     def num_samples(self):
-        """Returns the number of samples in the sample this kernel is attached to."""
+        """
+        Returns the number of samples in the sample this kernel is attached to.
+
+        This would be a scalar when the current instance is attached to a single sample.
+        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2
+        scalars representing num_samples from those two samples.
+        """
 
         return self._num_samples
 
@@ -267,9 +273,17 @@ class KernelMatrix(object):
 
     @property
     def size(self):
-        """Specifies the size of the KernelMatrix (num_samples in dataset)"""
+        """
+        Returns the size of the KernelMatrix
+            i.e. num_samples from which the kernel matrix is computed from.
+            In a single-sample case, it is the num_samples in the dataset.
+            In two-sample case, it is the sum of num_samples from two datasets.
+        """
 
-        return self._num_samples
+        if not self._two_samples:
+            return self._num_samples
+        else:
+            return sum(self._num_samples)
 
 
     def __len__(self):
