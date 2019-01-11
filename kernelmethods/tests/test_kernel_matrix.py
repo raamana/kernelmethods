@@ -10,9 +10,12 @@ from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKern
 from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
 from kernelmethods.operations import is_PSD
 
-num_samples = 50 # 9
-sample_dim = 3 # 2
+num_samples = np.random.randint(30, 100)
+sample_dim = np.random.randint(3, 10) # 2
 target_label_set = [1, 2]
+
+num_samples_two = np.random.randint(30, 100)
+sample_two_dim = sample_dim
 
 sample_data = np.random.rand(num_samples, sample_dim)
 target_labels = np.random.choice(target_label_set, num_samples)
@@ -141,9 +144,6 @@ def test_attach_to_two_samples():
     0. it is not necessarily symmetric
 
     """
-
-    num_samples_two = 30  # 9
-    sample_two_dim = 3  # 2
 
     sample_two = np.random.rand(num_samples_two, sample_two_dim)
     targets_two = np.random.choice(target_label_set, num_samples_two)
