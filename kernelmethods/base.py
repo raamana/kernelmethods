@@ -4,11 +4,10 @@ from copy import copy
 from itertools import product as iter_product
 
 import numpy as np
-from scipy.sparse import issparse, lil_matrix
-
 from kernelmethods.operations import center_km, is_PSD, normalize_km
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
+from scipy.sparse import issparse, lil_matrix
 
 
 class KernelMatrixException(Exception):
@@ -201,8 +200,17 @@ class KernelMatrix(object):
             When sample_two=None (e.g. during training), sample_two refers to sample_one.
 
         name : str
+            Name for the first sample.
 
+        sample_two : ndarray
+            Second sample for the kernel matrix i.e. Y in K(X,Y)
+            Must be a 2D dataset of shape (num_samples, num_features)
+                e.g. MLDataset or ndarray
+            The dimensionality of this sample (number of columns, sample_two.shape[1])
+                must match with that of sample_one
 
+        name_two : str
+            Name for the second sample.
         """
 
         self._sample = ensure_ndarray_2D(sample_one)
