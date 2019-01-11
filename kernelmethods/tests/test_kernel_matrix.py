@@ -6,6 +6,7 @@ from scipy.sparse import issparse
 from scipy.linalg import eigh
 from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
+    DEFINED_KERNEL_FUNCS
 from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
 from kernelmethods.operations import is_PSD
 
@@ -127,3 +128,46 @@ def test_internal_flags_on_recompute():
         raise ValueError('flag _lower_tri_km_filled not set to True '
                          'upon recompute with fill_lower_tri=True')
 
+def test_attach_to_two_samples():
+    """
+    Behaviour of KM when attached to two samples.
+
+    0. it is not necessarily symmetric
+
+    """
+
+    num_samples_two = 30  # 9
+    sample_two_dim = 3  # 2
+
+    sample_two = np.random.rand(num_samples_two, sample_two_dim)
+    targets_two = np.random.choice(target_label_set, num_samples_two)
+
+    for kernel in DEFINED_KERNEL_FUNCS:
+        km2 = KernelMatrix(kernel=kernel, normalized=False)
+        km2.attach_to(sample_data, name='S1', sample_two=sample_two, name_two='S2')
+        km2_dense = km2.full  # this will force computation of full KM
+
+        rand_ix_one = np.random.choice(range(num_samples), 5)
+        rand_ix_two = np.random.choice(range(num_samples_two), 5)
+        for ix_one, ix_two in zip(rand_ix_one, rand_ix_two):
+            external_eval = kernel(sample_data[ix_one,:], sample_two[ix_two,:])
+            if not np.isclose(km2[ix_one, ix_two], external_eval):
+                raise ValueError('Invalid implementation in two sample case:'
+                                 '\n\tcomputed values do not match external evaluation!'
+                                 '\n\t for {}'.format(kernel))
+
+    with raises(NotImplementedError):
+        km2.normalize()
+
+    with raises((KMAccessError, NotImplementedError)):
+        km2.normed_km
+
+    with raises((KMAccessError, NotImplementedError)):
+        km2.diagonal()
+
+    with raises(ValueError):
+        # dimensionalities can not differ!
+        more_dims = np.hstack((sample_data, sample_data[:,:1]))
+        km2.attach_to(sample_data, sample_two=)
+
+test_attach_to_two_samples()
