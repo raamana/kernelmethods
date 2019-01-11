@@ -126,6 +126,58 @@ def normalize_km(KM, method='cosine'):
     return normed_km
 
 
+def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
+    """
+    Normalize a kernel matrix K(X,Y) to have unit diagonal.
+
+    Cosine normalization normalizes the kernel matrix to have unit diagonal.
+        Implements definition _similar_ to Section 5.1 in book (Page 113)
+        Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+
+
+    Parameters
+    ----------
+    cross_K_XY : ndarray, 2D
+        Matrix of inner-products for samples from X onto Y i.e. K(X,Y)
+
+    diag_K_XX : array
+        Diagonal from matrix of inner-products for samples from X onto itself i.e. K(X,X)
+        K(X,X) must NOT be normalized (otherwise they will all be 1s)
+
+    diag_K_YY : array
+        Diagonal from matrix of inner-products for samples from Y onto itself i.e. K(Y,Y)
+
+    Returns
+    -------
+    normed_km
+        Normalized version of K(X,Y)
+
+        NOTE: K_XY may NOT have unit diagonal, as k(x,y) != sqrt(k(x,x))*sqrt(k(y,y))
+    """
+
+    if diag_K_XX.size != cross_K_XY.shape[0] or \
+        cross_K_XY.shape[1] != diag_K_YY.size:
+        raise ValueError('Shape mismatch for multiplication across the 3 kernel matrices!'
+                         ' Length of diag_K_XX must match number of rows in K_XY, '
+                         ' and number of columns in K_XY must match length of diag_K_XX.')
+
+    try:
+        method = method.lower()
+        if method == 'cosine':
+            diag_factor_xx = np.diag(1 / np.sqrt(diag_K_XX))
+            diag_factor_yy = np.diag(1 / np.sqrt(diag_K_YY))
+            # notice @ is matrix multiplication operator
+            normed_km = diag_factor_xx @ cross_K_XY @ diag_factor_yy
+        else:
+            raise NotImplementedError('Two-sample normalization method {} is not'
+                                      'implemented yet!'.format(method))
+    except:
+        raise RuntimeError('Unable to normalize two-sample kernel matrix using method {}'
+                           ''.format(method))
+
+    return normed_km
+
+
 def frobenius_product(A, B):
     """Computes the Frobenious product between two matrices of equal dimension.
 
