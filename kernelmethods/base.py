@@ -178,8 +178,8 @@ class KernelMatrix(object):
 
         # to ensure we can always query the size attribute
         self._num_samples = None
-        self.sample = None
-        self.sample_name = None
+        self._sample = None
+        self._sample_name = None
         self._reset()
 
 
@@ -196,9 +196,9 @@ class KernelMatrix(object):
 
         """
 
-        self.sample = ensure_ndarray_2D(sample)
-        self.sample_name = name
-        self._num_samples = self.sample.shape[0]
+        self._sample = ensure_ndarray_2D(sample)
+        self._sample_name = name
+        self._num_samples = self._sample.shape[0]
         self.shape = (self._num_samples, self._num_samples)
 
         # cleanup old flags and reset to ensure fresh slate for this sample
@@ -344,7 +344,7 @@ class KernelMatrix(object):
 
         if not (idx_one, idx_two) in self._KM:
             self._KM[(idx_one, idx_two)] = \
-                self.kernel(self.sample[idx_one, :], self.sample[idx_two, :])
+                self.kernel(self._sample[idx_one, :], self._sample[idx_two, :])
             self._num_ker_eval += 1
         return self._KM[(idx_one, idx_two)]
 
@@ -352,7 +352,7 @@ class KernelMatrix(object):
     def _features(self, index):
         """Returns the sample [features] corresponding to a given index."""
 
-        return self.sample[index, :]
+        return self._sample[index, :]
 
 
     def __getitem__(self, index_obj):
@@ -438,7 +438,7 @@ class KernelMatrix(object):
 
         return np.array([self._eval_kernel(idx_one, idx_two)
                          for idx_one, idx_two in iter_product(set_one, set_two)],
-                        dtype=self.sample.dtype).reshape(len(set_one), len(set_two))
+                        dtype=self._sample.dtype).reshape(len(set_one), len(set_two))
 
 
     def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):
@@ -456,10 +456,10 @@ class KernelMatrix(object):
         if not self._populated_fully and not hasattr(self, '_full_km'):
             if not dense_fmt:
                 self._full_km = lil_matrix((self._num_samples, self._num_samples),
-                                           dtype=self.sample.dtype)
+                                           dtype=self._sample.dtype)
             else:
                 self._full_km = np.empty((self._num_samples, self._num_samples),
-                                         dtype=self.sample.dtype)
+                                         dtype=self._sample.dtype)
 
             try:
                 for idx_one in range(self._num_samples):
@@ -492,9 +492,9 @@ class KernelMatrix(object):
     def __str__(self):
         """human readable presentation"""
 
-        if self.sample is not None:
+        if self._sample is not None:
             return "{}: {} on {} {}".format(self.name, str(self.kernel),
-                                            self.sample_name, self.sample.shape)
+                                            self._sample_name, self._sample.shape)
         else:
             return "{}: {}".format(self.name, str(self.kernel))
 
