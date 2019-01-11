@@ -535,7 +535,7 @@ class KernelMatrix(object):
 
         if fill_lower_tri and not self._lower_tri_km_filled:
             try:
-                self._full_km[idx_lower_tri] = self._full_km.T[idx_lower_tri]
+                # choosing k=-1 as main diag is already covered above (nested for loop)
                 ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
             except:
                 raise RuntimeError('Unable to symmetrize the kernel matrix!')
