@@ -216,6 +216,7 @@ class KernelMatrix(object):
             self.shape = (self._num_samples, self._num_samples)
             self._two_samples = False
 
+            self._sample_descr = "{} {}".format(self._sample_name, self._sample.shape)
 
         else:
             self._sample_two = ensure_ndarray_2D(sample_two)
@@ -228,6 +229,11 @@ class KernelMatrix(object):
             self.shape = (self._sample.shape[0], self._sample_two.shape[0])
 
             self._two_samples = True
+
+            self._sample_descr = "{} {} x {} {}" \
+                                 "".format(self._sample_name, self._sample.shape,
+                                           self._name_two, self._sample_two.shape)
+
         # cleanup old flags and reset to ensure fresh slate for this sample
         self._reset()
 
@@ -518,8 +524,7 @@ class KernelMatrix(object):
         """human readable presentation"""
 
         if self._sample is not None:
-            return "{}: {} on {} {}".format(self.name, str(self.kernel),
-                                            self._sample_name, self._sample.shape)
+            return "{}: {} on {}".format(self.name, str(self.kernel), self._sample_descr)
         else:
             return "{}: {}".format(self.name, str(self.kernel))
 
