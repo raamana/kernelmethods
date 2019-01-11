@@ -5,7 +5,7 @@ np.set_printoptions(linewidth=120, precision=4)
 from scipy.sparse import issparse
 from scipy.linalg import eigh
 from pytest import raises
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
 from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
 from kernelmethods.operations import is_PSD
 
@@ -16,10 +16,9 @@ target_label_set = [1, 2]
 sample_data = np.random.rand(num_samples, sample_dim)
 target_labels = np.random.choice(target_label_set, num_samples)
 
-km = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
-
-km.attach_to(sample_data)
-km_dense = km.full # this will force computation of full KM
+# suffix 1 to indicate one sample case
+km1 = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
+km1.attach_to(sample_data)
 
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
@@ -35,22 +34,22 @@ def test_PSD():
 
 def test_normalization():
 
-    km.normalize(method='cosine')
-    if not hasattr(km, 'normed_km'):
+    km1.normalize(method='cosine')
+    if not hasattr(km1, 'normed_km'):
         raise ValueError('Attribute exposing normalized km does not exist!')
 
-    if not np.isclose(km.normed_km.diagonal(), 1.0).all():
+    if not np.isclose(km1.normed_km.diagonal(), 1.0).all():
         raise ValueError('One or more diagonal elements of normalized KM != 1.0:\n\t'
-                         '{}'.format(km.normed_km.diagonal()))
+                         '{}'.format(km1.normed_km.diagonal()))
 
 def test_get_item():
 
     for invalid_index in [-1, num_samples+1]:
         # out of range indices must raise an error on any dim
         with raises(KMAccessError):
-            print(km[invalid_index,:])
+            print(km1[invalid_index, :])
         with raises(KMAccessError):
-            print(km[:, invalid_index])
+            print(km1[:, invalid_index])
 
     # max 2 dims allowed for access
     # TODO no restriction on float: float indices will be rounded down towards 0
@@ -60,7 +59,7 @@ def test_get_item():
                            ( ((0, 1), 2), (3, 4)), # no tuple of tuples for a single dim
                            ]:
         with raises((KMAccessError, TypeError)):
-            print(km[invalid_access])
+            print(km1[invalid_access])
 
 
 def test_random_submatrix_access():
@@ -78,54 +77,53 @@ def test_random_submatrix_access():
     if subset_len2[0]==subset_len2[1]:
         subset_len2[1] = subset_len2[0] + 1
 
-    sub_matrix = km[subset_len1[0]:subset_len1[1], subset_len2[0]:subset_len2[1]]
+    sub_matrix = km1[subset_len1[0]:subset_len1[1], subset_len2[0]:subset_len2[1]]
     if not sub_matrix.shape == (subset_len1[1]-subset_len1[0],
                                 subset_len2[1]-subset_len2[0]):
         raise ValueError('error in KM access implementation')
 
 def test_diag():
 
-    if len(km.diagonal()) != num_samples:
+    if len(km1.diagonal()) != num_samples:
         raise ValueError('KM diagonal does not have N elements!')
 
 def test_sparsity():
 
     # reset!
-    km.attach_to(sample_data)
-    if not issparse(km.full_sparse):
+    km1.attach_to(sample_data)
+    if not issparse(km1.full_sparse):
         raise TypeError('error in sparse format access of KM : it is not sparse')
 
-    if issparse(km.full):
+    if issparse(km1.full):
         raise TypeError('error in dense format access of KM : it is sparse!')
 
 def test_reset_flags_on_new_attach():
 
-    km.attach_to(sample_data)
-    if km._populated_fully:
+    km1.attach_to(sample_data)
+    if km1._populated_fully:
         raise ValueError('flag _populated_fully not set to False upon reset')
-    if km._lower_tri_km_filled:
+    if km1._lower_tri_km_filled:
         raise ValueError('flag _lower_tri_km_filled not set to False upon reset')
-    if km._num_ker_eval > 0:
+    if km1._num_ker_eval > 0:
         raise ValueError('counter _num_ker_eval > 0 upon reset!')
-    if hasattr(km, '_full_km'):
+    if hasattr(km1, '_full_km'):
         raise ValueError('_full_km from previous run is not cleared!')
-    if len(km._KM) > 0:
+    if len(km1._KM) > 0:
         raise ValueError('internal dict not empty upon reset!')
 
 def test_internal_flags_on_recompute():
 
-    km.attach_to(sample_data) # reset first
-    new_dense = km.full # recompute
-    if not km._populated_fully:
+    km1.attach_to(sample_data) # reset first
+    new_dense = km1.full # recompute
+    if not km1._populated_fully:
         raise ValueError('flag _populated_fully not set to True upon recompute')
-    if km._num_ker_eval != max_num_ker_eval:
+    if km1._num_ker_eval != max_num_ker_eval:
         raise ValueError('unexpected value for counter _num_ker_eval upon recompute!')
-    if not hasattr(km, '_full_km'):
+    if not hasattr(km1, '_full_km'):
         raise ValueError('_full_km is not populated yet!')
-    if len(km._KM)!=max_num_elements:
+    if len(km1._KM)!=max_num_elements:
         raise ValueError('internal dict not empty upon recompute!')
-    if not km._lower_tri_km_filled:
+    if not km1._lower_tri_km_filled:
         raise ValueError('flag _lower_tri_km_filled not set to True '
                          'upon recompute with fill_lower_tri=True')
 
-test_normalization()
