@@ -91,13 +91,21 @@ def center_km(KM):
 
 def normalize_km(KM, method='cosine'):
     """
-    Normalize the kernel matrix to have unit diagonal.
+    Normalize a kernel matrix to have unit diagonal.
 
     Cosine normalization normalizes the kernel matrix to have unit diagonal.
         Implements definition according to Section 5.1 in book (Page 113)
         Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
 
+    Matrix must be square (and coming from a single sample: K(X,X), not K(X,Y)
+
+
     """
+
+    if KM.shape[0] != KM.shape[1]:
+        raise ValueError('Input kernel matrix must be square! i.e. K(X,X) '
+                         'typically generated from inner products on a single sample X, '
+                         'not an inner-product on two separate samples X and Y')
 
     try:
         method = method.lower()
@@ -107,6 +115,7 @@ def normalize_km(KM, method='cosine'):
             _1bySqrtDiag = np.diag(1 / np.sqrt(KM.diagonal()))
             # notice @ is matrix multiplication operator
             normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
+            # in case of two samples K(X, Y), the rightmost factor must come from Y
         else:
             raise NotImplementedError('normalization method {} is not implemented'
                                       'yet!'.format(method))
