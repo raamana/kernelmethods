@@ -83,10 +83,16 @@ def test_random_submatrix_access():
                                 subset_len2[1]-subset_len2[0]):
         raise ValueError('error in KM access implementation')
 
-def test_diag():
+def test_size_properties():
 
     if len(km1.diagonal()) != num_samples:
         raise ValueError('KM diagonal does not have N elements!')
+
+    if km1.size != num_samples**2:
+        raise ValueError('KM size does not match N^2, N=num_samples')
+
+    if km1.size != km1.num_samples**2:
+        raise ValueError('KM size does not match N^2, invalid internal representation!')
 
 def test_sparsity():
 
@@ -155,6 +161,12 @@ def test_attach_to_two_samples():
                 raise ValueError('Invalid implementation in two sample case:'
                                  '\n\tcomputed values do not match external evaluation!'
                                  '\n\t for {}'.format(kernel))
+
+    if km2.size != num_samples*num_samples_two:
+        raise ValueError('KM size does not match N1*N2, N=num_samples for dataset i')
+
+    if km2.size != np.prod(km2.num_samples):
+        raise ValueError('KM size does not match N1*N2, invalid internal representation!')
 
     with raises(NotImplementedError):
         km2.normalize()

@@ -282,16 +282,18 @@ class KernelMatrix(object):
     @property
     def size(self):
         """
-        Returns the size of the KernelMatrix
+        Returns the size of the KernelMatrix (total number of elements)
             i.e. num_samples from which the kernel matrix is computed from.
             In a single-sample case, it is the num_samples in the dataset.
-            In two-sample case, it is the sum of num_samples from two datasets.
+            In two-sample case, it is the product of num_samples from two datasets.
+
+        Defining this to correspond to .size attr of numpy arrays
         """
 
         if not self._two_samples:
-            return self._num_samples
+            return self._num_samples**2
         else:
-            return sum(self._num_samples)
+            return np.prod(self._num_samples)
 
 
     def __len__(self):
