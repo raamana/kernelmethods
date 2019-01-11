@@ -169,16 +169,10 @@ def test_attach_to_two_samples():
         raise ValueError('KM size does not match N1*N2, invalid internal representation!')
 
     with raises(NotImplementedError):
-        km2.normalize()
-
-    with raises(NotImplementedError):
         km2.center()
 
     with raises(KMAccessError):
         km2.centered
-
-    with raises((KMAccessError, NotImplementedError)):
-        km2.normed_km
 
     with raises((KMAccessError, NotImplementedError)):
         km2.diagonal()
