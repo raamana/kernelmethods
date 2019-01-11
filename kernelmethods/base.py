@@ -392,17 +392,20 @@ class KernelMatrix(object):
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
 
-        # maintaining only upper triangular parts
+        # maintaining only upper triangular parts, when attached to a single sample
         #   by ensuring the first index is always <= second index
-        if idx_one > idx_two:
+        if idx_one > idx_two and not self._two_samples:
             idx_one, idx_two = idx_two, idx_one
         # above is more efficient than below:
         #  idx_one, idx_two = min(idx_one, idx_two), max(idx_one, idx_two)
 
         if not (idx_one, idx_two) in self._KM:
             self._KM[(idx_one, idx_two)] = \
-                self.kernel(self._sample[idx_one, :], self._sample[idx_two, :])
+                self.kernel(self._sample[idx_one, :],     # from 1st sample
+                            self._sample_two[idx_two, :]) # from 2nd sample
+                            # second refers to the first in the default case!
             self._num_ker_eval += 1
+
         return self._KM[(idx_one, idx_two)]
 
 
@@ -507,7 +510,8 @@ class KernelMatrix(object):
 
         """
 
-        # kernel matrix is symmetric - so we need only to STORE half the matrix!
+        # kernel matrix is symmetric (in a single sample case)
+        #   so we need only to STORE half the matrix!
         # as we are computing the full matrix anyways, it's better to keep a copy
         #   to avoid recomputing it for each access of self.full* attributes
         if not self._populated_fully and not hasattr(self, '_full_km'):
@@ -517,11 +521,10 @@ class KernelMatrix(object):
                 self._full_km = np.empty(self.shape, dtype=self._sample.dtype)
 
             try:
-                    # kernel matrix is symmetric - so we need only compute half the matrix!
-                    # computing the kernel for diagonal elements i,i as well
-                    #   if not change index_two starting point to index_one+1
-                        self._full_km[idx_one, idx_two] = self._eval_kernel(idx_one,
-                                                                            idx_two)
+                # kernel matrix is symmetric (in a single sample case)
+                #   so we need only compute half the matrix!
+                # computing the kernel for diagonal elements i,i as well
+                #   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case
                 for ix_one in range(self.shape[0]): # number of rows!
                     for ix_two in range(ix_one, self.shape[1]): # from second sample!
             except:
