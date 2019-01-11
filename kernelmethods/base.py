@@ -455,7 +455,7 @@ class KernelMatrix(object):
 
         are_all_selected = False
 
-        if isinstance(index_obj_per_dim, int):
+        if isinstance(index_obj_per_dim, int) or np.isscalar(index_obj_per_dim):
             indices = [index_obj_per_dim, ]  # making it iterable
         elif isinstance(index_obj_per_dim, slice):
             if index_obj_per_dim is None:
