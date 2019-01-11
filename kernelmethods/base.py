@@ -4,7 +4,7 @@ from copy import copy
 from itertools import product as iter_product
 
 import numpy as np
-from kernelmethods.operations import center_km, is_PSD, normalize_km
+from kernelmethods.operations import center_km, is_PSD, normalize_km, normalize_km_2sample
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 from scipy.sparse import issparse, lil_matrix
@@ -351,7 +351,22 @@ class KernelMatrix(object):
             self._populate_fully(dense_fmt=True, fill_lower_tri=True)
 
         if not self._is_normed:
-            self._normed_km = normalize_km(self._full_km, method=method)
+            if not self._two_samples:
+                self._normed_km = normalize_km(self._full_km, method=method)
+            else:
+                # KM_XX and KM_YY must NOT be normalized for correct norm of K_XY
+                #   NOTE: K_XY may NOT have unit diagonal
+                #       as k(x,y) != sqrt(k(x,x))*sqrt(k(y,y))
+                KM_XX = KernelMatrix(self.kernel, normalized=False)
+                KM_XX.attach_to(sample_one=self._sample)
+
+                KM_YY = KernelMatrix(self.kernel, normalized=False)
+                KM_YY.attach_to(sample_one=self._sample_two)
+
+                # not passing .full_km for KM_XX and KM_YY as we only need their diagonal
+                self._normed_km = normalize_km_2sample(self._full_km,
+                                                       KM_XX.diagonal(),
+                                                       KM_YY.diagonal())
             self._is_normed = True
 
 
