@@ -166,3 +166,6 @@ class LinearKernel(BaseKernelFunction):
 
         return self.name
 
+
+DEFINED_KERNEL_FUNCS = (PolyKernel(), GaussianKernel(), LaplacianKernel(),
+                        LinearKernel())
