@@ -364,7 +364,17 @@ class KernelMatrix(object):
 
 
     def diagonal(self):
-        """Returns the diagonal of the kernel matrix"""
+        """
+        Returns the diagonal of the kernel matrix, when attached to a single sample.
+
+        Raises
+        ------
+            ValueError
+                When this instance is attached to more than one sample
+        """
+
+        if self._two_samples:
+            raise KMAccessError('Diagonal() not defined when attached to 2 samples!')
 
         return np.array([self._eval_kernel(idx, idx) for idx in range(self.shape[0])])
 
