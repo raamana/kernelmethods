@@ -327,6 +327,10 @@ class KernelMatrix(object):
     def center(self):
         """Method to center the kernel matrix"""
 
+        if self._two_samples:
+            raise NotImplementedError('Centering is not implemented (or possible)'
+                                      ' when KM is attached two separate samples.')
+
         if not self._populated_fully:
             self._full_km = self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 

@@ -171,6 +171,9 @@ def test_attach_to_two_samples():
     with raises(NotImplementedError):
         km2.normalize()
 
+    with raises(NotImplementedError):
+        km2.center()
+
     with raises((KMAccessError, NotImplementedError)):
         km2.normed_km
 
