@@ -25,12 +25,12 @@ max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
 def test_symmetry():
 
-    if not np.isclose(km_dense, km_dense.T).all():
+    if not np.isclose(km1.full, km1.full.T).all():
         print('KM not symmetric')
 
 def test_PSD():
 
-    if not is_PSD(km_dense):
+    if not is_PSD(km1.full):
         raise ValueError('this kernel matrix is not PSD!')
 
 def test_normalization():
@@ -168,6 +168,6 @@ def test_attach_to_two_samples():
     with raises(ValueError):
         # dimensionalities can not differ!
         more_dims = np.hstack((sample_data, sample_data[:,:1]))
-        km2.attach_to(sample_data, sample_two=)
+        km2.attach_to(sample_data, sample_two=more_dims)
 
 test_attach_to_two_samples()
