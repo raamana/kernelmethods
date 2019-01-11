@@ -359,6 +359,9 @@ class KernelMatrix(object):
     def centered(self):
         """Exposes the centered version of the kernel matrix"""
 
+        if self._two_samples:
+            raise KMAccessError('Centering not defined when attached to 2 samples!')
+
         if not self._is_centered:
             self.center()
 
