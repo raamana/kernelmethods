@@ -841,6 +841,8 @@ class KernelSet(object):
             raise IndexError('Index out of range for KernelSet of size {}'
                              ''.format(self.size))
 
+        # TODO elements need to accessible by more than a simple integer index!
+        #   Perhaps KernelMatrix can provide a hash to uniquely refer to an instance
         return self._km_set[index]
 
 
