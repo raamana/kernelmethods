@@ -847,6 +847,15 @@ class KernelSet(object):
     def take(self, indices, name='Selected'):
         """Returns a new KernelSet with requested kernels, identified by their indices."""
 
+        if not isinstance(indices, Iterable):
+            indices = [indices, ]
+
+        indices = np.array(indices, dtype='int64')
+
+        if any(indices < 0) or any(indices >= self.size):
+            raise IndexError('One/more indices are out of range for KernelSet of size {}'
+                             ''.format(self.size))
+
         new_set = KernelSet(name=name)
         for idx in indices:
             # TODO should we add a copy of ith KM, or just a reference? No copy-->accidental changes!
