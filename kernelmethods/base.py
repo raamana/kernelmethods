@@ -874,6 +874,23 @@ class KernelSet(object):
         return new_set
 
 
+    def get_kernel_funcs(self, indices, name='SelectedKernelFuncs'):
+        """
+        Returns kernel functions underlying the specified kernel matrices in this kernel set.
+
+        This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)
+
+        """
+
+        indices = self._check_indices(indices)
+
+        ker_func_list = list()
+        for idx in indices:
+            ker_func_list.append(self._km_set[idx].kernel)
+
+        return ker_func_list
+
+
     def _check_indices(self, indices):
         """Checks the validity and type of indices."""
 
