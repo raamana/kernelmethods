@@ -857,11 +857,8 @@ class KernelSet(object):
         return self._km_set[index]
 
 
-    def take(self, indices, name='Selected'):
-        """Returns a new KernelSet with requested kernels, identified by their indices."""
-
-        if not isinstance(indices, Iterable):
-            indices = [indices, ]
+    def take(self, indices, name='SelectedKMs'):
+        """Returns a new KernelSet with requested kernel matrices, identified by their indices."""
 
         indices = self._check_indices(indices)
 
