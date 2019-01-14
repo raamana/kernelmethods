@@ -44,10 +44,16 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
     return x, y
 
 
-def ensure_ndarray_2D(array, ensure_dtype=np.number):
+def ensure_ndarray_2D(array, ensure_dtype=np.number, ensure_num_cols=None):
     """Converts the input to a numpy array and ensure it is 1D."""
 
-    return ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=2)
+    array = ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=2)
+
+    if ensure_num_cols is not None and array.shape[1] != ensure_num_cols:
+        raise ValueError('The number of columns differ from expected {}'
+                         ''.format(ensure_num_cols))
+
+    return array
 
 
 def ensure_ndarray_1D(array, ensure_dtype=np.number):
