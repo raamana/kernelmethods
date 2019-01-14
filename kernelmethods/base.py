@@ -772,7 +772,13 @@ VALID_KERNEL_MATRIX_TYPES = (KernelMatrix, KernelMatrixPrecomputed, np.ndarray)
 
 
 class KernelSet(object):
-    """Container class to manage a set of KernelMatrix instances."""
+    """
+    Container class to manage a set of compatible KernelMatrix instances.
+
+    Compatibility is checked based on the size (number of samples they operate on).
+    Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.
+
+    """
 
 
     def __init__(self, km_set=None, name='KernelSet'):
@@ -924,7 +930,8 @@ class KernelSet(object):
 
 
     def attach_to(self, sample, name='sample'):
-        """Attach this kernel to a given sample.
+        """
+        Attach all the kernel matrices in this set to a given sample.
 
         Any previous evaluations to other samples and their results will be reset.
 
@@ -950,7 +957,7 @@ class KernelSet(object):
 
 
     def extend(self, another_km_set):
-        """Combines two sets into one"""
+        """Extends the current set by adding in all elements from another set."""
 
         if not isinstance(another_km_set, KernelSet):
             raise KMSetAdditionError('Input is not a KernelSet!'
