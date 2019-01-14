@@ -863,11 +863,7 @@ class KernelSet(object):
         if not isinstance(indices, Iterable):
             indices = [indices, ]
 
-        indices = np.array(indices, dtype='int64')
-
-        if any(indices < 0) or any(indices >= self.size):
-            raise IndexError('One/more indices are out of range for KernelSet of size {}'
-                             ''.format(self.size))
+        indices = self._check_indices(indices)
 
         new_set = KernelSet(name=name)
         for idx in indices:
@@ -876,6 +872,21 @@ class KernelSet(object):
             new_set.append(self._km_set[idx])
 
         return new_set
+
+
+    def _check_indices(self, indices):
+        """Checks the validity and type of indices."""
+
+        if not isinstance(indices, Iterable):
+            indices = [indices, ]
+
+        indices = np.array(indices, dtype='int64')
+
+        if any(indices < 0) or any(indices >= self.size):
+            raise IndexError('One/more indices are out of range for KernelSet of size {}'
+                             ''.format(self.size))
+
+        return indices
 
 
     def __str__(self):
