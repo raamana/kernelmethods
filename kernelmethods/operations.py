@@ -115,7 +115,8 @@ def normalize_km(KM, method='cosine'):
             _1bySqrtDiag = np.diag(1 / np.sqrt(KM.diagonal()))
             # notice @ is matrix multiplication operator
             normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
-            # in case of two samples K(X, Y), the rightmost factor must come from Y
+            # in case of two samples K(X, Y), the left- and right-most factors
+            #   must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample
         else:
             raise NotImplementedError('normalization method {} is not implemented'
                                       'yet!'.format(method))
@@ -254,8 +255,11 @@ def linear_combination(km_set, weights):
     if km_set.size == len(weights):
         weights = ensure_ndarray_1D(weights)
     else:
-        raise ValueError('Number of weights ({}) supplied differ from the kernel set size ({})'
+        raise ValueError('Number of weights ({}) supplied differ '
+                         'from the kernel set size ({})'
                          ''.format(km_set.size, len(weights)))
+
+    # TODO should we not ensure weights sum to 1.0?
 
     # Computes the weighted average kernel
     KM = np.zeros((km_set.num_samples, km_set.num_samples))

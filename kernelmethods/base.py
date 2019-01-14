@@ -698,7 +698,10 @@ class KernelMatrixPrecomputed(object):
 
 
 class ConstantKernelMatrix(object):
-    """Custom KM to represent a constant """
+    """Custom KM to represent a constant.
+
+    TODO this is not fully though-out, or well. Consider removing or rewriting!
+    """
 
 
     def __init__(self, num_samples=None, value=0.0, name=None, dtype='float'):
