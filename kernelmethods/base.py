@@ -134,7 +134,7 @@ class KernelFromCallable(BaseKernelFunction):
 
 class KernelMatrix(object):
     """
-    The KernelMatrix class.
+    A self-contained class for the Gram matrix induced by a kernel fuction on a sample.
 
     KM[i,j] --> kernel between samples i and j
     KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
@@ -442,7 +442,15 @@ class KernelMatrix(object):
 
 
     def _features(self, index):
-        """Returns the sample [features] corresponding to a given index."""
+        """
+        Returns the sample [features] corresponding to a given index.
+
+        Using this would help abstract out the underlying data structure for samples and
+            their features. For example, inputs can be simply CSVs, or numpy arrays or
+            MLDataset or xarray or pandas etc.
+        Disadvantages include the 2 extra function calls to be made for each kernel eval,
+            which could be saved when operating on a predetermined format.
+        """
 
         return self._sample[index, :]
 
@@ -860,7 +868,8 @@ class KernelSet(object):
 
         new_set = KernelSet(name=name)
         for idx in indices:
-            # TODO should we add a copy of ith KM, or just a reference? No copy-->accidental changes!
+            # TODO should we add a copy of ith KM, or just a reference?
+            #   No copy-->accidental changes!
             new_set.append(self._km_set[idx])
 
         return new_set
