@@ -965,7 +965,10 @@ class KernelSet(object):
             yield self._km_set[index]
 
 
-    def attach_to(self, sample, name='sample'):
+    def attach_to(self, sample,
+                  name='sample',
+                  attr_name=None,
+                  attr_value=None):
         """
         Attach all the kernel matrices in this set to a given sample.
 
@@ -990,6 +993,8 @@ class KernelSet(object):
 
         for index in range(self.size):
             self._km_set[index].attach_to(sample, name=name)
+            if attr_name is not None:
+                self._km_set[index].set_attr(attr_name, attr_value)
 
 
     def extend(self, another_km_set):
