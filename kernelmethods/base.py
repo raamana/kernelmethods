@@ -638,10 +638,12 @@ class KernelMatrix(object):
     def __str__(self):
         """human readable presentation"""
 
+        string = "{}: {}".format(self.name, str(self.kernel))
         if self._sample is not None:
-            return "{}: {} on {}".format(self.name, str(self.kernel), self._sample_descr)
-        else:
-            return "{}: {}".format(self.name, str(self.kernel))
+            # showing normalization status only when attached to data!
+            string += " (normed={}) on {}".format(self._keep_normed, self._sample_descr)
+
+        return string
 
 
     # aliasing them to __str__ for now
