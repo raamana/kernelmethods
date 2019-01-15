@@ -887,11 +887,7 @@ class KernelSet(object):
 
         indices = self._check_indices(indices)
 
-        ker_func_list = list()
-        for idx in indices:
-            ker_func_list.append(self._km_set[idx].kernel)
-
-        return ker_func_list
+        return (self._km_set[idx].kernel for index in indices)
 
 
     def _check_indices(self, indices):
