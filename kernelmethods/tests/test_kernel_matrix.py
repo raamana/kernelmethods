@@ -7,7 +7,7 @@ from scipy.linalg import eigh
 from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     DEFINED_KERNEL_FUNCS
-from kernelmethods.base import KernelMatrix, KMAccessError, KernelMatrixException
+from kernelmethods.base import KernelMatrix, KMAccessError, KernelMethodsException
 from kernelmethods.operations import is_PSD
 
 num_samples = np.random.randint(30, 100)

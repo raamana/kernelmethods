@@ -6,7 +6,7 @@ from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
 from kernelmethods.base import KernelMatrix, KernelSet, \
     SumKernel, ProductKernel, AverageKernel, \
-    KMAccessError, KernelMatrixException, KMSetAdditionError
+    KMAccessError, KernelMethodsException, KMSetAdditionError
 from kernelmethods.operations import is_PSD
 from kernelmethods.sampling import KernelBucket, pairwise_similarity
 from kernelmethods.operations import alignment_centered, center_km

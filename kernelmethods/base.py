@@ -11,17 +11,17 @@ from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarra
     get_callable_name, not_symmetric
 
 
-class KernelMatrixException(Exception):
+class KernelMethodsException(Exception):
     """Allows to distinguish improper use of KernelMatrix from other code exceptions"""
     pass
 
 
-class KMAccessError(KernelMatrixException):
+class KMAccessError(KernelMethodsException):
     """Error to indicate invalid access to the kernel matrix!"""
     pass
 
 
-class KMSetAdditionError(KernelMatrixException):
+class KMSetAdditionError(KernelMethodsException):
     """Error to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
     pass
 

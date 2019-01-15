@@ -4,10 +4,10 @@
 
 __all__ = ['PolyKernel', 'BaseKernelFunction',
            'KernelMatrix',
-           'KernelMatrixException', 'KMAccessError']
+           'KernelMethodsException', 'KMAccessError']
 
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
-    KernelMatrixException, KMAccessError
+    KernelMethodsException, KMAccessError
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
     LinearKernel
 from kernelmethods.sampling import KernelBucket
