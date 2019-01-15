@@ -6,7 +6,7 @@ from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
 from kernelmethods.base import KernelMatrix, KernelSet, \
     SumKernel, ProductKernel, AverageKernel, \
-    KMAccessError, KernelMatrixException
+    KMAccessError, KernelMatrixException, KMSetAdditionError
 from kernelmethods.operations import is_PSD
 from kernelmethods.sampling import KernelBucket, pairwise_similarity
 from kernelmethods.operations import alignment_centered, center_km
@@ -31,6 +31,23 @@ poly = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
 
 kset = KernelSet([lin, poly, rbf])
 print(kset)
+
+def test_creation():
+
+    try:
+        ks = KernelSet()
+    except:
+        raise SyntaxError('empty set creation failed.')
+
+
+def test_size_property_mismatch():
+
+    ks = KernelSet(num_samples=sample_data.shape[0]+1)
+    lin = KernelMatrix(LinearKernel(skip_input_checks=True))
+    lin.attach_to(sample_data)
+    with raises(KMSetAdditionError):
+        ks.append(lin)
+
 
 def test_size():
 
