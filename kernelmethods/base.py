@@ -1046,6 +1046,16 @@ class KernelSet(object):
             self._km_set[index].set_attr(name, values[index])
 
 
+    def get_attr(self, name, value_if_not_found=None):
+        """Returns the value of an user-defined attribute.
+
+        If not set previously, or no match found, returns value_if_not_found.
+        """
+
+        return [ self._km_set[index].get_attr(name, value_if_not_found)
+                 for index in range(self.size) ]
+
+
 class CompositeKernel(ABC):
     """Class to combine a set of kernels into a composite kernel."""
 
