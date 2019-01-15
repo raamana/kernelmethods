@@ -262,7 +262,8 @@ def linear_combination(km_set, weights):
     # TODO should we not ensure weights sum to 1.0?
 
     # Computes the weighted average kernel
-    KM = np.zeros((km_set.num_samples, km_set.num_samples))
+    # km_set.num_samples is a tuple (N, M) when operating on two samples e.g. train x test
+    KM = np.zeros(km_set.num_samples)
     for weight, km in zip(weights, km_set):
         KM = KM + weight * km.full
 
