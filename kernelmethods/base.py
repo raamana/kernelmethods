@@ -821,16 +821,26 @@ class KernelSet(object):
     """
 
 
-    def __init__(self, km_set=None, name='KernelSet'):
+    def __init__(self,
+                 km_set=None,
+                 name='KernelSet',
+                 num_samples=None):
         """Constructor."""
 
-        # to denote no KM has been added yet
-        self._is_init = False
         self.name = name
 
         # empty to start with
         self._km_set = list()
-        self._num_samples = None
+
+        # user can choose to set the properties of the kernel matrices
+        # this num_samples property is key, as only KMs with same value are allowed in
+        if num_samples is not None:
+            self._num_samples = num_samples
+            self._is_init = True
+        else:
+            # to denote no KM has been added yet, or their size property is not set
+            self._is_init = False
+            self._num_samples = None
 
         if isinstance(km_set, Iterable):
             for km in km_set:
@@ -840,7 +850,8 @@ class KernelSet(object):
         elif km_set is None:
             pass  # do nothing
         else:
-            raise TypeError('Unknown type of input matrix! Must be one of:\n'
+            raise TypeError('Unknown type of input matrix! '
+                            'Must be one of:\n'
                             '{}'.format(VALID_KERNEL_MATRIX_TYPES))
 
 
