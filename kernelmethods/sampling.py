@@ -28,13 +28,13 @@ class KernelBucket(KernelSet):
                  ):
         """constructor"""
 
+        self._norm_kernels = normalize_kernels
+
         # start with the addition of kernel matrix for linear kernel
-        super().__init__(km_set=[KernelMatrix(LinearKernel()), ],
-                         name=name)
+        init_kset = [KernelMatrix(LinearKernel(), normalized=self._norm_kernels), ]
+        super().__init__(km_set=init_kset, name=name)
         # not attached to a sample yet
         self._num_samples = None
-
-        self._normalize_kernels = normalize_kernels
 
         self._add_parametrized_kernels(poly_degree_values, PolyKernel, 'degree')
         self._add_parametrized_kernels(rbf_sigma_values, GaussianKernel, 'sigma')
@@ -47,7 +47,7 @@ class KernelBucket(KernelSet):
         if values is not None:
             for val in values:
                 self.append(KernelMatrix(kernel_func(**{param_name: val}),
-                                         normalized=self._normalize_kernels))
+                                         normalized=self._norm_kernels))
 
 
 def make_kernel_bucket(strategy='exhaustive',
