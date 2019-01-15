@@ -1006,6 +1006,30 @@ class KernelSet(object):
             self.append(km)
 
 
+    def set_attr(self, name, values):
+        """
+        Sets user-defined attributes for the kernel matrices in this set.
+
+        If len(values)==1, same value is set for all. Otherwise values must be of size as
+        KernelSet, providing a separate value for each element.
+
+        Useful to identify this kernel matrix in various aspects!
+        You could think of them as tags or identifiers etc.
+        As they are user-defined, they are ideal to represent user needs and applications.
+        """
+
+        if not isinstance(values, Iterable) or isinstance(values, str):
+            values = [values]*self.size
+        elif len(values) != self.size:
+            raise ValueError('Values must be single element, or '
+                             'of the same size as this KernelSet ({}), '
+                             'providing a separate value for each element.'
+                             'It is {}'.format(self.size, len(values)))
+
+        for index in range(self.size):
+            self._km_set[index].set_attr(name, values[index])
+
+
 class CompositeKernel(ABC):
     """Class to combine a set of kernels into a composite kernel."""
 
