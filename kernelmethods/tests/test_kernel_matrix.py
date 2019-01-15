@@ -182,4 +182,18 @@ def test_attach_to_two_samples():
         more_dims = np.hstack((sample_data, sample_data[:,:1]))
         km2.attach_to(sample_data, sample_two=more_dims)
 
-test_attach_to_two_samples()
+
+def test_attributes():
+
+    km = KernelMatrix(LinearKernel())
+    km.set_attr('name', 'linear')
+    assert km.get_attr('name') == 'linear'
+    assert km.get_attr('noname', '404') == '404'
+    km.set_attr('weight', 42)
+
+    kma = km.attributes()
+    for attr in ('name', 'weight'):
+        assert attr in kma
+
+
+test_attributes()

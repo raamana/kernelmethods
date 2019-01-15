@@ -60,6 +60,17 @@ def test_take():
     assert isinstance(k2, KernelSet)
     assert k2.size == 2
 
+def test_attributes():
+
+    kset.set_attr('name', 'linear')
+    for km in kset:
+        assert km.get_attr('name') == 'linear'
+        assert km.get_attr('noname', '404') == '404'
+
+    values = np.random.rand(kset.size)
+    kset.set_attr('weight', values)
+    for ii, km in enumerate(kset):
+        assert km.get_attr('weight') == values[ii]
 
 
 # kb = KernelBucket()
@@ -72,4 +83,4 @@ def test_take():
 #     ag[ix] = alignment_centered(km.full, IdealKM)
 #     print('{:4} {:>60} : {:10.5f}'.format(ix, str(km),ag[ix]))
 
-test_take()
+test_attributes()
