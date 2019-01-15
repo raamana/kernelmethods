@@ -150,7 +150,7 @@ def test_attach_to_two_samples():
 
     for kernel in DEFINED_KERNEL_FUNCS:
         km2 = KernelMatrix(kernel=kernel, normalized=False)
-        km2.attach_to(sample_data, name='S1', sample_two=sample_two, name_two='S2')
+        km2.attach_to(sample_data, name_one='S1', sample_two=sample_two, name_two='S2')
         km2_dense = km2.full  # this will force computation of full KM
 
         rand_ix_one = np.random.choice(range(num_samples), 5)
