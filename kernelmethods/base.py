@@ -189,7 +189,7 @@ class KernelMatrix(object):
 
     def attach_to(self,
                   sample_one,
-                  name='sample',
+                  name_one='sample',
                   sample_two=None,
                   name_two=None):
         """
@@ -206,7 +206,7 @@ class KernelMatrix(object):
                 e.g. MLDataset or ndarray
             When sample_two=None (e.g. during training), sample_two refers to sample_one.
 
-        name : str
+        name_one : str
             Name for the first sample.
 
         sample_two : ndarray
@@ -221,11 +221,11 @@ class KernelMatrix(object):
         """
 
         self._sample = ensure_ndarray_2D(sample_one)
-        self._sample_name = name
+        self._sample_name = name_one
 
         if sample_two is None:
             self._sample_two = self._sample
-            self._name_two = name
+            self._name_two = name_one
 
             self._num_samples = self._sample.shape[0]
             self.shape = (self._num_samples, self._num_samples)
