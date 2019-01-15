@@ -4,10 +4,11 @@ from copy import copy
 from itertools import product as iter_product
 
 import numpy as np
+from scipy.sparse import issparse, lil_matrix
+
 from kernelmethods.operations import center_km, is_PSD, normalize_km, normalize_km_2sample
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
-from scipy.sparse import issparse, lil_matrix
 
 
 class KernelMatrixException(Exception):
@@ -179,6 +180,10 @@ class KernelMatrix(object):
         self._num_samples = None
         self._sample = None
         self._sample_name = None
+
+        # user-defined attribute dictionary
+        self._attr = dict()
+
         self._reset()
 
 
@@ -187,9 +192,11 @@ class KernelMatrix(object):
                   name='sample',
                   sample_two=None,
                   name_two=None):
-        """Attach this kernel to a given sample.
+        """
+        Attach this kernel to a given sample.
 
-        Any previous evaluations to other samples and their results will be reset.
+        Any computations from previous samples and their results will be reset,
+            along with all the previously set attributes.
 
         Parameters
         ----------
@@ -246,6 +253,35 @@ class KernelMatrix(object):
         self._reset()
 
 
+    def set_attr(self, name, value):
+        """
+        Sets user-defined attributes for the kernel matrix.
+
+        Useful to identify this kernel matrix in various aspects!
+        You could think of them as tags or identifiers etc.
+        As they are user-defined, they are ideal to represent user needs and applications.
+        """
+
+        self._attr[name] = value
+
+
+    def get_attr(self, attr_name, value_if_not_found=None):
+        """Returns the value of an user-defined attribute.
+
+        If not set previously, or no match found, returns value_if_not_found.
+        """
+
+        return self._attr.get(attr_name, value_if_not_found)
+
+
+    def attributes(self):
+        """
+        Returns all the attributes currently set.
+        """
+
+        return self._attr
+
+
     @property  # this is to prevent accidental change of value
     def num_samples(self):
         """
@@ -272,6 +308,10 @@ class KernelMatrix(object):
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
         #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
         self._KM = dict()
+
+        # restricting attributes to the latest sample only, to avoid leakage!!
+        self._attr.clear()
+
         # debugging and efficiency measurement purposes
         # for a given sample (of size n),
         #   number of kernel evals must never be more than n+ n*(n-1)/2 (or n(n+1)/2)
