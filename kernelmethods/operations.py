@@ -207,11 +207,19 @@ def frobenius_norm(A):
     return np.sqrt(frobenius_product(A, A))
 
 
-def alignment_centered(km_one, km_two, centered_already=False):
+def alignment_centered(km_one, km_two,
+                       value_if_zero_division='raise',
+                       centered_already=False):
     """
     Computes the centered alignment between two kernel matrices
 
     (Alignment is computed on centered kernel matrices)
+
+    value_if_zero_division determines the value of alignment, in case the norm of one of
+        the two kernel matrices is close to zero and we are unable to compute it.
+        Default is 'raise', requesting to raise an exception.
+            One could also choose 0.0 (assigning lowest alignment,
+                effectively discarding for ranking purposes)
 
     Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in
     Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
@@ -234,11 +242,14 @@ def alignment_centered(km_one, km_two, centered_already=False):
     fnorm_one = frobenius_norm(kC_one)
     fnorm_two = frobenius_norm(kC_two)
 
-    if np.isclose(fnorm_one, 0.0):
-        raise ValueError('The Frobenius norm of KM1 is 0. Can not compute alignment!')
-
-    if np.isclose(fnorm_two, 0.0):
-        raise ValueError('The Frobenius norm of KM1 is 0. Can not compute alignment!')
+    if np.isclose(fnorm_one, 0.0) or np.isclose(fnorm_two, 0.0):
+        if value_if_zero_division in ('raise', Exception):
+            raise ValueError('The Frobenius norm of KM1 or KM2 is 0. '
+                             'Can not compute alignment!')
+        else:
+            warnings.warn('The Frobenius norm of KM1 or KM2 is 0. Setting value of '
+                          'alignment as {} as requested'.format(value_if_zero_division))
+            return value_if_zero_division
 
     return frobenius_product(kC_one, kC_two) / (fnorm_one*fnorm_two)
 

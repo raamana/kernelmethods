@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.stats.stats import pearsonr
-
+from functools import partial
 from kernelmethods import config as cfg
 from kernelmethods.base import KernelMatrix, KernelSet
 from kernelmethods.numeric_kernels import GaussianKernel, LaplacianKernel, LinearKernel, \
@@ -93,7 +93,7 @@ def pairwise_similarity(k_bucket, metric='corr'):
 
     # mutual info?
     metric_func = {'corr' : correlation_km,
-                   'align': alignment_centered}
+                   'align': partial(alignment_centered, value_if_zero_division=0.0)}
 
     num_kernels = k_bucket.size
     estimator = metric_func[metric]
