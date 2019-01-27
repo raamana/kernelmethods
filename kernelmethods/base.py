@@ -673,25 +673,31 @@ class KernelMatrix(object):
                 self._populated_fully = True
 
         if fill_lower_tri and not self._lower_tri_km_filled:
-            try:
-                # choosing k=-1 as main diag is already covered above (nested for loop)
-                ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
-
-                if not self._two_samples and self.shape[0] == self.shape[1]:
-                    self._full_km[ix_lower_tri] = self._full_km.T[ix_lower_tri]
-                else:
-                    # evaluating it for the lower triangle as well!
-                    for ix_one, ix_two in zip(*ix_lower_tri):
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
-            except:
-                raise RuntimeError('Unable to symmetrize the kernel matrix!')
-            else:
-                self._lower_tri_km_filled = True
+            self._fill_lower_tri()
 
         if issparse(self._full_km) and dense_fmt:
             self._full_km = self._full_km.todense()
 
         return self._full_km
+
+
+    def _fill_lower_tri(self):
+        """Helper method to fill the lower tri part of KM"""
+
+        try:
+            # choosing k=-1 as main diag is already covered above (nested for loop)
+            ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
+
+            if not self._two_samples and self.shape[0] == self.shape[1]:
+                self._full_km[ix_lower_tri] = self._full_km.T[ix_lower_tri]
+            else:
+                # evaluating it for the lower triangle as well!
+                for ix_one, ix_two in zip(*ix_lower_tri):
+                    self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+        except:
+            raise RuntimeError('Unable to symmetrize the kernel matrix!')
+        else:
+            self._lower_tri_km_filled = True
 
 
     def __str__(self):
