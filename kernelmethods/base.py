@@ -476,8 +476,19 @@ class KernelMatrix(object):
         return self._normed_km
 
 
+    def _eval_pairs(self, pairs):
+        """Helper to facilitate parallel processing in chunks of index pairs"""
+
+        print('{} pairs provided: start {}, end: {}'.format(len(pairs)),
+              pairs[0], pairs[-1])
+        for idx_one, idx_two in pairs:
+            self._eval_kernel(idx_one, idx_two)
+
+
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
+
+        # print('within eval_kernel : {} {}'.format(idx_one, idx_two))
 
         # maintaining only upper triangular parts, when attached to a single sample
         #   by ensuring the first index is always <= second index
