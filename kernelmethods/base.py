@@ -614,6 +614,17 @@ class KernelMatrix(object):
             self._parallelize = False
             self._num_cpus = None
 
+
+    def _parallel_eval(self):
+        """Parallelize the evaluation of KM on subsets of n(n+1)/2 pairs of indices."""
+
+        indices = np.dstack(np.triu_indices(self.shape[0], m=self.shape[1])).squeeze()
+        from multiprocessing import Pool
+        with Pool(processes=self._num_cpus) as pool:
+            # n(m+1)/2 into _num_cpus chunks
+            pool.map(self._eval_pairs, indices, chunksize=0.5*self.size/self._num_cpus)
+
+
     def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):
         """Applies the kernel function on all pairs of points in a sample.
 
