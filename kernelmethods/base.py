@@ -596,6 +596,24 @@ class KernelMatrix(object):
                         dtype=self._sample.dtype).reshape(len(set_one), len(set_two))
 
 
+    def _setup_parallelization(self, n_cpus):
+        """Sets the number of CPUs and other state-related flags."""
+
+        if n_cpus is not None:
+            query = os.cpu_count()
+            if query is None:
+                query = 2
+                print('Unable to query the num. CPUs - choosing {}'.format(query))
+            self._num_cpus = min(int(n_cpus), query)
+            if self._num_cpus <= 1:
+                print('num_cpus setup is <=1, skipping parallelization.')
+                self._parallelize = False
+            else:
+                self._parallelize = True
+        else:
+            self._parallelize = False
+            self._num_cpus = None
+
     def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):
         """Applies the kernel function on all pairs of points in a sample.
 
@@ -619,10 +637,14 @@ class KernelMatrix(object):
                 # kernel matrix is symmetric (in a single sample case)
                 #   so we need only compute half the matrix!
                 # computing the kernel for diagonal elements i,i as well
-                #   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case
-                for ix_one in range(self.shape[0]): # number of rows!
-                    for ix_two in range(ix_one, self.shape[1]): # from second sample!
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+                #  as ix_two, even when equal to ix_one, refers to sample_two in
+                #  the two_samples case
+                if self._parallelize:
+                    self._parallel_eval()
+                else:
+                    for ix_one in range(self.shape[0]): # number of rows!
+                        for ix_two in range(ix_one, self.shape[1]): # from second sample!
+                            self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
             except:
                 raise RuntimeError('Unable to fully compute the kernel matrix!')
             else:
