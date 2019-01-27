@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from collections import Iterable
 from copy import copy
 from itertools import product as iter_product
+import os
 
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
@@ -74,6 +75,8 @@ class BaseKernelFunction(ABC):
 
 
     # aliasing others to __str__ for now
+    # TODO having a shorter alias such as p(2)/g(0.1) is conveniennt instead of
+    #  polynomial(degree=2) or gaussian(sigma=0.1): {:s} for __format__()?
     def __format__(self, _):
         """Representation"""
 
@@ -147,7 +150,8 @@ class KernelMatrix(object):
     def __init__(self,
                  kernel,
                  normalized=True,
-                 name='KernelMatrix'):
+                 name='KernelMatrix',
+                 n_cpus=None):
         """
         Constructor.
 
@@ -162,6 +166,14 @@ class KernelMatrix(object):
 
         name : str
             short name to describe the nature of the kernel function
+
+        n_cpus : None or int
+            Allows to parallelize evaluation of full gram matrix, when the number of
+            samples is too large to make the full computation of KM too slow, or when the
+            evaluation of kernel func on a single pair (i,j) is slow (rarely the case).
+            Default: None, which is serial evaluation of all the pairs.
+            If a number is specified, n=min(n_cpus, os.cpu_count()) will be used.
+            If os.cpu_count() is not successful, 2 will be chosen.
 
         """
 
@@ -184,6 +196,8 @@ class KernelMatrix(object):
         # user-defined attribute dictionary
         self._attr = dict()
 
+        self._setup_parallelization(n_cpus)
+
         self._reset()
 
 
@@ -191,7 +205,8 @@ class KernelMatrix(object):
                   sample_one,
                   name_one='sample',
                   sample_two=None,
-                  name_two=None):
+                  name_two=None,
+                  n_cpus=None):
         """
         Attach this kernel to a given sample.
 
