@@ -54,6 +54,11 @@ def make_kernel_bucket(strategy='exhaustive',
                        normalize_kernels=True):
     """Generates a candidate kernels based on user preferences."""
 
+    if isinstance(strategy, (KernelBucket, KernelSet)):
+        import warnings
+        warnings.warn('Input is already a kernel bucket/set - simply returning it!')
+        return strategy
+
     strategy = strategy.lower()
     if strategy == 'exhaustive':
         return KernelBucket(name='KBucketExhaustive',
