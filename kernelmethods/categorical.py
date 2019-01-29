@@ -20,7 +20,13 @@ from kernelmethods import config as cfg
 class MatchCountKernel(BaseKernelFunction):
     """
     Categorical kernel measuring similarity via the number of matching categorical
-    values.
+    dimensions.
+
+    Parameters
+    ----------
+
+    return_perc : bool
+        If True, the return value would be normalized by the number of dimensions.
 
     References
     ----------
@@ -31,10 +37,16 @@ class MatchCountKernel(BaseKernelFunction):
     """
 
 
-    def __init__(self, skip_input_checks=False):
+    def __init__(self,
+                 return_perc=True,
+                 skip_input_checks=False):
         """Constructor."""
 
-        super().__init__('MatchCount')
+        self.return_perc = return_perc
+        if self.return_perc:
+            super().__init__('MatchPerc')
+        else:
+            super().__init__('MatchCount')
 
         self.skip_input_checks = skip_input_checks
 
@@ -52,7 +64,13 @@ class MatchCountKernel(BaseKernelFunction):
 
         check_input_arrays(vec_c, vec_d, ensure_dtype=cfg.dtype_categorical)
 
-        return np.sum([c == d for c, d in zip(vec_c, vec_d)])
+        match_count = np.sum([c == d for c, d in zip(vec_c, vec_d)])
+
+        if self.return_perc:
+            return match_count / len(vec_d)
+        else:
+            return match_count
+
 
     def __str__(self):
         """human readable repr"""
