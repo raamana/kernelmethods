@@ -64,7 +64,7 @@ class MatchCountKernel(BaseKernelFunction):
 
         check_input_arrays(vec_c, vec_d, ensure_dtype=cfg.dtype_categorical)
 
-        match_count = np.sum([c == d for c, d in zip(vec_c, vec_d)])
+        match_count = np.sum(vec_c==vec_d)
 
         if self.return_perc:
             return match_count / len(vec_d)
