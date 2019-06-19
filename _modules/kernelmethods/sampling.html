@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>kernelmethods.sampling &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> kernelmethods
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1+1.gb24cf24
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Kernel methods and classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../km_collections.html">Collection of kernel matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operations.html">Kernel Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kernelmethods</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>kernelmethods.sampling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for kernelmethods.sampling</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats.stats</span> <span class="k">import</span> <span class="n">pearsonr</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">KernelMatrix</span><span class="p">,</span> <span class="n">KernelSet</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.numeric_kernels</span> <span class="k">import</span> <span class="n">GaussianKernel</span><span class="p">,</span> <span class="n">LaplacianKernel</span><span class="p">,</span> <span class="n">LinearKernel</span><span class="p">,</span> \
+    <span class="n">PolyKernel</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.operations</span> <span class="k">import</span> <span class="n">alignment_centered</span>
+
+
+<div class="viewcode-block" id="KernelBucket"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelBucket">[docs]</a><span class="k">class</span> <span class="nc">KernelBucket</span><span class="p">(</span><span class="n">KernelSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to generate a &quot;bucket&quot; of candidate kernels.</span>
+
+<span class="sd">    Applications:</span>
+<span class="sd">    1. to rank/filter/select kernels based on a given sample via many metrics</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;KernelBucket&#39;</span><span class="p">,</span>
+                 <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_degree_values_poly_kernel</span><span class="p">,</span>
+                 <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_sigma_values_gaussian_kernel</span><span class="p">,</span>
+                 <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;constructor&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span> <span class="o">=</span> <span class="n">normalize_kernels</span>
+
+        <span class="c1"># start with the addition of kernel matrix for linear kernel</span>
+        <span class="n">init_kset</span> <span class="o">=</span> <span class="p">[</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">LinearKernel</span><span class="p">(),</span> <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">),</span> <span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="o">=</span><span class="n">init_kset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># not attached to a sample yet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">poly_degree_values</span><span class="p">,</span> <span class="n">PolyKernel</span><span class="p">,</span> <span class="s1">&#39;degree&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">rbf_sigma_values</span><span class="p">,</span> <span class="n">GaussianKernel</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">laplacian_gamma_values</span><span class="p">,</span> <span class="n">LaplacianKernel</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_add_parametrized_kernels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">kernel_func</span><span class="p">,</span> <span class="n">param_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a list of kernels corr. to various values for a given param&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">param_name</span><span class="p">:</span> <span class="n">val</span><span class="p">}),</span>
+                                         <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">make_kernel_bucket</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;exhaustive&#39;</span><span class="p">,</span>
+                       <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a candidate kernels based on user preferences.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="p">(</span><span class="n">KernelBucket</span><span class="p">,</span> <span class="n">KernelSet</span><span class="p">)):</span>
+        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Input is already a kernel bucket/set - simply returning it!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">strategy</span>
+
+    <span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;exhaustive&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">KernelBucket</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;KBucketExhaustive&#39;</span><span class="p">,</span>
+                            <span class="n">normalize_kernels</span><span class="o">=</span><span class="n">normalize_kernels</span><span class="p">,</span>
+                            <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_degree_values_poly_kernel</span><span class="p">,</span>
+                            <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_sigma_values_gaussian_kernel</span><span class="p">,</span>
+                            <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;light&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">KernelBucket</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;KBucketLight&#39;</span><span class="p">,</span>
+                            <span class="n">normalize_kernels</span><span class="o">=</span><span class="n">normalize_kernels</span><span class="p">,</span>
+                            <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_degree_values_poly_kernel</span><span class="p">,</span>
+                            <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_sigma_values_gaussian_kernel</span><span class="p">,</span>
+                            <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_gamma_values_laplacian_kernel</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid choice of strategy &#39;</span>
+                         <span class="s1">&#39;- must be one of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">kernel_bucket_strategies</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">ideal_kernel</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the kernel matrix from the given target labels&quot;&quot;&quot;</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># row vector</span>
+
+    <span class="k">return</span> <span class="n">targets</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">correlation_km</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes correlation coefficient between two kernel matrices&quot;&quot;&quot;</span>
+
+    <span class="n">corr_coef</span><span class="p">,</span> <span class="n">p_val</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">k2</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">corr_coef</span>
+
+
+<span class="k">def</span> <span class="nf">pairwise_similarity</span><span class="p">(</span><span class="n">k_bucket</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;corr&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the similarity between all pairs of kernel matrices in a given bucket.&quot;&quot;&quot;</span>
+
+    <span class="c1"># mutual info?</span>
+    <span class="n">metric_func</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;corr&#39;</span> <span class="p">:</span> <span class="n">correlation_km</span><span class="p">,</span>
+                   <span class="s1">&#39;align&#39;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">alignment_centered</span><span class="p">,</span> <span class="n">value_if_zero_division</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)}</span>
+
+    <span class="n">num_kernels</span> <span class="o">=</span> <span class="n">k_bucket</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">estimator</span> <span class="o">=</span> <span class="n">metric_func</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+    <span class="n">pairwise_metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">k_bucket</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">k_bucket</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx_one</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">):</span>
+        <span class="c1"># kernel matrix is symmetric</span>
+        <span class="k">for</span> <span class="n">idx_two</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">num_kernels</span><span class="p">):</span> <span class="c1"># computing i,i as well to be consistent</span>
+            <span class="n">pairwise_metric</span><span class="p">[</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span><span class="p">(</span><span class="n">k_bucket</span><span class="p">[</span><span class="n">idx_one</span><span class="p">]</span><span class="o">.</span><span class="n">full</span><span class="p">,</span>
+                                                          <span class="n">k_bucket</span><span class="p">[</span><span class="n">idx_two</span><span class="p">]</span><span class="o">.</span><span class="n">full</span><span class="p">)</span>
+
+        <span class="c1"># not computing diagonal entries (can also be set to 1 for some metrics)</span>
+
+    <span class="c1"># making it symmetric</span>
+    <span class="n">idx_lower_tri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">)</span>
+    <span class="n">pairwise_metric</span><span class="p">[</span><span class="n">idx_lower_tri</span><span class="p">]</span> <span class="o">=</span> <span class="n">pairwise_metric</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">idx_lower_tri</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">pairwise_metric</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Pradeep Reddy Raamana
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

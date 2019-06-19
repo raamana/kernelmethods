@@ -1,0 +1,1419 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>kernelmethods.base &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> kernelmethods
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1+1.gb24cf24
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Kernel methods and classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../km_collections.html">Collection of kernel matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operations.html">Kernel Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kernelmethods</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>kernelmethods.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for kernelmethods.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span> <span class="k">as</span> <span class="n">iter_product</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">issparse</span><span class="p">,</span> <span class="n">lil_matrix</span>
+
+<span class="kn">from</span> <span class="nn">kernelmethods.operations</span> <span class="k">import</span> <span class="n">center_km</span><span class="p">,</span> <span class="n">is_PSD</span><span class="p">,</span> <span class="n">normalize_km</span><span class="p">,</span> <span class="n">normalize_km_2sample</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">check_callable</span><span class="p">,</span> <span class="n">ensure_ndarray_1D</span><span class="p">,</span> <span class="n">ensure_ndarray_2D</span><span class="p">,</span> \
+    <span class="n">get_callable_name</span><span class="p">,</span> <span class="n">not_symmetric</span>
+
+
+<span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Allows to distinguish improper use of KernelMatrix from other code exceptions&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">KMAccessError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error to indicate invalid access to the kernel matrix!&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">KMSetAdditionError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error to indicate invalid addition of kernel matrix to a KernelMatrixSet&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">BaseKernelFunction</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract base class for kernel functions.</span>
+
+<span class="sd">    Enforces each derived kernel:</span>
+<span class="sd">    1. to be callable, with two inputs</span>
+<span class="sd">    2. to have a name and a str representation</span>
+<span class="sd">    3. provides a method to check whether the derived kernel function is a valid kernel</span>
+<span class="sd">        i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)</span>
+<span class="sd">    4. and that it is symmetric (via tests) as required.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            short name to describe the nature of the kernel function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actual computation!&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">is_psd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tests whether kernel matrix produced via this function is PSD&quot;&quot;&quot;</span>
+
+        <span class="c1"># passing the instance of the derived class</span>
+        <span class="n">km</span> <span class="o">=</span> <span class="n">KernelMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">km</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>  <span class="c1"># random_sample</span>
+        <span class="k">return</span> <span class="n">is_PSD</span><span class="p">(</span><span class="n">km</span><span class="o">.</span><span class="n">full</span><span class="p">)</span>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation&quot;&quot;&quot;</span>
+
+
+    <span class="c1"># aliasing others to __str__ for now</span>
+    <span class="k">def</span> <span class="nf">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">KernelFromCallable</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to create a custom kernel from a given callable.&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">func_params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_func : callable</span>
+<span class="sd">            A callable that can accept atleast 2 args</span>
+<span class="sd">            Must not be builtin or C function.</span>
+<span class="sd">            If func is a C or builtin func, wrap it in a python def</span>
+
+<span class="sd">        name : str</span>
+<span class="sd">            A name to identify this kernel in a human readable way</span>
+
+<span class="sd">        func_params : dict</span>
+<span class="sd">            Parameters to func</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">check_callable</span><span class="p">(</span><span class="n">input_func</span><span class="p">,</span> <span class="n">min_num_args</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">func_params</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">get_callable_name</span><span class="p">(</span><span class="n">input_func</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actual computation!&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
+
+        <span class="n">arg_repr</span> <span class="o">=</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_repr</span><span class="p">)</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+<div class="viewcode-block" id="KernelMatrix"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix">[docs]</a><span class="k">class</span> <span class="nc">KernelMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A self-contained class for the Gram matrix induced by a kernel function on a</span>
+<span class="sd">    sample.</span>
+
+<span class="sd">    KM[i,j] --&gt; kernel between samples i and j</span>
+<span class="sd">    KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --&gt; matrix KM of size mxn</span>
+<span class="sd">        where KM_ij = kernel between samples set_i(i) and set_j(j)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">kernel</span><span class="p">,</span>
+                 <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;KernelMatrix&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kernel : BaseKernelFunction</span>
+<span class="sd">            kernel function that populates the kernel matrix</span>
+
+<span class="sd">        normalized : bool</span>
+<span class="sd">            Flag to indicate whether to normalize the kernel matrix</span>
+<span class="sd">            Normalization is recommended, unless you have clear reasons not to.</span>
+
+<span class="sd">        name : str</span>
+<span class="sd">            short name to describe the nature of the kernel function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">BaseKernelFunction</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input kernel must be derived from &#39;</span>
+                            <span class="s1">&#39; kernelmethods.BaseKernelFunction&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">normalized</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;normalized flag must be True or False&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keep_normed</span> <span class="o">=</span> <span class="n">normalized</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># to ensure we can always query the size attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># user-defined attribute dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="KernelMatrix.attach_to"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.attach_to">[docs]</a>    <span class="k">def</span> <span class="nf">attach_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">sample_one</span><span class="p">,</span>
+                  <span class="n">name_one</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span>
+                  <span class="n">sample_two</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">name_two</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attach this kernel to a given sample.</span>
+
+<span class="sd">        Any computations from previous samples and their results will be reset,</span>
+<span class="sd">            along with all the previously set attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample_one : ndarray</span>
+<span class="sd">            Input sample to operate on</span>
+<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features)</span>
+<span class="sd">                e.g. MLDataset or ndarray</span>
+<span class="sd">            When sample_two=None (e.g. during training), sample_two refers to sample_one.</span>
+
+<span class="sd">        name_one : str</span>
+<span class="sd">            Name for the first sample.</span>
+
+<span class="sd">        sample_two : ndarray</span>
+<span class="sd">            Second sample for the kernel matrix i.e. Y in K(X,Y)</span>
+<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features)</span>
+<span class="sd">                e.g. MLDataset or ndarray</span>
+<span class="sd">            The dimensionality of this sample (number of columns, sample_two.shape[1])</span>
+<span class="sd">                must match with that of sample_one</span>
+
+<span class="sd">        name_two : str</span>
+<span class="sd">            Name for the second sample.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_one</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span> <span class="o">=</span> <span class="n">name_one</span>
+
+        <span class="k">if</span> <span class="n">sample_two</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name_two</span> <span class="o">=</span> <span class="n">name_one</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_descr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_two</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dimensionalities of the two samples differ!&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name_two</span> <span class="o">=</span> <span class="n">name_two</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_descr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> x </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span> \
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">_name_two</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># cleanup old flags and reset to ensure fresh slate for this sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="KernelMatrix.set_attr"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.set_attr">[docs]</a>    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets user-defined attributes for the kernel matrix.</span>
+
+<span class="sd">        Useful to identify this kernel matrix in various aspects!</span>
+<span class="sd">        You could think of them as tags or identifiers etc.</span>
+<span class="sd">        As they are user-defined, they are ideal to represent user needs and applications.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="KernelMatrix.get_attr"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">value_if_not_found</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of an user-defined attribute.</span>
+
+<span class="sd">        If not set previously, or no match found, returns value_if_not_found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">value_if_not_found</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelMatrix.attributes"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.attributes">[docs]</a>    <span class="k">def</span> <span class="nf">attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the attributes currently set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span></div>
+
+
+    <span class="nd">@property</span>  <span class="c1"># this is to prevent accidental change of value</span>
+    <span class="k">def</span> <span class="nf">num_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of samples in the sample this kernel is attached to.</span>
+
+<span class="sd">        This would be a scalar when the current instance is attached to a single sample.</span>
+<span class="sd">        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2</span>
+<span class="sd">        scalars representing num_samples from those two samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span>
+
+
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convenience routine to reset internal state&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lower_tri_km_filled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_full_km&#39;</span><span class="p">):</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_full_km&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_centered</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_normed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># As K(i,j) is the same as K(j,i), only one of them needs to be computed!</span>
+        <span class="c1">#  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># restricting attributes to the latest sample only, to avoid leakage!!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c1"># debugging and efficiency measurement purposes</span>
+        <span class="c1"># for a given sample (of size n),</span>
+        <span class="c1">#   number of kernel evals must never be more than n+ n*(n-1)/2 (or n(n+1)/2)</span>
+        <span class="c1">#   regardless of the number of times different forms of KM are accessed!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_ker_eval</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the size of the KernelMatrix (total number of elements)</span>
+<span class="sd">            i.e. num_samples from which the kernel matrix is computed from.</span>
+<span class="sd">            In a single-sample case, it is the num_samples in the dataset.</span>
+<span class="sd">            In two-sample case, it is the product of num_samples from two datasets.</span>
+
+<span class="sd">        Defining this to correspond to .size attr of numpy arrays</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convenience wrapper for .size attribute, to enable use of len(KernelMatrix)&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fully populated kernel matrix in dense ndarray format.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dense_fmt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep_normed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_normed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normed_km</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">full_sparse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Kernel matrix populated in upper tri in sparse array format.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KernelMatrix.center"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.center">[docs]</a>    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to center the kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Centering is not implemented (or possible)&#39;</span>
+                                      <span class="s1">&#39; when KM is attached two separate samples.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dense_fmt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_centered</span> <span class="o">=</span> <span class="n">center_km</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_centered</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="KernelMatrix.normalize"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalize the kernel matrix to have unit diagonal.</span>
+
+<span class="sd">        Cosine normalization mplements definition according to Section 5.1 in</span>
+<span class="sd">            Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">dense_fmt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_normed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_normed_km</span> <span class="o">=</span> <span class="n">normalize_km</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># KM_XX and KM_YY must NOT be normalized for correct norm of K_XY</span>
+                <span class="c1">#   NOTE: K_XY may NOT have unit diagonal</span>
+                <span class="c1">#       as k(x,y) != sqrt(k(x,x))*sqrt(k(y,y))</span>
+                <span class="n">KM_XX</span> <span class="o">=</span> <span class="n">KernelMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">KM_XX</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">sample_one</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">)</span>
+
+                <span class="n">KM_YY</span> <span class="o">=</span> <span class="n">KernelMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">KM_YY</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">sample_one</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="p">)</span>
+
+                <span class="c1"># not passing .full_km for KM_XX and KM_YY as we only need their diagonal</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_normed_km</span> <span class="o">=</span> <span class="n">normalize_km_2sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">,</span>
+                                                       <span class="n">KM_XX</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(),</span>
+                                                       <span class="n">KM_YY</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_normed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">centered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Exposes the centered version of the kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Centering not defined when attached to 2 samples!&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_centered</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centered</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frob_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the Frobenius norm of the current kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">dense_fmt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frob_norm</span> <span class="o">=</span> <span class="n">frobenius_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frob_norm</span>
+
+
+<div class="viewcode-block" id="KernelMatrix.diagonal"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix.diagonal">[docs]</a>    <span class="k">def</span> <span class="nf">diagonal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the diagonal of the kernel matrix, when attached to a single sample.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">            ValueError</span>
+<span class="sd">                When this instance is attached to more than one sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Diagonal() not defined when attached to 2 samples!&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_eval_kernel</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">normed_km</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access to the normalized kernel matrix.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_normed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normed_km</span>
+
+
+    <span class="k">def</span> <span class="nf">_eval_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns kernel value between samples identified by indices one and two&quot;&quot;&quot;</span>
+
+        <span class="c1"># maintaining only upper triangular parts, when attached to a single sample</span>
+        <span class="c1">#   by ensuring the first index is always &lt;= second index</span>
+        <span class="k">if</span> <span class="n">idx_one</span> <span class="o">&gt;</span> <span class="n">idx_two</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span><span class="p">:</span>
+            <span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span> <span class="o">=</span> <span class="n">idx_two</span><span class="p">,</span> <span class="n">idx_one</span>
+        <span class="c1"># above is more efficient than below:</span>
+        <span class="c1">#  idx_one, idx_two = min(idx_one, idx_two), max(idx_one, idx_two)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">[(</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">)]</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">[</span><span class="n">idx_one</span><span class="p">,</span> <span class="p">:],</span>     <span class="c1"># from 1st sample</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="p">[</span><span class="n">idx_two</span><span class="p">,</span> <span class="p">:])</span> <span class="c1"># from 2nd sample</span>
+                            <span class="c1"># second refers to the first in the default case!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_ker_eval</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">[(</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">)]</span>
+
+
+    <span class="k">def</span> <span class="nf">_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sample [features] corresponding to a given index.</span>
+
+<span class="sd">        Using this would help abstract out the underlying data structure for samples and</span>
+<span class="sd">            their features. For example, inputs can be simply CSVs, or numpy arrays or</span>
+<span class="sd">            MLDataset or xarray or pandas etc.</span>
+<span class="sd">        Disadvantages include the 2 extra function calls to be made for each kernel eval,</span>
+<span class="sd">            which could be saved when operating on a predetermined format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Item getter to allow for efficient access</span>
+<span class="sd">        to partial or random portions of kernel matrix!</span>
+
+<span class="sd">        Indexing here is aimed to be compliant with numpy implementation</span>
+<span class="sd">        as much as possible: https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#arrays-indexing</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid attempt to access the kernel matrix &#39;</span>
+                                <span class="s1">&#39;-: must supply two [sets/ranges of] indices in a tuple!&#39;</span><span class="p">)</span>
+
+        <span class="n">set_one</span><span class="p">,</span> <span class="n">are_all_selected_dim_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_in_sample</span><span class="p">(</span><span class="n">index_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                        <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">set_two</span><span class="p">,</span> <span class="n">are_all_selected_dim_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_in_sample</span><span class="p">(</span><span class="n">index_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                        <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># below code prevents user from [VERY] inefficiently computing</span>
+        <span class="c1"># the entire kernel matrix with KM[:,:],</span>
+        <span class="c1"># without exploiting the fact that KM is symmetric</span>
+        <span class="k">if</span> <span class="n">are_all_selected_dim_one</span> <span class="ow">and</span> <span class="n">are_all_selected_dim_two</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populate_fully</span><span class="p">(</span><span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_for_index_combinations</span><span class="p">(</span><span class="n">set_one</span><span class="p">,</span> <span class="n">set_two</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_get_indices_in_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Turn an index or slice object on a given dimension</span>
+<span class="sd">        into a set of row indices into sample the kernel matrix is attached to.</span>
+
+<span class="sd">        As the kernel matrix is 2D and symmetric of known size,</span>
+<span class="sd">            dimension size doesn&#39;t need to be specified, it is taken from self.num_samples</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">are_all_selected</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="p">]</span>  <span class="c1"># making it iterable</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index_obj_per_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">are_all_selected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">_slice_index_list</span> <span class="o">=</span> <span class="n">index_obj_per_dim</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">_slice_index_list</span><span class="p">))</span>  <span class="c1"># *list expands it as args</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># TODO no restriction on float: float indices will be rounded down towards 0</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">index_obj_per_dim</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid index method/indices for kernel matrix &#39;</span>
+                                <span class="s1">&#39;of shape : </span><span class="si">{km_shape}</span><span class="s1">.&#39;</span>
+                                <span class="s1">&#39; Only int, slice or iterable objects are allowed!&#39;</span>
+                                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">km_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># enforcing constraints</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid index method/indices for kernel matrix!</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                <span class="s1">&#39; Some indices in </span><span class="si">{}</span><span class="s1"> are out of range: &#39;</span>
+                                <span class="s1">&#39; shape : </span><span class="si">{km_shape}</span><span class="s1">,&#39;</span>
+                                <span class="s1">&#39; index values must all be &gt;=0 and &lt; corr. dimension&#39;</span>
+                                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">km_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># slice object returns empty list if all specified are out of range</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;No samples were selected in dim </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+        <span class="c1"># removing duplicates and sorting</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">]:</span>
+            <span class="n">are_all_selected</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">are_all_selected</span>
+
+
+    <span class="k">def</span> <span class="nf">_compute_for_index_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_one</span><span class="p">,</span> <span class="n">set_two</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes value of kernel matrix for all combinations of given set of indices&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_eval_kernel</span><span class="p">(</span><span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">idx_one</span><span class="p">,</span> <span class="n">idx_two</span> <span class="ow">in</span> <span class="n">iter_product</span><span class="p">(</span><span class="n">set_one</span><span class="p">,</span> <span class="n">set_two</span><span class="p">)],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">set_one</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_two</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">_populate_fully</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dense_fmt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_lower_tri</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies the kernel function on all pairs of points in a sample.</span>
+
+<span class="sd">        CAUTION: this may not always be necessary,</span>
+<span class="sd">            and can take HUGE memory for LARGE datasets,</span>
+<span class="sd">            and also can take a lot of time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># kernel matrix is symmetric (in a single sample case)</span>
+        <span class="c1">#   so we need only to STORE half the matrix!</span>
+        <span class="c1"># as we are computing the full matrix anyways, it&#39;s better to keep a copy</span>
+        <span class="c1">#   to avoid recomputing it for each access of self.full* attributes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_full_km&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dense_fmt</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># kernel matrix is symmetric (in a single sample case)</span>
+                <span class="c1">#   so we need only compute half the matrix!</span>
+                <span class="c1"># computing the kernel for diagonal elements i,i as well</span>
+                <span class="c1">#   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case</span>
+                <span class="k">for</span> <span class="n">ix_one</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c1"># number of rows!</span>
+                    <span class="k">for</span> <span class="n">ix_two</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ix_one</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># from second sample!</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">[</span><span class="n">ix_one</span><span class="p">,</span> <span class="n">ix_two</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_kernel</span><span class="p">(</span><span class="n">ix_one</span><span class="p">,</span> <span class="n">ix_two</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to fully compute the kernel matrix!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">fill_lower_tri</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_tri_km_filled</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># choosing k=-1 as main diag is already covered above (nested for loop)</span>
+                <span class="n">ix_lower_tri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_samples</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">[</span><span class="n">ix_lower_tri</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">ix_lower_tri</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># evaluating it for the lower triangle as well!</span>
+                    <span class="k">for</span> <span class="n">ix_one</span><span class="p">,</span> <span class="n">ix_two</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ix_lower_tri</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">[</span><span class="n">ix_one</span><span class="p">,</span> <span class="n">ix_two</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_kernel</span><span class="p">(</span><span class="n">ix_one</span><span class="p">,</span> <span class="n">ix_two</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to symmetrize the kernel matrix!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_lower_tri_km_filled</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">issparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dense_fmt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable presentation&quot;&quot;&quot;</span>
+
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># showing normalization status only when attached to data!</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; (normed=</span><span class="si">{}</span><span class="s2">) on </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keep_normed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_descr</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">string</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+    <span class="c1"># TODO implement arithmetic operations on kernel matrices</span>
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Addition&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Multiplication&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtraction&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<span class="k">class</span> <span class="nc">KernelMatrixPrecomputed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience decorator for kernel matrices in ndarray or simple matrix format.&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input matrix is not convertible to numpy array!&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">matrix</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">not_symmetric</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input matrix appears to be NOT 2D or symmetric! &#39;</span>
+                             <span class="s1">&#39;Symmetry is needed for a valid kernel.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span> <span class="o">=</span> <span class="n">matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Precomputed&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;size of kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;size of kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the full kernel matrix (in dense format, as its already precomputed)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">diag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the diagonal of the kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the matrix&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">[</span><span class="n">index_obj</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid attempt to access the 2D kernel matrix!&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable presentation&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(num_samples=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+<span class="k">class</span> <span class="nc">ConstantKernelMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom KM to represent a constant.</span>
+
+<span class="sd">    TODO this is not fully though-out, or well. Consider removing or rewriting!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">const_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Constant&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;size of kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;size of kernel matrix&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the full kernel matrix (in dense format)&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_KM&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">),</span>
+                               <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">diag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the diagonal of the kernel matrix&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,),</span>
+                       <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the matrix&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">[</span><span class="n">index_obj</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid attempt to access the 2D kernel matrix!&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable presentation&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(value=</span><span class="si">{}</span><span class="s2">,num_samples=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+<span class="n">VALID_KERNEL_MATRIX_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="n">KernelMatrix</span><span class="p">,</span> <span class="n">KernelMatrixPrecomputed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KernelSet"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet">[docs]</a><span class="k">class</span> <span class="nc">KernelSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container class to manage a set of compatible KernelMatrix instances.</span>
+
+<span class="sd">    Compatibility is checked based on the size (number of samples they operate on).</span>
+<span class="sd">    Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">km_set</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;KernelSet&#39;</span><span class="p">,</span>
+                 <span class="n">num_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># empty to start with</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="c1"># user can choose to set the properties of the kernel matrices</span>
+        <span class="c1"># this num_samples property is key, as only KMs with same value are allowed in</span>
+        <span class="k">if</span> <span class="n">num_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_init</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># to denote no KM has been added yet, or their size property is not set</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_init</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">km</span> <span class="ow">in</span> <span class="n">km_set</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">km</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">VALID_KERNEL_MATRIX_TYPES</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">km_set</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">km_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># do nothing</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type of input matrix! &#39;</span>
+                            <span class="s1">&#39;Must be one of:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VALID_KERNEL_MATRIX_TYPES</span><span class="p">))</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of kernel matrices in this set&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of samples in each individual kernel matrix &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span>
+
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the number of kernels in this set&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KernelSet.append"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">KM</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to add a new kernel to the set.</span>
+
+<span class="sd">        Checks to ensure the new KM is compatible in size to the existing set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">KM</span><span class="p">,</span> <span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">,</span> <span class="n">KernelMatrix</span><span class="p">,</span>
+                               <span class="n">KernelMatrixPrecomputed</span><span class="p">)):</span>
+            <span class="n">KM</span> <span class="o">=</span> <span class="n">KernelMatrixPrecomputed</span><span class="p">(</span><span class="n">KM</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_init</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">KM</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_init</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">!=</span> <span class="n">KM</span><span class="o">.</span><span class="n">num_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMSetAdditionError</span><span class="p">(</span><span class="s1">&#39;Dimension of this KM </span><span class="si">{}</span><span class="s1"> is incompatible &#39;</span>
+                                     <span class="s1">&#39;with KMSet of </span><span class="si">{}</span><span class="s1">! &#39;</span>
+                                     <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">KM</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">KM</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To retrieve individual kernels&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Only integer indices are permitted, &#39;</span>
+                             <span class="s1">&#39;accessing one KM at a time&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Index out of range for KernelSet of size </span><span class="si">{}</span><span class="s1">&#39;</span>
+                             <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+        <span class="c1"># TODO elements need to accessible by more than a simple integer index!</span>
+        <span class="c1">#   Perhaps KernelMatrix can provide a hash to uniquely refer to an instance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="KernelSet.take"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.take">[docs]</a>    <span class="k">def</span> <span class="nf">take</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SelectedKMs&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a new KernelSet with requested kernel matrices, identified by their indices.&quot;&quot;&quot;</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+        <span class="n">new_set</span> <span class="o">=</span> <span class="n">KernelSet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="c1"># TODO should we add a copy of ith KM, or just a reference?</span>
+            <span class="c1">#   No copy--&gt;accidental changes!</span>
+            <span class="n">new_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">new_set</span></div>
+
+
+<div class="viewcode-block" id="KernelSet.get_kernel_funcs"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.get_kernel_funcs">[docs]</a>    <span class="k">def</span> <span class="nf">get_kernel_funcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SelectedKernelFuncs&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns kernel functions underlying the specified kernel matrices in this kernel set.</span>
+
+<span class="sd">        This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">kernel</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_check_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks the validity and type of indices.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">]</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">indices</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">indices</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;One/more indices are out of range for KernelSet of size </span><span class="si">{}</span><span class="s1">&#39;</span>
+                             <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">indices</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Human readable repr&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2"> kernels, </span><span class="si">{}</span><span class="s2"> samples):</span><span class="se">\n\t</span><span class="si">{}</span><span class="s2"> &quot;</span> \
+               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span>
+                         <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">)))</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Making an iterable.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="KernelSet.attach_to"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.attach_to">[docs]</a>    <span class="k">def</span> <span class="nf">attach_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span>
+                  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span>
+                  <span class="n">attr_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">attr_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attach all the kernel matrices in this set to a given sample.</span>
+
+<span class="sd">        Any previous evaluations to other samples and their results will be reset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample : ndarray</span>
+<span class="sd">            Input sample to operate on</span>
+<span class="sd">            Must be 2D of shape (num_samples, num_features)</span>
+
+<span class="sd">        name : str</span>
+<span class="sd">            Identifier for the sample (esp. when multiple are in the same set)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of samples in input differ from this KernelSet&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">name_one</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelSet.extend"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">another_km_set</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extends the current set by adding in all elements from another set.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">another_km_set</span><span class="p">,</span> <span class="n">KernelSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">KMSetAdditionError</span><span class="p">(</span><span class="s1">&#39;Input is not a KernelSet!&#39;</span>
+                                     <span class="s1">&#39;Build a KernelSet() first.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">another_km_set</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The two KernelSets are not compatible (in size: # samples)&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">km</span> <span class="ow">in</span> <span class="n">another_km_set</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">km</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelSet.set_attr"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.set_attr">[docs]</a>    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets user-defined attributes for the kernel matrices in this set.</span>
+
+<span class="sd">        If len(values)==1, same value is set for all. Otherwise values must be of size as</span>
+<span class="sd">        KernelSet, providing a separate value for each element.</span>
+
+<span class="sd">        Useful to identify this kernel matrix in various aspects!</span>
+<span class="sd">        You could think of them as tags or identifiers etc.</span>
+<span class="sd">        As they are user-defined, they are ideal to represent user needs and applications.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">values</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Values must be single element, or &#39;</span>
+                             <span class="s1">&#39;of the same size as this KernelSet (</span><span class="si">{}</span><span class="s1">), &#39;</span>
+                             <span class="s1">&#39;providing a separate value for each element.&#39;</span>
+                             <span class="s1">&#39;It is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="KernelSet.get_attr"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelSet.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value_if_not_found</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of an user-defined attribute.</span>
+
+<span class="sd">        If not set previously, or no match found, returns value_if_not_found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_km_set</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value_if_not_found</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="p">]</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">CompositeKernel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to combine a set of kernels into a composite kernel.&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Composite&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">KernelSet</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input must be a KernelSet&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">km_set</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;KernelSet must have atleast 2 kernels&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">km_set</span><span class="o">.</span><span class="n">num_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;KernelSet is not attached to any sample!&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span> <span class="o">=</span> <span class="n">km_set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">km_set</span><span class="o">.</span><span class="n">num_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Abstract methods that needs to be defined later.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">composite_KM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the result of composite operation&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not fitted yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable presentation&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">--&gt;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">))</span>
+
+
+    <span class="c1"># aliasing them to __str__ for now</span>
+    <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+
+
+<span class="k">class</span> <span class="nc">SumKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted sum kernel from a KernelSet&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SumKernel&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the sum kernel&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">kernel_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kernel_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kernel_weights</span> <span class="o">=</span> <span class="n">ensure_ndarray_1D</span><span class="p">(</span><span class="n">kernel_weights</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kernel_weights</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incompatible set of kernel_weights given.&#39;</span>
+                                 <span class="s1">&#39;Must be an array of length exactly </span><span class="si">{}</span><span class="s1">&#39;</span>
+                                 <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">km</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">kernel_weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">ProductKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a Product kernel from a KernelSet&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ProductKernel&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the product kernel.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">km</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>  <span class="c1"># * is element-wise multiplication here</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">AverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute an Average kernel from a KernelSet&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;AverageKernel&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the average kernel&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">km</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">+</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>  <span class="c1"># * is element-wise multiplication here</span>
+
+        <span class="c1"># dividing by N, to make it an average</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">WeightedAverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted verage kernel from a KernelSet&quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">km_set</span><span class="p">,</span>
+                 <span class="n">weights</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;WeightedAverageKernel&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">ensure_ndarray_1D</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Number of weights (</span><span class="si">{}</span><span class="s1">) supplied differ from the kernel set size (</span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
+
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the weighted average kernel&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">km</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">PredictiveModelFromKernelMatrix</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to turn a given kernel into a predictive model&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>  <span class="c1"># raise NotImplementedError()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Pradeep Reddy Raamana
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

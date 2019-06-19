@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utilities &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Numeric kernels" href="numeric_kernels.html" />
+    <link rel="prev" title="Kernel Operations" href="operations.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> kernelmethods
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1+1.gb24cf24
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">Kernel methods and classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kernelmethods</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/utilities.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="utilities">
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<p>Here, we document several important utilities related to this library, including different ways of ranking the KMs based on their target alignment, performance in cross-validation etc.</p>
+<span class="target" id="module-kernelmethods.ranking"></span><p>Module gathering techniques and helpers to rank kernels using various methods and metrics.</p>
+<dl class="function">
+<dt id="kernelmethods.ranking.CV_ranking">
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">CV_ranking</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">targets</em>, <em class="sig-param">num_folds=3</em>, <em class="sig-param">estimator_name='SVM'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#CV_ranking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.CV_ranking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ranks kernels by their performance in cross-validation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.ranking.alignment_ranking">
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">alignment_ranking</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">targets</em>, <em class="sig-param">**method_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#alignment_ranking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.alignment_ranking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to rank kernels that depend on target alignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.ranking.find_optimal_kernel">
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">find_optimal_kernel</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">sample</em>, <em class="sig-param">targets</em>, <em class="sig-param">method='align/corr'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#find_optimal_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.find_optimal_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the optimal kernel for the current sample</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.ranking.get_estimator">
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">get_estimator</code><span class="sig-paren">(</span><em class="sig-param">learner_id='svm'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#get_estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.get_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a valid kernel machine to become the base learner of the MKL methods.</p>
+<p>This base learner must be able to accept a precomputed kernel for fit/predict methods!</p>
+<dl class="simple">
+<dt>TODO hyper-param optimization needs to be incorporated somewhere!!</dt><dd><p>Perhaps by returning a GridSearchCV(base_learner) object or similar?</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.ranking.rank_kernels">
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">rank_kernels</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">targets</em>, <em class="sig-param">method='align/corr'</em>, <em class="sig-param">**method_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#rank_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.rank_kernels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main interface.</p>
+<p>Choices for the method include: “align/corr”, “cv_risk”</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="numeric_kernels.html" class="btn btn-neutral float-right" title="Numeric kernels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="operations.html" class="btn btn-neutral float-left" title="Kernel Operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Pradeep Reddy Raamana
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
