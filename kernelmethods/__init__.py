@@ -2,12 +2,13 @@
 
 """Top-level package for kernelmethods."""
 
-__all__ = ['PolyKernel', 'BaseKernelFunction',
-           'KernelMatrix',
-           'KernelMethodsException', 'KMAccessError']
+__all__ = ['KernelMatrix',
+           'BaseKernelFunction', 'KernelMethodsException', 'KMAccessError',
+           'PolyKernel', 'GaussianKernel', 'LaplacianKernel', 'LinearKernel',
+           'KernelBucket', 'KernelSet']
 
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
-    KernelMethodsException, KMAccessError
+    KernelMethodsException, KMAccessError, KernelSet
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
     LinearKernel
 from kernelmethods.sampling import KernelBucket

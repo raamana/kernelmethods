@@ -135,7 +135,8 @@ class KernelFromCallable(BaseKernelFunction):
 
 class KernelMatrix(object):
     """
-    A self-contained class for the Gram matrix induced by a kernel fuction on a sample.
+    A self-contained class for the Gram matrix induced by a kernel function on a
+    sample.
 
     KM[i,j] --> kernel between samples i and j
     KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
