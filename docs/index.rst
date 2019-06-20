@@ -15,6 +15,9 @@ Welcome to kernelmethods's documentation!
    operations
    utilities
    numeric_kernels
+   categorical_kernels
+   string_kernels
+   graph_kernels
    contributing
    history
 
