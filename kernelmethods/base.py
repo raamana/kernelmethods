@@ -9,7 +9,7 @@ from scipy.sparse import issparse, lil_matrix
 from kernelmethods.operations import center_km, is_PSD, normalize_km, normalize_km_2sample
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
-
+from kernelmethods import config as cfg
 
 class KernelMethodsException(Exception):
     """
@@ -227,7 +227,7 @@ class KernelMatrix(object):
             Name for the second sample.
         """
 
-        self._sample = ensure_ndarray_2D(sample_one)
+        self._sample = ensure_ndarray_2D(sample_one, ensure_dtype=sample_one.dtype)
         self._sample_name = name_one
 
         if sample_two is None:
@@ -241,7 +241,8 @@ class KernelMatrix(object):
             self._sample_descr = "{} {}".format(self._sample_name, self._sample.shape)
 
         else:
-            self._sample_two = ensure_ndarray_2D(sample_two)
+            self._sample_two = ensure_ndarray_2D(sample_two,
+                                                 ensure_dtype=sample_two.dtype)
 
             if self._sample.shape[1] != self._sample_two.shape[1]:
                 raise ValueError('Dimensionalities of the two samples differ!')
@@ -603,9 +604,9 @@ class KernelMatrix(object):
         #   to avoid recomputing it for each access of self.full* attributes
         if not self._populated_fully and not hasattr(self, '_full_km'):
             if not dense_fmt:
-                self._full_km = lil_matrix(self.shape, dtype=self._sample.dtype)
+                self._full_km = lil_matrix(self.shape, dtype=cfg.km_dtype)
             else:
-                self._full_km = np.empty(self.shape, dtype=self._sample.dtype)
+                self._full_km = np.empty(self.shape, dtype=cfg.km_dtype)
 
             try:
                 # kernel matrix is symmetric (in a single sample case)
