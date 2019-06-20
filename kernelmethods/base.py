@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from collections import Iterable
 from copy import copy
 from itertools import product as iter_product
+import os
 
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
@@ -80,6 +81,8 @@ class BaseKernelFunction(ABC):
 
 
     # aliasing others to __str__ for now
+    # TODO having a shorter alias such as p(2)/g(0.1) is conveniennt instead of
+    #  polynomial(degree=2) or gaussian(sigma=0.1): {:s} for __format__()?
     def __format__(self, _):
         """Representation"""
 
@@ -154,7 +157,8 @@ class KernelMatrix(object):
     def __init__(self,
                  kernel,
                  normalized=True,
-                 name='KernelMatrix'):
+                 name='KernelMatrix',
+                 n_cpus=None):
         """
         Constructor.
 
@@ -169,6 +173,14 @@ class KernelMatrix(object):
 
         name : str
             short name to describe the nature of the kernel function
+
+        n_cpus : None or int
+            Allows to parallelize evaluation of full gram matrix, when the number of
+            samples is too large to make the full computation of KM too slow, or when the
+            evaluation of kernel func on a single pair (i,j) is slow (rarely the case).
+            Default: None, which is serial evaluation of all the pairs.
+            If a number is specified, n=min(n_cpus, os.cpu_count()) will be used.
+            If os.cpu_count() is not successful, 2 will be chosen.
 
         """
 
@@ -191,6 +203,8 @@ class KernelMatrix(object):
         # user-defined attribute dictionary
         self._attr = dict()
 
+        self._setup_parallelization(n_cpus)
+
         self._reset()
 
 
@@ -198,7 +212,8 @@ class KernelMatrix(object):
                   sample_one,
                   name_one='sample',
                   sample_two=None,
-                  name_two=None):
+                  name_two=None,
+                  n_cpus=None):
         """
         Attach this kernel to a given sample.
 
@@ -469,8 +484,19 @@ class KernelMatrix(object):
         return self._normed_km
 
 
+    def _eval_pairs(self, pairs):
+        """Helper to facilitate parallel processing in chunks of index pairs"""
+
+        print('{} pairs provided: start {}, end: {}'.format(len(pairs)),
+              pairs[0], pairs[-1])
+        for idx_one, idx_two in pairs:
+            self._eval_kernel(idx_one, idx_two)
+
+
     def _eval_kernel(self, idx_one, idx_two):
         """Returns kernel value between samples identified by indices one and two"""
+
+        # print('within eval_kernel : {} {}'.format(idx_one, idx_two))
 
         # maintaining only upper triangular parts, when attached to a single sample
         #   by ensuring the first index is always <= second index
@@ -589,6 +615,35 @@ class KernelMatrix(object):
                         dtype=self._sample.dtype).reshape(len(set_one), len(set_two))
 
 
+    def _setup_parallelization(self, n_cpus):
+        """Sets the number of CPUs and other state-related flags."""
+
+        if n_cpus is not None:
+            query = os.cpu_count()
+            if query is None:
+                query = 2
+                print('Unable to query the num. CPUs - choosing {}'.format(query))
+            self._num_cpus = min(int(n_cpus), query)
+            if self._num_cpus <= 1:
+                print('num_cpus setup is <=1, skipping parallelization.')
+                self._parallelize = False
+            else:
+                self._parallelize = True
+        else:
+            self._parallelize = False
+            self._num_cpus = None
+
+
+    def _parallel_eval(self):
+        """Parallelize the evaluation of KM on subsets of n(n+1)/2 pairs of indices."""
+
+        indices = np.dstack(np.triu_indices(self.shape[0], m=self.shape[1])).squeeze()
+        from multiprocessing import Pool
+        with Pool(processes=self._num_cpus) as pool:
+            # n(m+1)/2 into _num_cpus chunks
+            pool.map(self._eval_pairs, indices, chunksize=0.5*self.size/self._num_cpus)
+
+
     def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):
         """Applies the kernel function on all pairs of points in a sample.
 
@@ -612,35 +667,45 @@ class KernelMatrix(object):
                 # kernel matrix is symmetric (in a single sample case)
                 #   so we need only compute half the matrix!
                 # computing the kernel for diagonal elements i,i as well
-                #   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case
-                for ix_one in range(self.shape[0]): # number of rows!
-                    for ix_two in range(ix_one, self.shape[1]): # from second sample!
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+                #  as ix_two, even when equal to ix_one, refers to sample_two in
+                #  the two_samples case
+                if self._parallelize:
+                    self._parallel_eval()
+                else:
+                    for ix_one in range(self.shape[0]): # number of rows!
+                        for ix_two in range(ix_one, self.shape[1]): # from second sample!
+                            self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
             except:
                 raise RuntimeError('Unable to fully compute the kernel matrix!')
             else:
                 self._populated_fully = True
 
         if fill_lower_tri and not self._lower_tri_km_filled:
-            try:
-                # choosing k=-1 as main diag is already covered above (nested for loop)
-                ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
-
-                if not self._two_samples and self.shape[0] == self.shape[1]:
-                    self._full_km[ix_lower_tri] = self._full_km.T[ix_lower_tri]
-                else:
-                    # evaluating it for the lower triangle as well!
-                    for ix_one, ix_two in zip(*ix_lower_tri):
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
-            except:
-                raise RuntimeError('Unable to symmetrize the kernel matrix!')
-            else:
-                self._lower_tri_km_filled = True
+            self._fill_lower_tri()
 
         if issparse(self._full_km) and dense_fmt:
             self._full_km = self._full_km.todense()
 
         return self._full_km
+
+
+    def _fill_lower_tri(self):
+        """Helper method to fill the lower tri part of KM"""
+
+        try:
+            # choosing k=-1 as main diag is already covered above (nested for loop)
+            ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
+
+            if not self._two_samples and self.shape[0] == self.shape[1]:
+                self._full_km[ix_lower_tri] = self._full_km.T[ix_lower_tri]
+            else:
+                # evaluating it for the lower triangle as well!
+                for ix_one, ix_two in zip(*ix_lower_tri):
+                    self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+        except:
+            raise RuntimeError('Unable to symmetrize the kernel matrix!')
+        else:
+            self._lower_tri_km_filled = True
 
 
     def __str__(self):

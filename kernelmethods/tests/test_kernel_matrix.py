@@ -21,7 +21,8 @@ sample_data = np.random.rand(num_samples, sample_dim)
 target_labels = np.random.choice(target_label_set, num_samples)
 
 # suffix 1 to indicate one sample case
-km1 = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
+typical_ker_func = PolyKernel(degree=2, skip_input_checks=True)
+km1 = KernelMatrix(typical_ker_func)
 km1.attach_to(sample_data)
 
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
@@ -183,6 +184,33 @@ def test_attach_to_two_samples():
         km2.attach_to(sample_data, sample_two=more_dims)
 
 
+def test_parallelization():
+
+
+    n_cpus = 4
+    large_n = 1000
+    large_sample = np.random.rand(large_n, 3)
+    target_labels = np.random.choice(target_label_set, large_n)
+
+    km_parallel = KernelMatrix(typical_ker_func, n_cpus=n_cpus)
+    km_parallel.attach_to(large_sample)
+    a = km_parallel.full
+
+    from timeit import timeit, repeat
+    parl = repeat('km_parallel._populate_fully()', repeat=4, globals=locals())
+
+    km_serial = KernelMatrix(typical_ker_func)
+    km_serial.attach_to(large_sample)
+
+    serial = repeat('km_serial._populate_fully()', repeat=4,  globals=locals())
+
+    print('time taken: in paralle : {}, serial: {}'.format(np.median(parl),
+          np.median(serial)))
+    if np.median(parl) >= np.median(serial)/(n_cpus-1):
+        raise ValueError('parallelization with {} cpus has not saved time '
+                         'for sample of size {}'.format(n_cpus, large_n))
+
+
 def test_attributes():
 
     km = KernelMatrix(LinearKernel())
@@ -196,4 +224,5 @@ def test_attributes():
         assert attr in kma
 
 
-test_attributes()
+# test_attributes()
+test_parallelization()
