@@ -1,8 +1,8 @@
 
 # Config file for automatic testing at travis-ci.org
 install:
-  - pip install pytest-cov
-  - pip install -r requirements.txt
+  - pip install pytest-cov hypothesis
+  - pip install -r requirements_dev.txt
   - pip install -e .
 
 language: python
