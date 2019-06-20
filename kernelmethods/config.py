@@ -20,6 +20,9 @@ light_degree_values_poly_kernel = (2, 3, 4)
 light_sigma_values_gaussian_kernel = tuple([2**exp for exp in range(-5, 6, 2)])
 light_gamma_values_laplacian_kernel = tuple([2**exp for exp in range(1, 7, 2)])
 
-# categorical variables
+# controls the precision for kernel_matrix elements
+km_dtype = np.dtype('f8')
 
-dtype_categorical = np.string_
+# categorical variables
+dtype_categorical = np.unicode_
+
