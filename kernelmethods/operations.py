@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Kernel methods module."""
+"""Module implementing common kernel operations."""
 
 import numpy as np
 from numpy import multiply as elem_wise_multiply
@@ -13,12 +13,14 @@ def is_positive_semidefinite(sym_matrix,
                              tolerance=1e-6,
                              verbose=False):
     """
-    Tests whether a given matrix is PSD.
+    Tests whether a given matrix is positive-semidefinite (PSD).
 
     A symmetric matrix is PSD if ALL its eigen values >= 0 (non-negative).
         If any of its eigen values are negative, it is not PSD.
 
-    Accouting for numerical instabilities with tolerance
+    Accounting for numerical instabilities with tolerance.
+
+    Shortcut: is_PSD()
 
     """
 

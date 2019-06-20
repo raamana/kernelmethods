@@ -8,9 +8,9 @@ Welcome to kernelmethods's documentation!
    readme
    installation
    usage
-   modules
    API
    kernel_matrix
+   kernel_functions
    km_collections
    operations
    utilities
