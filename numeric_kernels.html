@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Numeric kernels &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
+  <title>Numeric kernels &mdash; kernelmethods 0.1.1 documentation</title>
   
 
   
@@ -17,37 +17,42 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
 
+  
+  
     
 
   
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Categorical kernels" href="categorical_kernels.html" />
-    <link rel="prev" title="Utilities" href="utilities.html" /> 
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="kernelmethods 0.1.1 documentation" href="index.html"/>
+        <link rel="next" title="Categorical kernels" href="categorical_kernels.html"/>
+        <link rel="prev" title="Utilities" href="utilities.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
+
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+        <div class="wy-side-nav-search">
           
 
           
@@ -61,7 +66,7 @@
             
             
               <div class="version">
-                0.1+11.ga91d38d.dirty
+                0.1.1
               </div>
             
           
@@ -93,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#composite-kernel-functions">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
@@ -114,7 +119,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">kernelmethods</a>
@@ -122,10 +127,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -171,28 +175,28 @@
 <span id="numeric-kernels"></span><h1>Numeric kernels<a class="headerlink" href="#module-kernelmethods.numeric_kernels" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="kernelmethods.numeric_kernels.GaussianKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">GaussianKernel</code><span class="sig-paren">(</span><em class="sig-param">sigma=2.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#GaussianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.GaussianKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.numeric_kernels.</code><code class="descname">GaussianKernel</code><span class="sig-paren">(</span><em>sigma=2.0</em>, <em>skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#GaussianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.GaussianKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Gaussian kernel function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="kernelmethods.numeric_kernels.LaplacianKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">LaplacianKernel</code><span class="sig-paren">(</span><em class="sig-param">gamma=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LaplacianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.LaplacianKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.numeric_kernels.</code><code class="descname">LaplacianKernel</code><span class="sig-paren">(</span><em>gamma=1.0</em>, <em>skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LaplacianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.LaplacianKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Laplacian kernel function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="kernelmethods.numeric_kernels.LinearKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">LinearKernel</code><span class="sig-paren">(</span><em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LinearKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.LinearKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.numeric_kernels.</code><code class="descname">LinearKernel</code><span class="sig-paren">(</span><em>skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LinearKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.LinearKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Linear kernel function</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="kernelmethods.numeric_kernels.PolyKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">PolyKernel</code><span class="sig-paren">(</span><em class="sig-param">degree=2</em>, <em class="sig-param">b=0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.PolyKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.numeric_kernels.</code><code class="descname">PolyKernel</code><span class="sig-paren">(</span><em>degree=2</em>, <em>b=0</em>, <em>skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.PolyKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Polynomial kernel function</p>
 </dd></dl>
@@ -201,7 +205,9 @@
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -210,7 +216,7 @@
         <a href="categorical_kernels.html" class="btn btn-neutral float-right" title="Categorical kernels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="utilities.html" class="btn btn-neutral float-left" title="Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="utilities.html" class="btn btn-neutral" title="Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -219,11 +225,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Pradeep Reddy Raamana
+        &copy; Copyright 2018, Pradeep Reddy Raamana.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -236,15 +242,37 @@
   
 
 
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
 
   
   
-    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
    
 
 </body>

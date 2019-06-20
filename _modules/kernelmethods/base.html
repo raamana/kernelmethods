@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>kernelmethods.base &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
+  <title>kernelmethods.base &mdash; kernelmethods 0.1.1 documentation</title>
   
 
   
@@ -17,35 +17,41 @@
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
+  
+  
     
 
   
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="kernelmethods 0.1.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
+
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+        <div class="wy-side-nav-search">
           
 
           
@@ -59,7 +65,7 @@
             
             
               <div class="version">
-                0.1+11.ga91d38d.dirty
+                0.1.1
               </div>
             
           
@@ -91,7 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../kernel_matrix.html">KernelMatrix class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html">Kernel functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html#composite-kernel-functions">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities</a></li>
@@ -112,7 +118,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">kernelmethods</a>
@@ -120,10 +126,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -153,6 +158,8 @@
     
       <li class="wy-breadcrumbs-aside">
         
+            
+        
       </li>
     
   </ul>
@@ -177,7 +184,7 @@
     <span class="n">get_callable_name</span><span class="p">,</span> <span class="n">not_symmetric</span>
 <span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
 
-<div class="viewcode-block" id="KernelMethodsException"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.KernelMethodsException">[docs]</a><span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelMethodsException"><a class="viewcode-back" href="../../API.html#kernelmethods.KernelMethodsException">[docs]</a><span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generic exception to indicate invalid use of the kernelmethods library.</span>
 
@@ -258,7 +265,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">KernelFromCallable</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelFromCallable"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.KernelFromCallable">[docs]</a><span class="k">class</span> <span class="nc">KernelFromCallable</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to create a custom kernel from a given callable.&quot;&quot;&quot;</span>
 
 
@@ -302,7 +309,7 @@
 
     <span class="c1"># aliasing them to __str__ for now</span>
     <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
-    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span></div>
 
 
 <div class="viewcode-block" id="KernelMatrix"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrix">[docs]</a><span class="k">class</span> <span class="nc">KernelMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1232,7 +1239,7 @@
                  <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="p">]</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">CompositeKernel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="CompositeKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.CompositeKernel">[docs]</a><span class="k">class</span> <span class="nc">CompositeKernel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to combine a set of kernels into a composite kernel.&quot;&quot;&quot;</span>
 
 
@@ -1254,10 +1261,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
 
-    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="CompositeKernel.fit"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.CompositeKernel.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Abstract methods that needs to be defined later.&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
 
 
     <span class="nd">@property</span>
@@ -1278,10 +1285,10 @@
 
     <span class="c1"># aliasing them to __str__ for now</span>
     <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
-    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span></div>
 
 
-<span class="k">class</span> <span class="nc">SumKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="SumKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.SumKernel">[docs]</a><span class="k">class</span> <span class="nc">SumKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted sum kernel from a KernelSet&quot;&quot;&quot;</span>
 
 
@@ -1291,7 +1298,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SumKernel.fit"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.SumKernel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the sum kernel&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">kernel_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1307,10 +1314,10 @@
         <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">km</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">kernel_weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">ProductKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.ProductKernel">[docs]</a><span class="k">class</span> <span class="nc">ProductKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to define and compute a Product kernel from a KernelSet&quot;&quot;&quot;</span>
 
 
@@ -1320,17 +1327,17 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductKernel.fit"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.ProductKernel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the product kernel.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">km</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>  <span class="c1"># * is element-wise multiplication here</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">AverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="AverageKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.AverageKernel">[docs]</a><span class="k">class</span> <span class="nc">AverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to define and compute an Average kernel from a KernelSet&quot;&quot;&quot;</span>
 
 
@@ -1340,7 +1347,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AverageKernel.fit"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.AverageKernel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the average kernel&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
@@ -1350,10 +1357,10 @@
         <span class="c1"># dividing by N, to make it an average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">WeightedAverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="WeightedAverageKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.WeightedAverageKernel">[docs]</a><span class="k">class</span> <span class="nc">WeightedAverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted verage kernel from a KernelSet&quot;&quot;&quot;</span>
 
 
@@ -1373,14 +1380,14 @@
                 <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
 
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WeightedAverageKernel.fit"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.WeightedAverageKernel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the weighted average kernel&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">km</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">km_set</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">KM</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">PredictiveModelFromKernelMatrix</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">):</span>
@@ -1390,7 +1397,9 @@
 </pre></div>
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -1399,11 +1408,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Pradeep Reddy Raamana
+        &copy; Copyright 2018, Pradeep Reddy Raamana.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1416,15 +1425,37 @@
   
 
 
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
 
   
   
-    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
    
 
 </body>

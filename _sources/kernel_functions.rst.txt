@@ -16,8 +16,14 @@ In addition, the following classes are provided to enable compositional represen
  - :doc:`graph_kernels`
  - and others such as trees and sequences (TBA).
 
-.. automodule:: kernelmethods
-   :members: BaseKernelFunction, KernelFromCallable
+.. autoclass:: kernelmethods.BaseKernelFunction
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: kernelmethods.base.KernelFromCallable
+   :members:
    :undoc-members:
    :inherited-members:
    :show-inheritance:
@@ -27,8 +33,33 @@ Composite kernel functions
 ---------------------------
 
 
-.. automodule:: kernelmethods
-   :members: CompositeKernel, ProductKernel, SumKernel, AverageKernel, WeightedAverageKernel
+.. autoclass:: kernelmethods.base.CompositeKernel
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+.. autoclass:: kernelmethods.base.ProductKernel
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: kernelmethods.base.SumKernel
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: kernelmethods.base.AverageKernel
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: kernelmethods.base.WeightedAverageKernel
+   :members:
    :undoc-members:
    :inherited-members:
    :show-inheritance:

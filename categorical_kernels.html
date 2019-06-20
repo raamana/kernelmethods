@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Categorical kernels &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
+  <title>Categorical kernels &mdash; kernelmethods 0.1.1 documentation</title>
   
 
   
@@ -17,37 +17,42 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
 
+  
+  
     
 
   
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="String kernels (coming soon)" href="string_kernels.html" />
-    <link rel="prev" title="Numeric kernels" href="numeric_kernels.html" /> 
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="kernelmethods 0.1.1 documentation" href="index.html"/>
+        <link rel="next" title="String kernels (coming soon)" href="string_kernels.html"/>
+        <link rel="prev" title="Numeric kernels" href="numeric_kernels.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
+
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+        <div class="wy-side-nav-search">
           
 
           
@@ -61,7 +66,7 @@
             
             
               <div class="version">
-                0.1+11.ga91d38d.dirty
+                0.1.1
               </div>
             
           
@@ -93,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#composite-kernel-functions">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
@@ -114,7 +119,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">kernelmethods</a>
@@ -122,10 +127,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -172,29 +176,32 @@
 <p>Implemented:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">MatchCountKernel</span></code></p></li>
+<li><code class="docutils literal notranslate"><span class="pre">MatchCountKernel</span></code></li>
 </ul>
 </div></blockquote>
 <span class="target" id="module-kernelmethods.categorical"></span><p>Module for categorical kernels</p>
 <p>Please refer to the following papers and theses for more details:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Villegas García, Marco Antonio. “An investigation into new kernels for
+<li>Villegas García, Marco Antonio. “An investigation into new kernels for
 categorical variables.” Master’s thesis, Universitat Politècnica de Catalunya,
-2013.</p></li>
+2013.</li>
 </ul>
 </div></blockquote>
 <dl class="class">
 <dt id="kernelmethods.categorical.MatchCountKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.categorical.</code><code class="sig-name descname">MatchCountKernel</code><span class="sig-paren">(</span><em class="sig-param">return_perc=True</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/categorical.html#MatchCountKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.categorical.MatchCountKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.categorical.</code><code class="descname">MatchCountKernel</code><span class="sig-paren">(</span><em>return_perc=True</em>, <em>skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/categorical.html#MatchCountKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.categorical.MatchCountKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Categorical kernel measuring similarity via the number of matching categorical
 dimensions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>return_perc</strong> (<em>bool</em>) – If True, the return value would be normalized by the number of dimensions.</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>return_perc</strong> (<em>bool</em>) – If True, the return value would be normalized by the number of dimensions.</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">References</p>
 <p>Villegas García, Marco A., “An investigation into new kernels for categorical
 variables.” Master’s thesis, Universitat Politècnica de Catalunya, 2013.</p>
@@ -204,7 +211,9 @@ variables.” Master’s thesis, Universitat Politècnica de Catalunya, 2013.</p
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -213,7 +222,7 @@ variables.” Master’s thesis, Universitat Politècnica de Catalunya, 2013.</p
         <a href="string_kernels.html" class="btn btn-neutral float-right" title="String kernels (coming soon)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="numeric_kernels.html" class="btn btn-neutral float-left" title="Numeric kernels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="numeric_kernels.html" class="btn btn-neutral" title="Numeric kernels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -222,11 +231,11 @@ variables.” Master’s thesis, Universitat Politècnica de Catalunya, 2013.</p
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Pradeep Reddy Raamana
+        &copy; Copyright 2018, Pradeep Reddy Raamana.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -239,15 +248,37 @@ variables.” Master’s thesis, Universitat Politècnica de Catalunya, 2013.</p
   
 
 
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
 
   
   
-    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
    
 
 </body>
