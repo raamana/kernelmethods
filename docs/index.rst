@@ -1,5 +1,5 @@
 Welcome to kernelmethods's documentation!
-======================================
+=========================================
 
 .. toctree::
    :maxdepth: 3
