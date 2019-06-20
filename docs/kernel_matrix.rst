@@ -11,7 +11,22 @@ The class is designed in such a way that
  - implements basic operations such as centering and normalization (whose implementation differs from that of manipulating regular matrices)
  - exposes several convenience attributes to make advanced development a breeze
 
-.. automodule:: kernelmethods
-   :members: KernelMatrix
+This library also provides convenience wrappers:
+
+ - ``KernelMatrixPrecomputed`` turns a precomputed kernel matrix into a ``KernelMatrix`` class with all its attractive properties
+ - ``ConstantKernelMatrix`` that defines a ``KernelMatrix`` with a constant everywhere
+ -
+
+.. autoclass:: kernelmethods.KernelMatrix
+   :members:
    :undoc-members:
+
+
+Exceptions
+==========
+
+.. autoclass:: kernelmethods.KMAccessError
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
 

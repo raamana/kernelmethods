@@ -12,17 +12,22 @@ from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarra
 
 
 class KernelMethodsException(Exception):
-    """Allows to distinguish improper use of KernelMatrix from other code exceptions"""
+    """
+    Generic exception to indicate invalid use of the kernelmethods library.
+
+
+    Allows to distinguish improper use of KernelMatrix from other code exceptions
+    """
     pass
 
 
 class KMAccessError(KernelMethodsException):
-    """Error to indicate invalid access to the kernel matrix!"""
+    """Exception to indicate invalid access to the kernel matrix!"""
     pass
 
 
 class KMSetAdditionError(KernelMethodsException):
-    """Error to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
+    """Exception to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
     pass
 
 

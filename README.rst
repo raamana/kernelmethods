@@ -25,7 +25,9 @@ kernelmethods
 Docs
 ----
 
-Documentation of API, including example notebooks, will be published shortly.
+https://raamana.github.io/kernelmethods/
+
+Example notebooks, will be published shortly.
 
 
 Note
