@@ -5,11 +5,12 @@ from pytest import raises, warns
 from hypothesis import given, strategies, unlimited
 from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
-    LaplacianKernel
+from kernelmethods.categorical import MatchCountKernel
 from kernelmethods.utils import check_callable
 from kernelmethods.base import KernelMatrix
 from kernelmethods.operations import is_positive_semidefinite
+import string
+import random
 
 default_feature_dim = 10
 range_feature_dim = [10, 500]
@@ -19,21 +20,23 @@ np.random.seed(42)
 
 # choosing skip_input_checks=False will speed up test runs
 # default values for parameters
-SupportedKernels = (GaussianKernel(), PolyKernel(), LinearKernel(),
-                    LaplacianKernel())
+SupportedKernels = (MatchCountKernel(), )
 num_tests_psd_kernel = 3
 
-categorical_values = np.random.choice()
+def random_string(length=5):
 
-def gen_random_categorical_array(dim):
+    return ''.join(random.choices(string.ascii_letters, k=length))
+
+def gen_random_categorical_array(dim, length):
     """To better control precision and type of floats"""
 
-    return np.random.rand(dim)
+    return [random_string(length) for _ in range(dim)]
 
-def gen_random_sample(num_samples, sample_dim):
+def gen_random_sample(num_samples, sample_dim, string_length):
     """To better control precision and type of floats"""
 
-    return np.random.rand(num_samples, sample_dim)
+    return np.array([gen_random_categorical_array(sample_dim, string_length) for
+                    _ in range(num_samples)])
 
 
 def _test_for_all_kernels(kernel, sample_dim):
