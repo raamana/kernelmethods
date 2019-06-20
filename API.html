@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  <title>API Reference &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1+1.gb24cf24
+                0.1+11.ga91d38d.dirty
               </div>
             
           
@@ -90,12 +90,20 @@
 <li class="toctree-l1"><a class="reference internal" href="readme.html">Kernel methods and classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="categorical_kernels.html">Categorical kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="string_kernels.html">String kernels (coming soon)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_kernels.html">Graph kernels (coming soon)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 </ul>
@@ -165,7 +173,30 @@
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <p>A tutorial-like presentation is available at <a class="reference internal" href="usage.html"><span class="doc">Usage</span></a>.</p>
-<p>This library consists of a set of key classes such as <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>, <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collection of kernel matrices</span></a>, along with a library of kernel <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</p>
+<p>This library consists of a set of key classes such as <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>, diverse library of <a class="reference internal" href="kernel_functions.html"><span class="doc">Kernel functions</span></a>, <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collection of kernel matrices</span></a>, along with a library of <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</p>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="kernelmethods.KernelMethodsException">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMethodsException</code><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMethodsException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMethodsException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Generic exception to indicate invalid use of the kernelmethods library.</p>
+<p>Allows to distinguish improper use of KernelMatrix from other code exceptions</p>
+<dl class="attribute">
+<dt id="kernelmethods.KernelMethodsException.args">
+<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KernelMethodsException.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.KernelMethodsException.with_traceback">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelMethodsException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 

@@ -1,6 +1,7 @@
 Collection of kernel matrices
 -----------------------------
 
+
 Kernel Set
 ==============
 
@@ -18,4 +19,12 @@ Kernel Bucket
    :inherited-members:
    :show-inheritance:
 
+
+Exceptions
+==========
+
+.. autoclass:: kernelmethods.KMSetAdditionError
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>kernelmethods.operations &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  <title>kernelmethods.operations &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.1+1.gb24cf24
+                0.1+11.ga91d38d.dirty
               </div>
             
           
@@ -90,10 +90,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html">Kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../categorical_kernels.html">Categorical kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../string_kernels.html">String kernels (coming soon)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph_kernels.html">Graph kernels (coming soon)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 </ul>
@@ -161,7 +166,7 @@
   <h1>Source code for kernelmethods.operations</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="sd">&quot;&quot;&quot;Kernel methods module.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Module implementing common kernel operations.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
@@ -174,12 +179,14 @@
                              <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
                              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Tests whether a given matrix is PSD.</span>
+<span class="sd">    Tests whether a given matrix is positive-semidefinite (PSD).</span>
 
 <span class="sd">    A symmetric matrix is PSD if ALL its eigen values &gt;= 0 (non-negative).</span>
 <span class="sd">        If any of its eigen values are negative, it is not PSD.</span>
 
-<span class="sd">    Accouting for numerical instabilities with tolerance</span>
+<span class="sd">    Accounting for numerical instabilities with tolerance.</span>
+
+<span class="sd">    Shortcut: is_PSD()</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -376,16 +383,34 @@
 
 <span class="sd">    (Alignment is computed on centered kernel matrices)</span>
 
-<span class="sd">    value_if_zero_division determines the value of alignment, in case the norm of one of</span>
-<span class="sd">        the two kernel matrices is close to zero and we are unable to compute it.</span>
-<span class="sd">        Default is &#39;raise&#39;, requesting to raise an exception.</span>
-<span class="sd">            One could also choose 0.0 (assigning lowest alignment,</span>
-<span class="sd">                effectively discarding for ranking purposes)</span>
-
 <span class="sd">    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in</span>
 <span class="sd">    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,</span>
 <span class="sd">        &quot;Algorithms for Learning Kernels Based on Centered Alignment&quot;,</span>
 <span class="sd">        Journal of Machine Learning Research 13(Mar): 795–828.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    km_one, km_two : KernelMatrix</span>
+
+<span class="sd">    value_if_zero_division : str or float</span>
+<span class="sd">        determines the value of alignment, in case the norm of one of the two</span>
+<span class="sd">        kernel matrices is close to zero and we are unable to compute it.</span>
+
+<span class="sd">        Default is &#39;raise&#39;, requesting to raise an exception.</span>
+
+<span class="sd">        One could also choose 0.0, which assigns lowest alignment,  effectively</span>
+<span class="sd">        discarding it for ranking purposes.</span>
+
+<span class="sd">    centered_already : bool</span>
+<span class="sd">        Flag to indicate whether the input kernel matrices are centered already</span>
+<span class="sd">        or not. If False, input KMs will be centered.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    centered_alignment : float</span>
+<span class="sd">        Value of centered_alignment between the two kernel matrices</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">km_one</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">km_two</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>

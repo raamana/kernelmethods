@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Collection of kernel matrices &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  <title>Collection of kernel matrices &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
   
 
   
@@ -36,7 +36,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="KernelMatrix class" href="kernel_matrix.html" /> 
+    <link rel="next" title="Kernel Operations" href="operations.html" />
+    <link rel="prev" title="Kernel functions" href="kernel_functions.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                0.1+1.gb24cf24
+                0.1+11.ga91d38d.dirty
               </div>
             
           
@@ -91,18 +92,20 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Collection of kernel matrices</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#kernel-set">Kernel Set</a><ul class="simple">
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#kernel-bucket">Kernel Bucket</a><ul class="simple">
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#kernel-set">Kernel Set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kernel-bucket">Kernel Bucket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="categorical_kernels.html">Categorical kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="string_kernels.html">String kernels (coming soon)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_kernels.html">Graph kernels (coming soon)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 </ul>
@@ -180,87 +183,45 @@
 <p>Container class to manage a set of compatible KernelMatrix instances.</p>
 <p>Compatibility is checked based on the size (number of samples they operate on).
 Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="#kernelmethods.KernelSet.num_samples" title="kernelmethods.KernelSet.num_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_samples</span></code></a></dt><dd><p>Number of samples in each individual kernel matrix</p>
-</dd>
-<dt><a class="reference internal" href="#kernelmethods.KernelSet.size" title="kernelmethods.KernelSet.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></dt><dd><p>Number of kernel matrices in this set</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.append" title="kernelmethods.KernelSet.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(self, KM)</p></td>
-<td><p>Method to add a new kernel to the set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.attach_to" title="kernelmethods.KernelSet.attach_to"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attach_to</span></code></a>(self, sample[, name, attr_name, …])</p></td>
-<td><p>Attach all the kernel matrices in this set to a given sample.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.extend" title="kernelmethods.KernelSet.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(self, another_km_set)</p></td>
-<td><p>Extends the current set by adding in all elements from another set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.get_attr" title="kernelmethods.KernelSet.get_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attr</span></code></a>(self, name[, value_if_not_found])</p></td>
-<td><p>Returns the value of an user-defined attribute.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.get_kernel_funcs" title="kernelmethods.KernelSet.get_kernel_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kernel_funcs</span></code></a>(self, indices[, name])</p></td>
-<td><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.set_attr" title="kernelmethods.KernelSet.set_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_attr</span></code></a>(self, name, values)</p></td>
-<td><p>Sets user-defined attributes for the kernel matrices in this set.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelSet.take" title="kernelmethods.KernelSet.take"><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code></a>(self, indices[, name])</p></td>
-<td><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="method">
 <dt id="kernelmethods.KernelSet.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">KM</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.append" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to add a new kernel to the set.</p>
 <p>Checks to ensure the new KM is compatible in size to the existing set.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.attach_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.attach_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach all the kernel matrices in this set to a given sample.</p>
 <p>Any previous evaluations to other samples and their results will be reset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>sample</strong><span class="classifier">ndarray</span></dt><dd><p>Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p>
-</dd>
-<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Identifier for the sample (esp. when multiple are in the same set)</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
+Must be 2D of shape (num_samples, num_features)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.extend">
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.extend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends the current set by adding in all elements from another set.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of an user-defined attribute.</p>
 <p>If not set previously, or no match found, returns value_if_not_found.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
 <p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
 </dd></dl>
@@ -273,7 +234,7 @@ Must be 2D of shape (num_samples, num_features)</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.set_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
 <p>If len(values)==1, same value is set for all. Otherwise values must be of size as
 KernelSet, providing a separate value for each element.</p>
@@ -290,7 +251,7 @@ As they are user-defined, they are ideal to represent user needs and application
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.take">
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.take" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.take" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
 </dd></dl>
 
@@ -306,87 +267,45 @@ As they are user-defined, they are ideal to represent user needs and application
 <p>Class to generate a “bucket” of candidate kernels.</p>
 <p>Applications:
 1. to rank/filter/select kernels based on a given sample via many metrics</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="#kernelmethods.KernelBucket.num_samples" title="kernelmethods.KernelBucket.num_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_samples</span></code></a></dt><dd><p>Number of samples in each individual kernel matrix</p>
-</dd>
-<dt><a class="reference internal" href="#kernelmethods.KernelBucket.size" title="kernelmethods.KernelBucket.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></dt><dd><p>Number of kernel matrices in this set</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.append" title="kernelmethods.KernelBucket.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(self, KM)</p></td>
-<td><p>Method to add a new kernel to the set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.attach_to" title="kernelmethods.KernelBucket.attach_to"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attach_to</span></code></a>(self, sample[, name, attr_name, …])</p></td>
-<td><p>Attach all the kernel matrices in this set to a given sample.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.extend" title="kernelmethods.KernelBucket.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(self, another_km_set)</p></td>
-<td><p>Extends the current set by adding in all elements from another set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.get_attr" title="kernelmethods.KernelBucket.get_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attr</span></code></a>(self, name[, value_if_not_found])</p></td>
-<td><p>Returns the value of an user-defined attribute.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="kernelmethods.KernelBucket.get_kernel_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kernel_funcs</span></code></a>(self, indices[, name])</p></td>
-<td><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.set_attr" title="kernelmethods.KernelBucket.set_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_attr</span></code></a>(self, name, values)</p></td>
-<td><p>Sets user-defined attributes for the kernel matrices in this set.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kernelmethods.KernelBucket.take" title="kernelmethods.KernelBucket.take"><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code></a>(self, indices[, name])</p></td>
-<td><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">KM</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.append" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to add a new kernel to the set.</p>
 <p>Checks to ensure the new KM is compatible in size to the existing set.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.attach_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.attach_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach all the kernel matrices in this set to a given sample.</p>
 <p>Any previous evaluations to other samples and their results will be reset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>sample</strong><span class="classifier">ndarray</span></dt><dd><p>Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p>
-</dd>
-<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Identifier for the sample (esp. when multiple are in the same set)</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
+Must be 2D of shape (num_samples, num_features)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.extend">
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.extend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends the current set by adding in all elements from another set.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of an user-defined attribute.</p>
 <p>If not set previously, or no match found, returns value_if_not_found.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
 <p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
 </dd></dl>
@@ -399,7 +318,7 @@ Must be 2D of shape (num_samples, num_features)</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.set_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
 <p>If len(values)==1, same value is set for all. Otherwise values must be of size as
 KernelSet, providing a separate value for each element.</p>
@@ -416,8 +335,30 @@ As they are user-defined, they are ideal to represent user needs and application
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.take">
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.take" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.take" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="kernelmethods.KMSetAdditionError">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMSetAdditionError</code><a class="reference internal" href="_modules/kernelmethods/base.html#KMSetAdditionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMSetAdditionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelMethodsException</span></code></p>
+<p>Exception to indicate invalid addition of kernel matrix to a KernelSet</p>
+<dl class="attribute">
+<dt id="kernelmethods.KMSetAdditionError.args">
+<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KMSetAdditionError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.KMSetAdditionError.with_traceback">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KMSetAdditionError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 </dd></dl>
@@ -433,8 +374,10 @@ As they are user-defined, they are ideal to represent user needs and application
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="operations.html" class="btn btn-neutral float-right" title="Kernel Operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="kernel_matrix.html" class="btn btn-neutral float-left" title="KernelMatrix class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="kernel_functions.html" class="btn btn-neutral float-left" title="Kernel functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

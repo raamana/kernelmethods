@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>kernelmethods.base &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  <title>kernelmethods.base &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.1+1.gb24cf24
+                0.1+11.ga91d38d.dirty
               </div>
             
           
@@ -90,10 +90,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../kernel_matrix.html">KernelMatrix class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html">Kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../categorical_kernels.html">Categorical kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../string_kernels.html">String kernels (coming soon)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph_kernels.html">Graph kernels (coming soon)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 </ul>
@@ -170,31 +175,37 @@
 <span class="kn">from</span> <span class="nn">kernelmethods.operations</span> <span class="k">import</span> <span class="n">center_km</span><span class="p">,</span> <span class="n">is_PSD</span><span class="p">,</span> <span class="n">normalize_km</span><span class="p">,</span> <span class="n">normalize_km_2sample</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">check_callable</span><span class="p">,</span> <span class="n">ensure_ndarray_1D</span><span class="p">,</span> <span class="n">ensure_ndarray_2D</span><span class="p">,</span> \
     <span class="n">get_callable_name</span><span class="p">,</span> <span class="n">not_symmetric</span>
+<span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+
+<div class="viewcode-block" id="KernelMethodsException"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.KernelMethodsException">[docs]</a><span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic exception to indicate invalid use of the kernelmethods library.</span>
 
 
-<span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Allows to distinguish improper use of KernelMatrix from other code exceptions&quot;&quot;&quot;</span>
-    <span class="k">pass</span>
+<span class="sd">    Allows to distinguish improper use of KernelMatrix from other code exceptions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 
 
-<span class="k">class</span> <span class="nc">KMAccessError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error to indicate invalid access to the kernel matrix!&quot;&quot;&quot;</span>
-    <span class="k">pass</span>
+<div class="viewcode-block" id="KMAccessError"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KMAccessError">[docs]</a><span class="k">class</span> <span class="nc">KMAccessError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception to indicate invalid access to the kernel matrix!&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 
 
-<span class="k">class</span> <span class="nc">KMSetAdditionError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error to indicate invalid addition of kernel matrix to a KernelMatrixSet&quot;&quot;&quot;</span>
-    <span class="k">pass</span>
+<div class="viewcode-block" id="KMSetAdditionError"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KMSetAdditionError">[docs]</a><span class="k">class</span> <span class="nc">KMSetAdditionError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception to indicate invalid addition of kernel matrix to a KernelSet&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 
 
-<span class="k">class</span> <span class="nc">BaseKernelFunction</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Abstract base class for kernel functions.</span>
+<div class="viewcode-block" id="BaseKernelFunction"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.BaseKernelFunction">[docs]</a><span class="k">class</span> <span class="nc">BaseKernelFunction</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for kernel functions.</span>
 
 <span class="sd">    Enforces each derived kernel:</span>
 <span class="sd">    1. to be callable, with two inputs</span>
 <span class="sd">    2. to have a name and a str representation</span>
-<span class="sd">    3. provides a method to check whether the derived kernel function is a valid kernel</span>
-<span class="sd">        i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)</span>
+<span class="sd">    3. provides a method to check whether the derived kernel func is a valid kernel</span>
+<span class="sd">       i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)</span>
 <span class="sd">    4. and that it is symmetric (via tests) as required.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -216,17 +227,17 @@
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Actual computation!&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Actual computation to defined in the inherited class!&quot;&quot;&quot;</span>
 
 
-    <span class="k">def</span> <span class="nf">is_psd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseKernelFunction.is_psd"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.BaseKernelFunction.is_psd">[docs]</a>    <span class="k">def</span> <span class="nf">is_psd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Tests whether kernel matrix produced via this function is PSD&quot;&quot;&quot;</span>
 
         <span class="c1"># passing the instance of the derived class</span>
         <span class="n">km</span> <span class="o">=</span> <span class="n">KernelMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="n">km</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>  <span class="c1"># random_sample</span>
-        <span class="k">return</span> <span class="n">is_PSD</span><span class="p">(</span><span class="n">km</span><span class="o">.</span><span class="n">full</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">is_PSD</span><span class="p">(</span><span class="n">km</span><span class="o">.</span><span class="n">full</span><span class="p">)</span></div>
 
 
     <span class="nd">@abstractmethod</span>
@@ -244,7 +255,7 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Representation&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
 
 
 <span class="k">class</span> <span class="nc">KernelFromCallable</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
@@ -382,7 +393,7 @@
 <span class="sd">            Name for the second sample.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_one</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_one</span><span class="p">,</span> <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">sample_one</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span> <span class="o">=</span> <span class="n">name_one</span>
 
         <span class="k">if</span> <span class="n">sample_two</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -396,7 +407,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_sample_descr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_two</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span> <span class="o">=</span> <span class="n">ensure_ndarray_2D</span><span class="p">(</span><span class="n">sample_two</span><span class="p">,</span>
+                                                 <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">sample_two</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_two</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dimensionalities of the two samples differ!&#39;</span><span class="p">)</span>
@@ -758,9 +770,9 @@
         <span class="c1">#   to avoid recomputing it for each access of self.full* attributes</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_populated_fully</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_full_km&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">dense_fmt</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">km_dtype</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_full_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">km_dtype</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># kernel matrix is symmetric (in a single sample case)</span>

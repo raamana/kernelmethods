@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>KernelMatrix class &mdash; kernelmethods 0.1+1.gb24cf24 documentation</title>
+  <title>KernelMatrix class &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
   
 
   
@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Collection of kernel matrices" href="km_collections.html" />
+    <link rel="next" title="Kernel functions" href="kernel_functions.html" />
     <link rel="prev" title="API Reference" href="API.html" /> 
 </head>
 
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1+1.gb24cf24
+                0.1+11.ga91d38d.dirty
               </div>
             
           
@@ -91,11 +91,19 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">KernelMatrix class</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">KernelMatrix class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="numeric_kernels.html">Numeric kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="categorical_kernels.html">Categorical kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="string_kernels.html">String kernels (coming soon)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_kernels.html">Graph kernels (coming soon)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 </ul>
@@ -165,8 +173,9 @@
   <div class="section" id="kernelmatrix-class">
 <h1>KernelMatrix class<a class="headerlink" href="#kernelmatrix-class" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> is a self-contained class for the Gram matrix induced by a kernel function on a given sample. This class defines the central data structure for all kernel methods, as it acts a key bridge between input data space and the learning algorithms.</p>
-<dl class="simple">
-<dt>The class is designed in such a way that</dt><dd><ul class="simple">
+<p>The class is designed in such a way that</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>it only computes elements of the kernel matrix (KM) as neeeded, and nothing more, which can save a lot computation and storage</p></li>
 <li><p>it supports both callable as well as attribute access, allowing easy access to partial or random portions of the KM. Indexing is aimed to be compliant with numpy as much as possible.</p></li>
 <li><p>allows parallel computation of different part of the KM to speed up computation when <code class="docutils literal notranslate"><span class="pre">N</span></code> is large</p></li>
@@ -174,9 +183,14 @@
 <li><p>implements basic operations such as centering and normalization (whose implementation differs from that of manipulating regular matrices)</p></li>
 <li><p>exposes several convenience attributes to make advanced development a breeze</p></li>
 </ul>
-</dd>
-</dl>
-<span class="target" id="module-kernelmethods"></span><p>Top-level package for kernelmethods.</p>
+</div></blockquote>
+<p>This library also provides convenience wrappers:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">KernelMatrixPrecomputed</span></code> turns a precomputed kernel matrix into a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class with all its attractive properties</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConstantKernelMatrix</span></code> that defines a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> with a constant everywhere</p></li>
+</ul>
+</div></blockquote>
 <dl class="class">
 <dt id="kernelmethods.KernelMatrix">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">kernel</em>, <em class="sig-param">normalized=True</em>, <em class="sig-param">name='KernelMatrix'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix" title="Permalink to this definition">¶</a></dt>
@@ -189,25 +203,24 @@ KM[set_i,set_j] where len(set_i)=m and len(set_i)=n –&gt; matrix KM of size mx
 </div></blockquote>
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">sample_one</em>, <em class="sig-param">name_one='sample'</em>, <em class="sig-param">sample_two=None</em>, <em class="sig-param">name_two=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attach_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample_one</em>, <em class="sig-param">name_one='sample'</em>, <em class="sig-param">sample_two=None</em>, <em class="sig-param">name_two=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attach_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach this kernel to a given sample.</p>
 <dl class="simple">
 <dt>Any computations from previous samples and their results will be reset,</dt><dd><p>along with all the previously set attributes.</p>
 </dd>
 </dl>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>sample_one</strong><span class="classifier">ndarray</span></dt><dd><p>Input sample to operate on
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_one</strong> (<em>ndarray</em>) – <p>Input sample to operate on
 Must be a 2D dataset of shape (num_samples, num_features)</p>
 <blockquote>
 <div><p>e.g. MLDataset or ndarray</p>
 </div></blockquote>
 <p>When sample_two=None (e.g. during training), sample_two refers to sample_one.</p>
-</dd>
-<dt><strong>name_one</strong><span class="classifier">str</span></dt><dd><p>Name for the first sample.</p>
-</dd>
-<dt><strong>sample_two</strong><span class="classifier">ndarray</span></dt><dd><p>Second sample for the kernel matrix i.e. Y in K(X,Y)
+</p></li>
+<li><p><strong>name_one</strong> (<em>str</em>) – Name for the first sample.</p></li>
+<li><p><strong>sample_two</strong> (<em>ndarray</em>) – <p>Second sample for the kernel matrix i.e. Y in K(X,Y)
 Must be a 2D dataset of shape (num_samples, num_features)</p>
 <blockquote>
 <div><p>e.g. MLDataset or ndarray</p>
@@ -216,23 +229,22 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <dt>The dimensionality of this sample (number of columns, sample_two.shape[1])</dt><dd><p>must match with that of sample_one</p>
 </dd>
 </dl>
-</dd>
-<dt><strong>name_two</strong><span class="classifier">str</span></dt><dd><p>Name for the second sample.</p>
-</dd>
-</dl>
+</p></li>
+<li><p><strong>name_two</strong> (<em>str</em>) – Name for the second sample.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.attributes">
-<code class="sig-name descname">attributes</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the attributes currently set.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.center">
-<code class="sig-name descname">center</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.center" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to center the kernel matrix</p>
 </dd></dl>
 
@@ -244,14 +256,11 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.diagonal">
-<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.diagonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.diagonal" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.diagonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.diagonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the diagonal of the kernel matrix, when attached to a single sample.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>When this instance is attached to more than one sample</p>
-</dd>
-</dl>
+<dd class="field-odd"><p><strong>ValueError</strong> – When this instance is attached to more than one sample</p>
 </dd>
 </dl>
 </dd></dl>
@@ -276,14 +285,14 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">attr_name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.get_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">attr_name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of an user-defined attribute.</p>
 <p>If not set previously, or no match found, returns value_if_not_found.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.normalize">
-<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.normalize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize the kernel matrix to have unit diagonal.</p>
 <dl class="simple">
 <dt>Cosine normalization mplements definition according to Section 5.1 in</dt><dd><p>Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”, 2004</p>
@@ -308,7 +317,7 @@ scalars representing num_samples from those two samples.</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.set_attr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets user-defined attributes for the kernel matrix.</p>
 <p>Useful to identify this kernel matrix in various aspects!
 You could think of them as tags or identifiers etc.
@@ -329,6 +338,28 @@ In two-sample case, it is the product of num_samples from two datasets.</p>
 
 </dd></dl>
 
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="kernelmethods.KMAccessError">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/base.html#KMAccessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMAccessError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelMethodsException</span></code></p>
+<p>Exception to indicate invalid access to the kernel matrix!</p>
+<dl class="attribute">
+<dt id="kernelmethods.KMAccessError.args">
+<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KMAccessError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.KMAccessError.with_traceback">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KMAccessError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -339,7 +370,7 @@ In two-sample case, it is the product of num_samples from two datasets.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="km_collections.html" class="btn btn-neutral float-right" title="Collection of kernel matrices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="kernel_functions.html" class="btn btn-neutral float-right" title="Kernel functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="API.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
