@@ -4,8 +4,9 @@ Module for categorical kernels
 
 Please refer to the following papers and theses for more details:
 
- - Villegas García, Marco Antonio. "An investigation into new kernels for categorical
- variables." Master's thesis, Universitat Politècnica de Catalunya, 2013.
+ - Villegas García, Marco Antonio. "An investigation into new kernels for
+   categorical variables." Master's thesis, Universitat Politècnica de Catalunya,
+   2013.
 
 
 """
@@ -31,8 +32,8 @@ class MatchCountKernel(BaseKernelFunction):
     References
     ----------
 
-    - Villegas García, Marco A., "An investigation into new kernels for categorical
-        variables." Master's thesis, Universitat Politècnica de Catalunya, 2013.
+    Villegas García, Marco A., "An investigation into new kernels for categorical
+    variables." Master's thesis, Universitat Politècnica de Catalunya, 2013.
 
     """
 
