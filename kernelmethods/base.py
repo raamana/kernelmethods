@@ -27,18 +27,19 @@ class KMAccessError(KernelMethodsException):
 
 
 class KMSetAdditionError(KernelMethodsException):
-    """Exception to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
+    """Exception to indicate invalid addition of kernel matrix to a KernelSet"""
     pass
 
 
 class BaseKernelFunction(ABC):
-    """Abstract base class for kernel functions.
+    """
+    Abstract base class for kernel functions.
 
     Enforces each derived kernel:
     1. to be callable, with two inputs
     2. to have a name and a str representation
-    3. provides a method to check whether the derived kernel function is a valid kernel
-        i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
+    3. provides a method to check whether the derived kernel func is a valid kernel
+       i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
     4. and that it is symmetric (via tests) as required.
 
     """
@@ -60,7 +61,7 @@ class BaseKernelFunction(ABC):
 
     @abstractmethod
     def __call__(self, x, y):
-        """Actual computation!"""
+        """Actual computation to defined in the inherited class!"""
 
 
     def is_psd(self):
