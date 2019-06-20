@@ -217,16 +217,34 @@ def alignment_centered(km_one, km_two,
 
     (Alignment is computed on centered kernel matrices)
 
-    value_if_zero_division determines the value of alignment, in case the norm of one of
-        the two kernel matrices is close to zero and we are unable to compute it.
-        Default is 'raise', requesting to raise an exception.
-            One could also choose 0.0 (assigning lowest alignment,
-                effectively discarding for ranking purposes)
-
     Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in
     Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
         "Algorithms for Learning Kernels Based on Centered Alignment",
         Journal of Machine Learning Research 13(Mar): 795–828.
+
+    Parameters
+    ----------
+
+    km_one, km_two : KernelMatrix
+
+    value_if_zero_division : str or float
+        determines the value of alignment, in case the norm of one of the two
+        kernel matrices is close to zero and we are unable to compute it.
+
+        Default is 'raise', requesting to raise an exception.
+
+        One could also choose 0.0, which assigns lowest alignment,  effectively
+        discarding it for ranking purposes.
+
+    centered_already : bool
+        Flag to indicate whether the input kernel matrices are centered already
+        or not. If False, input KMs will be centered.
+
+    Returns
+    -------
+    centered_alignment : float
+        Value of centered_alignment between the two kernel matrices
+
     """
 
     if km_one.shape != km_two.shape:

@@ -2,9 +2,6 @@ Collection of kernel matrices
 -----------------------------
 
 
-We also define a ``KMSetAdditionError`` exception to indicate invalid attempt to include a KM into a ``KernelSet``
-
-
 Kernel Set
 ==============
 

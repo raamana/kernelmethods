@@ -48,7 +48,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages',
-              'numpydoc',
+              'sphinxcontrib.napoleon',
+              # 'numpydoc',
               'sphinxarg.ext',
               'sphinx.ext.intersphinx']
 
