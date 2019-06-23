@@ -6,7 +6,8 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
-from kernelmethods.operations import center_km, is_PSD, normalize_km, normalize_km_2sample
+from kernelmethods.operations import center_km, is_PSD, normalize_km, \
+    normalize_km_2sample, frobenius_norm
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 from kernelmethods import config as cfg
@@ -438,7 +439,8 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(dense_fmt=True, fill_lower_tri=True)
 
-        self._frob_norm = frobenius_norm(self._full_km)
+        if not hasattr(self, '_frob_norm'):
+            self._frob_norm = frobenius_norm(self._full_km)
 
         return self._frob_norm
 
