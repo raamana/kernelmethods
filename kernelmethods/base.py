@@ -286,6 +286,11 @@ class KernelMatrix(object):
     def attributes(self):
         """
         Returns all the attributes currently set.
+
+        Returns
+        -------
+        attributes : dict
+            Dict of the all the attributes currently set.
         """
 
         return self._attr
@@ -374,7 +379,19 @@ class KernelMatrix(object):
 
 
     def center(self):
-        """Method to center the kernel matrix"""
+        """
+        Method to center the kernel matrix
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        NotImplementedError
+            If the KM is attached two separate samples.
+            Centering a KM is possible only when attached to a single sample.
+        """
 
         if self._two_samples:
             raise NotImplementedError('Centering is not implemented (or possible)'
@@ -389,10 +406,20 @@ class KernelMatrix(object):
 
     def normalize(self, method='cosine'):
         """
+
         Normalize the kernel matrix to have unit diagonal.
 
         Cosine normalization mplements definition according to Section 5.1 in
             Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+
+        Parameters
+        ----------
+        method : str
+            Identifier of the method.
+
+        Returns
+        -------
+        None
 
         """
 
