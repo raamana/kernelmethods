@@ -1,5 +1,6 @@
 scipy
 numpy
+scikit-learn
 pytest
 pytest-runner
 hypothesis
