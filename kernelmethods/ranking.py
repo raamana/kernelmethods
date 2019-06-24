@@ -100,7 +100,11 @@ def get_estimator(learner_id='svm'):
         range_C = np.power(10.0, range(-6, 6))
         param_grid = dict(C=range_C)
         base_learner = SVC(kernel='precomputed', probability=True, C=10)
-
+    elif learner_id in ('svr', ):
+        from sklearn.svm import SVR
+        range_C = np.power(10.0, range(-6, 6))
+        param_grid = dict(C=range_C)
+        base_learner = SVR(kernel='precomputed', C=10)
     else:
         raise NotImplementedError('Requested base learner {} is not implemented yet!'
                                   ''.format(learner_id))
