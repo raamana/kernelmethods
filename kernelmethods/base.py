@@ -940,7 +940,7 @@ class KernelSet(object):
     def __getitem__(self, index):
         """To retrieve individual kernels"""
 
-        if not isinstance(index, int):
+        if not (np.issubdtype(index, np.integer) or isinstance(index, int)):
             raise ValueError('Only integer indices are permitted, '
                              'accessing one KM at a time')
 
