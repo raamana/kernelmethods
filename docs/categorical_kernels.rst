@@ -1,0 +1,8 @@
+Categorical kernels
+-------------------
+
+Implemented:
+
+ - ``MatchCountKernel``
+
+

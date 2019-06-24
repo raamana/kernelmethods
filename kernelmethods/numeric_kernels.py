@@ -54,7 +54,7 @@ class PolyKernel(BaseKernelFunction):
 
 
 class GaussianKernel(BaseKernelFunction):
-    """Polynomial kernel function"""
+    """Gaussian kernel function"""
 
     def __init__(self, sigma=2.0, skip_input_checks=False):
         """

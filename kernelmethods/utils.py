@@ -129,3 +129,11 @@ def check_operation_kernel_matrix(operation):
                          ''.format(config.VALID_KERNEL_MATRIX_OPS))
 
     return opr
+
+
+def min_max_scale(array):
+    """Rescale the array values from 0 to 1 via min-max normalization."""
+
+    array = np.array(array)
+    min_val = array.min()
+    return (array - min_val) / (np.max(array) - min_val)

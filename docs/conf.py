@@ -20,9 +20,20 @@
 #
 import os
 import sys
+
+# Get the project root dir, which is the parent dir of this
+cwd = os.getcwd()
+project_root = os.path.dirname(cwd)
+
 sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, project_root)
+
+sys.path.insert(0, os.path.abspath('../visualqc'))
+sys.path.insert(0, os.path.abspath('../../visualqc'))
+sys.path.insert(0, os.path.abspath('visualqc'))
 
 import kernelmethods
+import sphinx_rtd_theme
 
 # -- General configuration ---------------------------------------------
 
@@ -32,7 +43,14 @@ import kernelmethods
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.githubpages',
+              'numpydoc',
+              'sphinxarg.ext',
+              'sphinx.ext.intersphinx']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -84,7 +102,9 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+# html_theme = 'alabaster'
+html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the

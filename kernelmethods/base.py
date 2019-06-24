@@ -6,34 +6,41 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
-from kernelmethods.operations import center_km, is_PSD, normalize_km, normalize_km_2sample
+from kernelmethods.operations import center_km, is_PSD, normalize_km, \
+    normalize_km_2sample, frobenius_norm
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
-
+from kernelmethods import config as cfg
 
 class KernelMethodsException(Exception):
-    """Allows to distinguish improper use of KernelMatrix from other code exceptions"""
+    """
+    Generic exception to indicate invalid use of the kernelmethods library.
+
+
+    Allows to distinguish improper use of KernelMatrix from other code exceptions
+    """
     pass
 
 
 class KMAccessError(KernelMethodsException):
-    """Error to indicate invalid access to the kernel matrix!"""
+    """Exception to indicate invalid access to the kernel matrix!"""
     pass
 
 
 class KMSetAdditionError(KernelMethodsException):
-    """Error to indicate invalid addition of kernel matrix to a KernelMatrixSet"""
+    """Exception to indicate invalid addition of kernel matrix to a KernelSet"""
     pass
 
 
 class BaseKernelFunction(ABC):
-    """Abstract base class for kernel functions.
+    """
+    Abstract base class for kernel functions.
 
     Enforces each derived kernel:
     1. to be callable, with two inputs
     2. to have a name and a str representation
-    3. provides a method to check whether the derived kernel function is a valid kernel
-        i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
+    3. provides a method to check whether the derived kernel func is a valid kernel
+       i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
     4. and that it is symmetric (via tests) as required.
 
     """
@@ -55,7 +62,7 @@ class BaseKernelFunction(ABC):
 
     @abstractmethod
     def __call__(self, x, y):
-        """Actual computation!"""
+        """Actual computation to defined in the inherited class!"""
 
 
     def is_psd(self):
@@ -135,7 +142,8 @@ class KernelFromCallable(BaseKernelFunction):
 
 class KernelMatrix(object):
     """
-    A self-contained class for the Gram matrix induced by a kernel fuction on a sample.
+    A self-contained class for the Gram matrix induced by a kernel function on a
+    sample.
 
     KM[i,j] --> kernel between samples i and j
     KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
@@ -220,7 +228,7 @@ class KernelMatrix(object):
             Name for the second sample.
         """
 
-        self._sample = ensure_ndarray_2D(sample_one)
+        self._sample = ensure_ndarray_2D(sample_one, ensure_dtype=sample_one.dtype)
         self._sample_name = name_one
 
         if sample_two is None:
@@ -234,7 +242,8 @@ class KernelMatrix(object):
             self._sample_descr = "{} {}".format(self._sample_name, self._sample.shape)
 
         else:
-            self._sample_two = ensure_ndarray_2D(sample_two)
+            self._sample_two = ensure_ndarray_2D(sample_two,
+                                                 ensure_dtype=sample_two.dtype)
 
             if self._sample.shape[1] != self._sample_two.shape[1]:
                 raise ValueError('Dimensionalities of the two samples differ!')
@@ -277,6 +286,11 @@ class KernelMatrix(object):
     def attributes(self):
         """
         Returns all the attributes currently set.
+
+        Returns
+        -------
+        attributes : dict
+            Dict of the all the attributes currently set.
         """
 
         return self._attr
@@ -365,7 +379,19 @@ class KernelMatrix(object):
 
 
     def center(self):
-        """Method to center the kernel matrix"""
+        """
+        Method to center the kernel matrix
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        NotImplementedError
+            If the KM is attached two separate samples.
+            Centering a KM is possible only when attached to a single sample.
+        """
 
         if self._two_samples:
             raise NotImplementedError('Centering is not implemented (or possible)'
@@ -380,10 +406,20 @@ class KernelMatrix(object):
 
     def normalize(self, method='cosine'):
         """
+
         Normalize the kernel matrix to have unit diagonal.
 
         Cosine normalization mplements definition according to Section 5.1 in
             Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+
+        Parameters
+        ----------
+        method : str
+            Identifier of the method.
+
+        Returns
+        -------
+        None
 
         """
 
@@ -430,7 +466,8 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(dense_fmt=True, fill_lower_tri=True)
 
-        self._frob_norm = frobenius_norm(self._full_km)
+        if not hasattr(self, '_frob_norm'):
+            self._frob_norm = frobenius_norm(self._full_km)
 
         return self._frob_norm
 
@@ -596,9 +633,9 @@ class KernelMatrix(object):
         #   to avoid recomputing it for each access of self.full* attributes
         if not self._populated_fully and not hasattr(self, '_full_km'):
             if not dense_fmt:
-                self._full_km = lil_matrix(self.shape, dtype=self._sample.dtype)
+                self._full_km = lil_matrix(self.shape, dtype=cfg.km_dtype)
             else:
-                self._full_km = np.empty(self.shape, dtype=self._sample.dtype)
+                self._full_km = np.empty(self.shape, dtype=cfg.km_dtype)
 
             try:
                 # kernel matrix is symmetric (in a single sample case)
@@ -1006,7 +1043,9 @@ class KernelSet(object):
 
         for index in range(self.size):
             self._km_set[index].attach_to(sample, name_one=name)
-            if attr_name is not None:
+
+        if attr_name is not None:
+            for index in range(self.size):
                 self._km_set[index].set_attr(attr_name, attr_value)
 
 
