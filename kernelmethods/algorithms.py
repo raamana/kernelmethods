@@ -121,10 +121,9 @@ class OptimalKernelSVR(SVR):
         """
 
         # sample_one must be test data to get the right shape for sklearn X
-        test_train_KM = self.opt_kernel.attach_to(sample_one=X,
-                                                  sample_two=self._train_X)
-
-        predicted_y = super().predict(test_train_KM.full)
+        self.opt_kernel.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self.opt_kernel.full
+        predicted_y = super().predict(test_train_KM)
 
         return predicted_y
         # TODO we don't need data type coversion, as its not classification?
