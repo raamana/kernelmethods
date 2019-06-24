@@ -1043,7 +1043,9 @@ class KernelSet(object):
 
         for index in range(self.size):
             self._km_set[index].attach_to(sample, name_one=name)
-            if attr_name is not None:
+
+        if attr_name is not None:
+            for index in range(self.size):
                 self._km_set[index].set_attr(attr_name, attr_value)
 
 
