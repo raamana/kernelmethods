@@ -4,12 +4,21 @@ from pytest import raises, warns
 from hypothesis import given, strategies, unlimited
 from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
+import warnings
+
 from sklearn.datasets import make_classification
+from sklearn.utils.estimator_checks import check_estimator
 from kernelmethods.base import KernelMatrix
 from kernelmethods.operations import is_positive_semidefinite
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from kernelmethods.algorithms import OptimalKernelSVR
-import warnings
+
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
+    LaplacianKernel
+from kernelmethods.algorithms import OptimalKernelSVR, KernelMachine
+
+
+SupportedKernels = (GaussianKernel(), PolyKernel(), LinearKernel(),
+                    LaplacianKernel())
 
 def gen_random_sample(num_samples, sample_dim):
     """To better control precision and type of floats"""
@@ -18,11 +27,33 @@ def gen_random_sample(num_samples, sample_dim):
     return np.random.rand(num_samples, sample_dim)
 
 sample_dim = 10
+n_training = 100
+n_testing  = 30
+
+def _test_estimator_can_fit_predict(estimator, est_name):
+
+    train_data, labels = make_classification(n_features=sample_dim, n_samples=n_training)
+    test_data = gen_random_sample(n_testing, sample_dim)
+
+    if not check_estimator(estimator):
+        raise TypeError('{} failed sklearn checks to be an estimator'.format(
+            est_name))
+
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            estimator.fit(train_data, labels)
+    except:
+        raise RuntimeError('{} is unable to fit to training data!'.format(est_name))
+
+    try:
+        estimator.predict(test_data)
+    except:
+        raise RuntimeError('{} is unable to make predictions'.format(est_name))
+
 
 def test_optimal_kernel_svr():
 
-    train_data, labels = make_classification(n_features=sample_dim)
-    test_data = gen_random_sample(30, sample_dim)
     k_bucket = make_kernel_bucket('light')
 
     try:
@@ -30,17 +61,21 @@ def test_optimal_kernel_svr():
     except:
         raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            OKSVR.fit(train_data, labels)
-    except:
-        raise RuntimeError('Unable to fit OptimalKernelSVR to training data!')
-
-    try:
-        OKSVR.predict(test_data)
-    except:
-        raise RuntimeError('Unable to make predictions with OptimalKernelSVR!')
+    _test_estimator_can_fit_predict(OKSVR, 'OptimalKernelSVR')
 
 
-test_optimal_kernel_svr()
+
+def test_kernel_machine():
+
+    for kernel in SupportedKernels:
+        # print('\n\nTesting {}'.format(kernel))
+        try:
+            k_machine = KernelMachine(kernel)
+        except:
+            raise RuntimeError('Unable to instantiate KernelMachine with this func '
+                               '{}!'.format(kernel))
+
+        _test_estimator_can_fit_predict(k_machine, str(kernel))
+
+
+test_kernel_machine()
