@@ -94,8 +94,9 @@ class OptimalKernelSVR(SVR):
 
         self._train_X, self._train_y = check_X_y(X, y)
 
-        self.opt_kernel = find_optimal_kernel(self._train_X, self._train_y,
-                                              self._k_bucket)
+        self.opt_kernel = find_optimal_kernel(self._k_bucket,
+                                              self._train_X, self._train_y,
+                                              method='cv_risk')
 
         super().fit(X=self.opt_kernel.full, y=self._train_y,
                     sample_weight=sample_weight)
