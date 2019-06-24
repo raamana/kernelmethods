@@ -16,11 +16,12 @@ from sklearn.kernel_ridge import KernelRidge
 import numpy as np
 
 class OptimalKernelSVR(SVR):
-    """An estimator to learn the optimal kernel for a given sample and
-        build a support vector regressor based on this custom kernel.
+    """
+    An estimator to learn the optimal kernel for a given sample and
+    build a support vector regressor based on this custom kernel.
 
-    This class is wrapped around the sklearn SVR estimator to be its drop-in replacement,
-    whose implementation is in turn based on LIBSVM.
+    This class is wrapped around the sklearn SVR estimator to function as its
+    drop-in replacement, whose implementation is in turn based on LIBSVM.
 
     Parameters
     ----------
@@ -93,9 +94,11 @@ class OptimalKernelSVR(SVR):
 
         self._train_X, self._train_y = check_X_y(X, y)
 
-        self.opt_kernel = find_optimal_kernel(self._train_X, self._train_y, self._k_bucket)
+        self.opt_kernel = find_optimal_kernel(self._train_X, self._train_y,
+                                              self._k_bucket)
 
-        super().fit(X=self.opt_kernel.full, y=self._train_y, sample_weight=sample_weight)
+        super().fit(X=self.opt_kernel.full, y=self._train_y,
+                    sample_weight=sample_weight)
 
 
     def predict(self, X):
@@ -117,7 +120,8 @@ class OptimalKernelSVR(SVR):
         """
 
         # sample_one must be test data to get the right shape for sklearn X
-        test_train_KM = self.opt_kernel.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self.opt_kernel.attach_to(sample_one=X,
+                                                  sample_two=self._train_X)
 
         predicted_y = super().predict(test_train_KM.full)
 
