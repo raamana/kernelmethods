@@ -60,6 +60,8 @@ def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
 def alignment_ranking(kernel_bucket, targets, **method_params):
     """Method to rank kernels that depend on target alignment."""
 
+    raise NotImplementedError()
+
 
 def get_estimator(learner_id='svm'):
     """Returns a valid kernel machine to become the base learner of the MKL methods.
