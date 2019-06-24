@@ -12,6 +12,10 @@ Kernel methods and classes
 
 Docs: https://raamana.github.io/kernelmethods/
 
+Demo notebooks:
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
 
 kernelmethods
 -------------
@@ -31,8 +35,10 @@ Docs
 
 https://raamana.github.io/kernelmethods/
 
-Example notebooks, will be published shortly.
+Demo notebooks:
 
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
 
 Note
 ----
