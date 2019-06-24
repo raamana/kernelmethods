@@ -12,7 +12,29 @@ from kernelmethods.utils import min_max_scale
 
 
 def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
-    """Finds the optimal kernel for the current sample"""
+    """
+    Finds the optimal kernel for the current sample given their labels.
+
+    Parameters
+    ----------
+    kernel_bucket : KernelBucket
+        The collection of kernels to evaluate and rank
+
+    sample : ndarray
+        The dataset given kernel bucket to be evaluated on
+
+    targets : ndarray
+        Target labels for each point in the sample dataset
+
+    method : str
+        identifier for the metric to choose to rank the kernels
+
+    Returns
+    -------
+    km : KernelMatrix
+        Instance of KernelMatrix with the optimal kernel function
+
+    """
 
     KB = make_kernel_bucket(kernel_bucket)
     KB.attach_to(sample=sample)
