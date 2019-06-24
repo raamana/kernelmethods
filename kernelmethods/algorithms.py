@@ -5,15 +5,97 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 """
 
-from kernelmethods.base import BaseKernelFunction
+from kernelmethods.base import BaseKernelFunction, KernelMatrix
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from kernelmethods.ranking import rank_kernels, find_optimal_kernel
+from kernelmethods.ranking import rank_kernels, find_optimal_kernel, get_estimator
 
 from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
 from sklearn.kernel_ridge import KernelRidge
 import numpy as np
+
+class KernelMachine(BaseEstimator):
+    """Generic class to return a drop-in sklearn estimator."""
+
+    def __init__(self,
+                 k_func,
+                 learner_id='SVR'):
+        """Constructor"""
+
+        self._k_func = k_func
+        self._estimator, self.param_grid = get_estimator(learner_id)
+
+
+    def fit(self, X, y, sample_weight=None):
+        """Estimate the optimal kernel, and fit a SVM based on the custom kernel.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+            Training vectors, where n_samples is the number of samples
+            and n_features is the number of features.
+            For kernel="precomputed", the expected shape of X is
+            (n_samples, n_samples).
+
+        y : array-like, shape (n_samples,)
+            Target values (class labels in classification, real numbers in
+            regression)
+
+        sample_weight : array-like, shape (n_samples,)
+            Per-sample weights. Rescale C per sample. Higher weights
+            force the classifier to put more emphasis on these points.
+
+        Returns
+        -------
+        self : object
+
+        Notes
+        ------
+        If X and y are not C-ordered and contiguous arrays of np.float64 and
+        X is not a scipy.sparse.csr_matrix, X and/or y may be copied.
+
+        If X is a dense array, then the other methods will not support sparse
+        matrices as input.
+
+        """
+
+        self._train_X, self._train_y = check_X_y(X, y)
+
+        self._km = KernelMatrix(self._k_func, name='train_km')
+        self._km.attach_to(self._train_X)
+
+        self._estimator.fit(X=self._km.full, y=self._train_y,
+                            sample_weight=sample_weight)
+
+
+    def predict(self, X):
+        """
+        Perform classification on samples in X.
+
+        For an one-class model, +1 or -1 is returned.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+            For kernel="precomputed", the expected shape of X is
+            [n_samples_test, n_samples_train]
+
+        Returns
+        -------
+        y_pred : array, shape (n_samples,)
+            Class labels for samples in X.
+        """
+
+        # sample_one must be test data to get the right shape for sklearn X
+        self._km.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self._km.full
+        predicted_y = self._estimator.predict(test_train_KM)
+
+        return predicted_y
+        # TODO we don't need data type coversion, as its not classification?
+        # return np.asarray(predicted_y, dtype=np.intp)
+
 
 class OptimalKernelSVR(SVR):
     """
