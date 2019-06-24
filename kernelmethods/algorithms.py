@@ -24,7 +24,8 @@ class KernelMachine(BaseEstimator):
         """Constructor"""
 
         self._k_func = k_func
-        self._estimator, self.param_grid = get_estimator(learner_id)
+        self._learner_id = learner_id
+        self._estimator, self.param_grid = get_estimator(self._learner_id)
 
 
     def fit(self, X, y, sample_weight=None):
@@ -95,6 +96,28 @@ class KernelMachine(BaseEstimator):
         return predicted_y
         # TODO we don't need data type coversion, as its not classification?
         # return np.asarray(predicted_y, dtype=np.intp)
+
+
+    def get_params(self, deep=True):
+        """returns all the relevant parameters for this estimator!"""
+
+        est_param_dict = self._estimator.get_params()
+
+        est_param_dict['k_func'] = self._k_func
+        est_param_dict['learner_id'] = self._learner_id
+
+        return est_param_dict
+
+
+    def set_params(self, **parameters):
+        """Param setter"""
+
+        for parameter, value in parameters.items():
+            if parameter in ('k_func', 'learner_id'):
+                setattr(self, parameter, value)
+            else:
+                setattr(self._estimator, parameter, value)
+        return self
 
 
 class OptimalKernelSVR(SVR):
