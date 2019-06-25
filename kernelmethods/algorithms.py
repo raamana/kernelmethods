@@ -14,6 +14,7 @@ from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
 from sklearn.kernel_ridge import KernelRidge
 import numpy as np
+import warnings
 
 class KernelMachine(BaseEstimator):
     """Generic class to return a drop-in sklearn estimator."""
@@ -23,9 +24,28 @@ class KernelMachine(BaseEstimator):
                  learner_id='SVR'):
         """Constructor"""
 
-        self._k_func = k_func
-        self._learner_id = learner_id
-        self._estimator, self.param_grid = get_estimator(self._learner_id)
+        self.k_func = k_func
+        self.learner_id = learner_id
+        self._estimator, self.param_grid = get_estimator(self.learner_id)
+
+
+    def set_learner_params(self, **learner_params):
+        """Separate method to set underlying estimator parameters"""
+
+        self.learner_params = learner_params
+        if len(self.learner_params) > 0:
+            if 'kernel' in self.learner_params:
+                warnings.warn('kernel is not allowed as parameter to estimator!'
+                              'As we set it via k_func. Ignoring it!')
+                self.learner_params.pop('kernel')
+
+            # to prevent recursive parameter setting
+            self.learner_params.pop('learner_params')
+
+            valid_keys = self._estimator.get_params().keys()
+            new_param_dict = {key : val for key, val in self.learner_params.items()
+                              if key in valid_keys}
+            self._estimator.set_params(**new_param_dict)
 
 
     def fit(self, X, y, sample_weight=None):
@@ -63,11 +83,13 @@ class KernelMachine(BaseEstimator):
 
         self._train_X, self._train_y = check_X_y(X, y)
 
-        self._km = KernelMatrix(self._k_func, name='train_km')
+        self._km = KernelMatrix(self.k_func, name='train_km')
         self._km.attach_to(self._train_X)
 
         self._estimator.fit(X=self._km.full, y=self._train_y,
                             sample_weight=sample_weight)
+
+        return self
 
 
     def predict(self, X):
@@ -88,35 +110,42 @@ class KernelMachine(BaseEstimator):
             Class labels for samples in X.
         """
 
+
+        X = check_array(X)
+
         # sample_one must be test data to get the right shape for sklearn X
         self._km.attach_to(sample_one=X, sample_two=self._train_X)
         test_train_KM = self._km.full
         predicted_y = self._estimator.predict(test_train_KM)
 
         return predicted_y
-        # TODO we don't need data type coversion, as its not classification?
+        # TODO we don't need data type conversion, as things can be
+        #  different in classifiers and regressors?
         # return np.asarray(predicted_y, dtype=np.intp)
 
 
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
-        est_param_dict = self._estimator.get_params()
+        # est_param_dict = self._estimator.get_params(deep=deep)
+        # est_param_dict['k_func'] = self.k_func
+        # est_param_dict['learner_id'] = self.learner_id
+        # est_param_dict['learner_params'] = self.learner_params
+        # return est_param_dict
 
-        est_param_dict['k_func'] = self._k_func
-        est_param_dict['learner_id'] = self._learner_id
-
-        return est_param_dict
+        return {'k_func': self.k_func,
+                'learner_id' : self.learner_id}
 
 
     def set_params(self, **parameters):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_func', 'learner_id'):
+            if parameter in ('k_func', 'learner_id'): # 'learner_params'
                 setattr(self, parameter, value)
-            else:
-                setattr(self._estimator, parameter, value)
+            # else:
+            #     setattr(self._estimator, parameter, value)
+
         return self
 
 
