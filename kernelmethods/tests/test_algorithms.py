@@ -5,7 +5,7 @@ from hypothesis import given, strategies, unlimited
 from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
 import warnings
-
+import traceback
 from sklearn.datasets import make_classification
 from sklearn.utils.estimator_checks import check_estimator
 from kernelmethods.base import KernelMatrix
@@ -35,7 +35,10 @@ def _test_estimator_can_fit_predict(estimator, est_name):
     train_data, labels = make_classification(n_features=sample_dim, n_samples=n_training)
     test_data = gen_random_sample(n_testing, sample_dim)
 
-    if not check_estimator(estimator):
+    try:
+        check_estimator(estimator)
+    except:
+        traceback.print_exc()
         raise TypeError('{} failed sklearn checks to be an estimator'.format(
             est_name))
 
@@ -75,7 +78,8 @@ def test_kernel_machine():
             raise RuntimeError('Unable to instantiate KernelMachine with this func '
                                '{}!'.format(kernel))
 
-        _test_estimator_can_fit_predict(k_machine, str(kernel))
+        _test_estimator_can_fit_predict(k_machine,
+                                        'kernel machine with ' + str(kernel))
 
 
 test_kernel_machine()
