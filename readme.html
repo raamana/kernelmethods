@@ -1,190 +1,56 @@
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Kernel methods and classes &mdash; kernelmethods 0.1+11.ga91d38d.dirty documentation</title>
-  
 
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kernel methods and classes &#8212; kernelmethods 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pd.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="Welcome to kernelmethods’s documentation!" href="index.html" /> 
-</head>
+    <link rel="prev" title="Welcome to kernelmethods’s documentation!" href="index.html" />
+    <script type="text/javascript" src="_static/pd.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-<body class="wy-body-for-nav">
-
-   
-  <div class="wy-grid-for-nav">
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="index.html" class="icon icon-home"> kernelmethods
-          
-
-          
-          </a>
-
-          
-            
-            
-              <div class="version">
-                0.1+11.ga91d38d.dirty
-              </div>
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Kernel methods and classes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#kernelmethods">kernelmethods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#docs">Docs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#note">Note</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel_matrix.html">KernelMatrix class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html">Kernel functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel_functions.html#module-kernelmethods">Composite kernel functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="km_collections.html">Collection of kernel matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operations.html">Kernel Operations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="numeric_kernels.html">Numeric kernels</a></li>
-<li class="toctree-l1"><a class="reference internal" href="categorical_kernels.html">Categorical kernels</a></li>
-<li class="toctree-l1"><a class="reference internal" href="string_kernels.html">String kernels (coming soon)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graph_kernels.html">Graph kernels (coming soon)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
-</ul>
-
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">kernelmethods</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Kernel methods and classes</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
-  </ul>
-
+  </head><body>
+    <div id="header">
+        <h1>kernelmethods 0.1 documentation</h1>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+        <ul>
+            <li class="nav-item nav-item-0"><a href="index.html">kernelmethods 0.1 documentation</a> &#187;
+            </li>
+        </ul>
+    </div>
   
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
             
-  <div class="section" id="kernel-methods-and-classes">
+<div class="section" id="kernel-methods-and-classes">
 <h1>Kernel methods and classes<a class="headerlink" href="#kernel-methods-and-classes" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/kernelmethods"><img alt="https://img.shields.io/pypi/v/kernelmethods.svg" src="https://img.shields.io/pypi/v/kernelmethods.svg" /></a>
 <a class="reference external image-reference" href="https://travis-ci.org/raamana/kernelmethods"><img alt="https://img.shields.io/travis/raamana/kernelmethods.svg" src="https://img.shields.io/travis/raamana/kernelmethods.svg" /></a>
-<a class="reference external image-reference" href="https://kernelmethods.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/kernelmethods/badge/?version=latest" /></a>
-<div class="section" id="kernelmethods">
-<h2>kernelmethods<a class="headerlink" href="#kernelmethods" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> is a pure python library defining modular classes that provides basic kernel methods, such as computing various kernel functions on a given sample (N points of dimension p) as well as provides an intuitive interface for advanced functionality such as composite and hyper kernels. This library fills an important void in the ever-growing python-based machine learning ecosystem, where users can only use predefined kernels and are not able to customize or extend them for their own applications, that demand great flexibility owing to their diversity and need for better performing kernel. This library defines the <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class that is central to all the kernel methods and machines. As the <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class is a key bridge between input data and the various kernel learning algorithms, it is designed to be highly usable and extensible to different applications and data types. Besides being able to apply basic kernels on a given sample (to produce a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code>), this library provides various kernel operations, such as normalization, centering, product, alignment evaluation, linear combination and ranking (by various performance metrics) of kernel matrices. In addition, we provide several convenient classes, such as <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> for easy management of a large collection of kernels.  Dealing with a diverse configuration of kernels is necessary for automatic kernel selection and optimization in applications such as Multiple Kernel Learning (MKL) and the like. In addition to the common numerical kernels such as the Gaussian and Polynomial kernels, we designed this library to provide categorical, string and graph kernels, with the same attractive properties of intuitive and highly-testable API. In addition to providing native implementation of non-numerical kernels, we aim to provide a deeply and easily extensible framework for arbitrary input data types, such as sequences, trees and graphs etc, via data structures such as <code class="docutils literal notranslate"><span class="pre">pyradigm</span></code>. Moreover, drop-in <code class="docutils literal notranslate"><span class="pre">Estimator</span></code> classes are provided for kernel machines such as the <code class="docutils literal notranslate"><span class="pre">SVM</span></code> for seamless usage in the <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> ecosystem.</p>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> is a pure python library defining modular classes that provides basic kernel methods, such as computing various kernel functions on a given sample (N points of dimension p) as well as provides an intuitive interface for advanced functionality such as composite and hyper kernels. This library fills an important void in the ever-growing python-based machine learning ecosystem, where users can only use predefined kernels and are not able to customize or extend them for their own applications, that demand great flexibility owing to their diversity and need for better performing kernel. This library defines the <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class that is central to all the kernel methods and machines. As the <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class is a key bridge between input data and the various kernel learning algorithms, it is designed to be highly usable and extensible to different applications and data types. Besides being able to apply basic kernels on a given sample (to produce a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code>), this library provides various kernel operations, such as normalization, centering, product, alignment evaluation, linear combination and ranking (by various performance metrics) of kernel matrices.</p>
+<p>In addition, we provide several convenient classes, such as <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> for easy management of a large collection of kernels.  Dealing with a diverse configuration of kernels is necessary for automatic kernel selection and optimization in applications such as Multiple Kernel Learning (MKL) and the like.</p>
+<p>In addition to the common numerical kernels such as the Gaussian and Polynomial kernels, we designed this library to make it easy to develop categorical, string and graph kernels, with the same attractive properties of intuitive and highly-testable API. In addition to providing native implementation of non-numerical kernels, we aim to provide a deeply and easily extensible framework for arbitrary input data types, such as sequences, trees and graphs etc, via data structures such as <code class="docutils literal notranslate"><span class="pre">pyradigm</span></code>.</p>
+<p>Moreover, drop-in <code class="docutils literal notranslate"><span class="pre">Estimator</span></code> classes are provided for kernel machines such as the <code class="docutils literal notranslate"><span class="pre">SVM</span></code> for seamless usage in the <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> ecosystem.</p>
 <div class="section" id="docs">
 <h2>Docs<a class="headerlink" href="#docs" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://raamana.github.io/kernelmethods/">https://raamana.github.io/kernelmethods/</a></p>
-<p>Example notebooks, will be published shortly.</p>
+<p>Demo notebooks:</p>
+<a class="reference external image-reference" href="https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb"><img alt="https://mybinder.org/badge_logo.svg" src="https://mybinder.org/badge_logo.svg" /></a>
+<p>For download:</p>
+<p><a class="reference external" href="https://github.com/raamana/kernelmethods/tree/master/demo_tutorials">https://github.com/raamana/kernelmethods/tree/master/demo_tutorials</a></p>
 </div>
 <div class="section" id="note">
 <h2>Note<a class="headerlink" href="#note" title="Permalink to this headline">¶</a></h2>
@@ -193,52 +59,50 @@
 </div>
 
 
-           </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to kernelmethods’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2018, Pradeep Reddy Raamana
-
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
         </div>
       </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Kernel methods and classes</a><ul>
+<li><a class="reference internal" href="#docs">Docs</a></li>
+<li><a class="reference internal" href="#note">Note</a></li>
+</ul>
+</li>
+</ul>
 
-    </section>
-
-  </div>
-  
-
-
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
-
-  
-  
-    
-   
-
-</body>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to kernelmethods’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/readme.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Pradeep Reddy Raamana.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
 </html>
