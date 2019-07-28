@@ -363,6 +363,11 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 
+        if (not np.isfinite(self._full_km).all()) \
+            or (np.isnan(self._full_km).any()):
+            raise Warning('Kernel matrix computation resulted in Inf or NaN '
+                          'values - check your parameters and data!')
+
         if self._keep_normed:
             if not self._is_normed:
                 self.normalize()
@@ -444,6 +449,11 @@ class KernelMatrix(object):
                                                        KM_XX.diagonal(),
                                                        KM_YY.diagonal())
             self._is_normed = True
+
+            if (not np.isfinite(self._normed_km).all()) \
+                or (np.isnan(self._normed_km).any()):
+                raise Warning('normalization of kernel matrix resulted in Inf / NaN '
+                              'values - check your parameters and data!')
 
 
     @property
@@ -668,6 +678,11 @@ class KernelMatrix(object):
 
         if issparse(self._full_km) and dense_fmt:
             self._full_km = self._full_km.todense()
+
+        if (not np.isfinite(self._full_km).all()) \
+            or (np.isnan(self._full_km).any()):
+            raise Warning('Kernel matrix computation resulted in Inf or NaN '
+                          'values - check your parameters and data!')
 
         return self._full_km
 
