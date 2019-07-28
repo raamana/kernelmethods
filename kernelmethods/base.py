@@ -11,25 +11,8 @@ from kernelmethods.operations import center_km, is_PSD, normalize_km, \
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
     get_callable_name, not_symmetric
 from kernelmethods import config as cfg
-
-class KernelMethodsException(Exception):
-    """
-    Generic exception to indicate invalid use of the kernelmethods library.
-
-
-    Allows to distinguish improper use of KernelMatrix from other code exceptions
-    """
-    pass
-
-
-class KMAccessError(KernelMethodsException):
-    """Exception to indicate invalid access to the kernel matrix!"""
-    pass
-
-
-class KMSetAdditionError(KernelMethodsException):
-    """Exception to indicate invalid addition of kernel matrix to a KernelSet"""
-    pass
+from kernelmethods.config import KernelMethodsException, KMAccessError, \
+    KMSetAdditionError
 
 
 class BaseKernelFunction(ABC):

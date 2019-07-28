@@ -3,6 +3,10 @@
 """Module implementing common kernel operations."""
 
 import traceback
+import warnings
+
+import numpy as np
+from kernelmethods.config import KMNormError, KernelMethodsException
 from kernelmethods.utils import ensure_ndarray_1D
 from numpy import multiply as elem_wise_multiply
 from scipy.linalg import LinAlgError, eigh
