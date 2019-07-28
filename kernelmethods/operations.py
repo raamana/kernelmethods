@@ -2,12 +2,11 @@
 
 """Module implementing common kernel operations."""
 
-import numpy as np
-from numpy import multiply as elem_wise_multiply
-from scipy.linalg import eigh, LinAlgError
-import warnings
 import traceback
 from kernelmethods.utils import ensure_ndarray_1D
+from numpy import multiply as elem_wise_multiply
+from scipy.linalg import LinAlgError, eigh
+
 
 def is_positive_semidefinite(sym_matrix,
                              tolerance=1e-6,
@@ -112,19 +111,32 @@ def normalize_km(KM, method='cosine'):
     try:
         method = method.lower()
         if method == 'cosine':
+            km_diag = KM.diagonal()
+            if np.isclose(km_diag, 0.0).any():
+                raise KMNormError(
+                    'Some diagnoal entries in KM are [close to] zero - '
+                    ' this results in infinite or Nan values '
+                    'during Cosine normalization of KM!')
             # D = diag(1./sqrt(diag(K)))
             # normed_K = D * K * D;
-            _1bySqrtDiag = np.diag(1 / np.sqrt(KM.diagonal()))
+            _1bySqrtDiag = np.diag(1 / np.sqrt(km_diag))
             # notice @ is matrix multiplication operator
             normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
             # in case of two samples K(X, Y), the left- and right-most factors
-            #   must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample
+            #  must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample
         else:
             raise NotImplementedError('normalization method {} is not implemented'
                                       'yet!'.format(method))
+    except (KMNormError, KernelMethodsException):
+        raise
     except:
         raise RuntimeError('Unable to normalize kernel matrix using method {}'
                            ''.format(method))
+    else:
+        if (not np.isfinite(normed_km).all()) \
+            or (np.isnan(normed_km).any()):
+            warnings.warn('normalization of kernel matrix resulted in Inf / NaN '
+                          'values - check your parameters and data!')
 
     return normed_km
 
@@ -167,6 +179,13 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
     try:
         method = method.lower()
         if method == 'cosine':
+            if np.isclose(diag_K_XX, 0.0).any() or \
+                np.isclose(diag_K_YY, 0.0).any():
+                raise KMNormError(
+                    'Some diagnoal entries in one of the KMs are [close to] zero - '
+                    ' this results in infinite or Nan values '
+                    'during Cosine normalization of KM!')
+
             diag_factor_xx = np.diag(1 / np.sqrt(diag_K_XX))
             diag_factor_yy = np.diag(1 / np.sqrt(diag_K_YY))
             # notice @ is matrix multiplication operator
