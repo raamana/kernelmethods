@@ -190,7 +190,7 @@ class OptimalKernelSVR(SVR):
 
         super().__init__(kernel='precomputed')
 
-        self._k_bucket = k_bucket
+        self.k_bucket = k_bucket
 
 
     def fit(self, X, y, sample_weight=None):
@@ -228,12 +228,14 @@ class OptimalKernelSVR(SVR):
 
         self._train_X, self._train_y = check_X_y(X, y)
 
-        self.opt_kernel = find_optimal_kernel(self._k_bucket,
+        self.opt_kernel = find_optimal_kernel(self.k_bucket,
                                               self._train_X, self._train_y,
                                               method='cv_risk')
 
         super().fit(X=self.opt_kernel.full, y=self._train_y,
                     sample_weight=sample_weight)
+
+        return self
 
 
     def predict(self, X):
@@ -263,3 +265,19 @@ class OptimalKernelSVR(SVR):
         # TODO we don't need data type coversion, as its not classification?
         # return np.asarray(predicted_y, dtype=np.intp)
 
+    def get_params(self, deep=True):
+        """returns all the relevant parameters for this estimator!"""
+
+        return {'k_bucket': self.k_bucket, }
+
+
+    def set_params(self, **parameters):
+        """Param setter"""
+
+        for parameter, value in parameters.items():
+            if parameter in ('k_bucket', ):
+                setattr(self, parameter, value)
+            # else:
+            #     setattr(self._estimator, parameter, value)
+
+        return self
