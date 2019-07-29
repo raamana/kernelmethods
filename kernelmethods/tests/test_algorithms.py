@@ -70,7 +70,7 @@ def test_optimal_kernel_svr():
     k_bucket = make_kernel_bucket('light')
 
     try:
-        OKSVR = OptimalKernelSVR(k_bucket)
+        OKSVR = OptimalKernelSVR(k_bucket=k_bucket)
     except:
         raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
