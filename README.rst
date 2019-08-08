@@ -20,6 +20,8 @@ Demo notebooks:
 kernelmethods
 -------------
 
+.. image:: docs/flyer.png
+
 
 ``kernelmethods`` is a pure python library defining modular classes that provides basic kernel methods, such as computing various kernel functions on a given sample (N points of dimension p) as well as provides an intuitive interface for advanced functionality such as composite and hyper kernels. This library fills an important void in the ever-growing python-based machine learning ecosystem, where users can only use predefined kernels and are not able to customize or extend them for their own applications, that demand great flexibility owing to their diversity and need for better performing kernel. This library defines the ``KernelMatrix`` class that is central to all the kernel methods and machines. As the ``KernelMatrix`` class is a key bridge between input data and the various kernel learning algorithms, it is designed to be highly usable and extensible to different applications and data types. Besides being able to apply basic kernels on a given sample (to produce a ``KernelMatrix``), this library provides various kernel operations, such as normalization, centering, product, alignment evaluation, linear combination and ranking (by various performance metrics) of kernel matrices.
 
