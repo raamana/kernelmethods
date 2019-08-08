@@ -12,6 +12,7 @@ Welcome to kernelmethods's documentation!
    kernel_matrix
    kernel_functions
    km_collections
+   kernel_machine
    operations
    utilities
    numeric_kernels
