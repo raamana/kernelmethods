@@ -137,3 +137,22 @@ def min_max_scale(array):
     array = np.array(array)
     min_val = array.min()
     return (array - min_val) / (np.max(array) - min_val)
+
+
+def contains_nan_inf(matrix):
+    """
+    Helper func to check for the presence of NaN or Inf.
+    Returns True if any element is not finite (Inf) or NaN. False otherwise.
+
+    Works for both dense and sparse matrices!
+
+    """
+
+    if issparse(matrix):
+        matrix = matrix.todense()
+
+    if (not np.isfinite(matrix).all()) \
+        or (np.isnan(matrix).any()):
+        return True
+    else:
+        return False

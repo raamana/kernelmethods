@@ -7,7 +7,7 @@ cross-validation etc.
 """
 
 import numpy as np
-from kernelmethods.sampling import make_kernel_bucket
+from kernelmethods.sampling import make_kernel_bucket, KernelBucket
 from kernelmethods.utils import min_max_scale
 
 
@@ -36,11 +36,13 @@ def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
 
     """
 
-    KB = make_kernel_bucket(kernel_bucket)
-    KB.attach_to(sample=sample)
+    if not isinstance(kernel_bucket, KernelBucket):
+        raise TypeError('Input is not of required type: KernelBucket')
+
+    kernel_bucket.attach_to(sample=sample)
     metric = rank_kernels(kernel_bucket, targets, method=method)
 
-    return KB[np.argmax(metric)]
+    return kernel_bucket[np.argmax(metric)]
 
 
 def rank_kernels(kernel_bucket, targets, method='align/corr', **method_params):

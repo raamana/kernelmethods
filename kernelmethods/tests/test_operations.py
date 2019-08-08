@@ -24,9 +24,9 @@ def test_frobenius_product():
     B = np.array([[4, 1], [2, 5]])
 
     fprod = frobenius_product(A, B)
-    if np.isclose(fprod, 32):
+    if not np.isclose(fprod, 32):
         raise ValueError('Frobenius product implementation is wrong!')
 
     fnorm = frobenius_norm(A)
-    if not np.isclose(fnorm, np.sqrt(fprod)):
+    if not np.isclose(fnorm, np.sqrt(frobenius_product(A, A))):
         raise ValueError('Frobenius norm implementation is wrong!')

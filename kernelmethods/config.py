@@ -1,6 +1,30 @@
 from operator import add, mul
 import numpy as np
 
+class KernelMethodsException(Exception):
+    """
+    Generic exception to indicate invalid use of the kernelmethods library.
+
+
+    Allows to distinguish improper use of KernelMatrix from other code exceptions
+    """
+    pass
+
+
+class KMAccessError(KernelMethodsException):
+    """Exception to indicate invalid access to the kernel matrix!"""
+    pass
+
+
+class KMNormError(KernelMethodsException):
+    """Custom exception to indicate error during normalization of kernel matrix"""
+
+
+class KMSetAdditionError(KernelMethodsException):
+    """Exception to indicate invalid addition of kernel matrix to a KernelSet"""
+    pass
+
+
 VALID_KERNEL_MATRIX_OPS = ('sum', 'product', 'average')
 
 OPER_KM_OPS = {'sum'    : add,
