@@ -12,6 +12,7 @@ from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
     LinearKernel
 from kernelmethods.sampling import KernelBucket
+from kernelmethods.algorithms import KernelMachine, OptimalKernelSVR
 
 from ._version import get_versions
 __version__ = get_versions()['version']
