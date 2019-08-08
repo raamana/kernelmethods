@@ -29,7 +29,7 @@ In addition, we provide several convenient classes, such as ``KernelSet`` and ``
 
 In addition to the common numerical kernels such as the Gaussian and Polynomial kernels, we designed this library to make it easy to develop categorical, string and graph kernels, with the same attractive properties of intuitive and highly-testable API. In addition to providing native implementation of non-numerical kernels, we aim to provide a deeply and easily extensible framework for arbitrary input data types, such as sequences, trees and graphs etc, via data structures such as ``pyradigm``.
 
-Moreover, drop-in ``Estimator`` classes are provided for kernel machines such as the ``SVM`` for seamless usage in the ``scikit-learn`` ecosystem.
+Moreover, drop-in ``Estimator`` classes are provided, called ``KernelMachine``, offering the power of ``SVM`` for seamless usage in the ``scikit-learn`` ecosystem. Another useful class is called ``OptimalKernelSVR`` which finds the most optimal kernel func for a given sample, and trains the SVM using the optimal kernel.
 
 
 Docs
