@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>kernelmethods.numeric_kernels &#8212; kernelmethods 0.1 documentation</title>
+    <title>kernelmethods.numeric_kernels &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -20,11 +20,11 @@
 
   </head><body>
     <div id="header">
-        <h1>kernelmethods 0.1 documentation</h1>
+        <h1>kernelmethods 0.2 documentation</h1>
     </div>
     <div class="related" role="navigation" aria-label="related navigation">
         <ul>
-            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.1 documentation</a> &#187;
+            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.2 documentation</a> &#187;
             </li>
                 <li class="nav-item nav-item-1"><a href="../index.html"
                         accesskey="U">Module code</a> &#187;</li>
@@ -49,7 +49,7 @@
 <span class="c1">#   (e.g. custom dot product during kernel evaluation might be more efficient</span>
 
 
-<div class="viewcode-block" id="PolyKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.PolyKernel">[docs]</a><span class="k">class</span> <span class="nc">PolyKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="PolyKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.PolyKernel">[docs]</a><span class="k">class</span> <span class="nc">PolyKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Polynomial kernel function&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -93,7 +93,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(degree=</span><span class="si">{}</span><span class="s2">,b=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="GaussianKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.GaussianKernel">[docs]</a><span class="k">class</span> <span class="nc">GaussianKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="GaussianKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.GaussianKernel">[docs]</a><span class="k">class</span> <span class="nc">GaussianKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gaussian kernel function&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -135,7 +135,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(sigma=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="LaplacianKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.LaplacianKernel">[docs]</a><span class="k">class</span> <span class="nc">LaplacianKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="LaplacianKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.LaplacianKernel">[docs]</a><span class="k">class</span> <span class="nc">LaplacianKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Laplacian kernel function&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -174,7 +174,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(gamma=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="LinearKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.LinearKernel">[docs]</a><span class="k">class</span> <span class="nc">LinearKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="LinearKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.LinearKernel">[docs]</a><span class="k">class</span> <span class="nc">LinearKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Linear kernel function&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>

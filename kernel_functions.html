@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Kernel functions &#8212; kernelmethods 0.1 documentation</title>
+    <title>Kernel functions &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -22,11 +22,11 @@
 
   </head><body>
     <div id="header">
-        <h1>kernelmethods 0.1 documentation</h1>
+        <h1>kernelmethods 0.2 documentation</h1>
     </div>
     <div class="related" role="navigation" aria-label="related navigation">
         <ul>
-            <li class="nav-item nav-item-0"><a href="index.html">kernelmethods 0.1 documentation</a> &#187;
+            <li class="nav-item nav-item-0"><a href="index.html">kernelmethods 0.2 documentation</a> &#187;
             </li>
         </ul>
     </div>
@@ -52,186 +52,6 @@
 <li><p>and others such as trees and sequences (TBA).</p></li>
 </ul>
 </div></blockquote>
-<span class="target" id="module-kernelmethods"></span><p>Top-level package for kernelmethods.</p>
-<dl class="class">
-<dt id="kernelmethods.KernelMatrix">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">kernel</em>, <em class="sig-param">normalized=True</em>, <em class="sig-param">name='KernelMatrix'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A self-contained class for the Gram matrix induced by a kernel function on a
-sample.</p>
-<p>KM[i,j] –&gt; kernel between samples i and j
-KM[set_i,set_j] where len(set_i)=m and len(set_i)=n –&gt; matrix KM of size mxn</p>
-<blockquote>
-<div><p>where KM_ij = kernel between samples set_i(i) and set_j(j)</p>
-</div></blockquote>
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample_one</em>, <em class="sig-param">name_one='sample'</em>, <em class="sig-param">sample_two=None</em>, <em class="sig-param">name_two=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attach_to" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attach this kernel to a given sample.</p>
-<dl class="simple">
-<dt>Any computations from previous samples and their results will be reset,</dt><dd><p>along with all the previously set attributes.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample_one</strong> (<em>ndarray</em>) – <p>Input sample to operate on
-Must be a 2D dataset of shape (num_samples, num_features)</p>
-<blockquote>
-<div><p>e.g. MLDataset or ndarray</p>
-</div></blockquote>
-<p>When sample_two=None (e.g. during training), sample_two refers to sample_one.</p>
-</p></li>
-<li><p><strong>name_one</strong> (<em>str</em>) – Name for the first sample.</p></li>
-<li><p><strong>sample_two</strong> (<em>ndarray</em>) – <p>Second sample for the kernel matrix i.e. Y in K(X,Y)
-Must be a 2D dataset of shape (num_samples, num_features)</p>
-<blockquote>
-<div><p>e.g. MLDataset or ndarray</p>
-</div></blockquote>
-<dl class="simple">
-<dt>The dimensionality of this sample (number of columns, sample_two.shape[1])</dt><dd><p>must match with that of sample_one</p>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>name_two</strong> (<em>str</em>) – Name for the second sample.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.attributes">
-<code class="sig-name descname">attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attributes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the attributes currently set.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>attributes</strong> – Dict of the all the attributes currently set.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.center">
-<code class="sig-name descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.center" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to center the kernel matrix</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – If the KM is attached two separate samples.
-    Centering a KM is possible only when attached to a single sample.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.centered">
-<em class="property">property </em><code class="sig-name descname">centered</code><a class="headerlink" href="#kernelmethods.KernelMatrix.centered" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exposes the centered version of the kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.diagonal">
-<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.diagonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.diagonal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the diagonal of the kernel matrix, when attached to a single sample.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – When this instance is attached to more than one sample</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.frob_norm">
-<em class="property">property </em><code class="sig-name descname">frob_norm</code><a class="headerlink" href="#kernelmethods.KernelMatrix.frob_norm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Frobenius norm of the current kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.full">
-<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.KernelMatrix.full" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fully populated kernel matrix in dense ndarray format.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.full_sparse">
-<em class="property">property </em><code class="sig-name descname">full_sparse</code><a class="headerlink" href="#kernelmethods.KernelMatrix.full_sparse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kernel matrix populated in upper tri in sparse array format.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">attr_name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.normalize">
-<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.normalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Normalize the kernel matrix to have unit diagonal.</p>
-<dl class="simple">
-<dt>Cosine normalization mplements definition according to Section 5.1 in</dt><dd><p>Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”, 2004</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>method</strong> (<em>str</em>) – Identifier of the method.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.normed_km">
-<em class="property">property </em><code class="sig-name descname">normed_km</code><a class="headerlink" href="#kernelmethods.KernelMatrix.normed_km" title="Permalink to this definition">¶</a></dt>
-<dd><p>Access to the normalized kernel matrix.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.num_samples">
-<em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#kernelmethods.KernelMatrix.num_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of samples in the sample this kernel is attached to.</p>
-<p>This would be a scalar when the current instance is attached to a single sample.
-When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2
-scalars representing num_samples from those two samples.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.set_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets user-defined attributes for the kernel matrix.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMatrix.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#kernelmethods.KernelMatrix.size" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Returns the size of the KernelMatrix (total number of elements)</dt><dd><p>i.e. num_samples from which the kernel matrix is computed from.
-In a single-sample case, it is the num_samples in the dataset.
-In two-sample case, it is the product of num_samples from two datasets.</p>
-</dd>
-</dl>
-<p>Defining this to correspond to .size attr of numpy arrays</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
 <dt id="kernelmethods.BaseKernelFunction">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">BaseKernelFunction</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#BaseKernelFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.BaseKernelFunction" title="Permalink to this definition">¶</a></dt>
@@ -255,714 +75,113 @@ In two-sample case, it is the product of num_samples from two datasets.</p>
 
 </dd></dl>
 
-<dl class="exception">
-<dt id="kernelmethods.KernelMethodsException">
-<em class="property">exception </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMethodsException</code><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMethodsException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMethodsException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Generic exception to indicate invalid use of the kernelmethods library.</p>
-<p>Allows to distinguish improper use of KernelMatrix from other code exceptions</p>
-<dl class="attribute">
-<dt id="kernelmethods.KernelMethodsException.args">
-<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KernelMethodsException.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMethodsException.with_traceback">
-<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelMethodsException.with_traceback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="kernelmethods.KMAccessError">
-<em class="property">exception </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/base.html#KMAccessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMAccessError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelMethodsException</span></code></p>
-<p>Exception to indicate invalid access to the kernel matrix!</p>
-<dl class="attribute">
-<dt id="kernelmethods.KMAccessError.args">
-<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KMAccessError.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KMAccessError.with_traceback">
-<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KMAccessError.with_traceback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
-<dt id="kernelmethods.PolyKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">PolyKernel</code><span class="sig-paren">(</span><em class="sig-param">degree=2</em>, <em class="sig-param">b=0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.PolyKernel" title="Permalink to this definition">¶</a></dt>
+<dt id="kernelmethods.base.KernelFromCallable">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">KernelFromCallable</code><span class="sig-paren">(</span><em class="sig-param">input_func</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**func_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelFromCallable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.KernelFromCallable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Polynomial kernel function</p>
+<p>Class to create a custom kernel from a given callable.</p>
 <dl class="method">
-<dt id="kernelmethods.PolyKernel.is_psd">
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.PolyKernel.is_psd" title="Permalink to this definition">¶</a></dt>
+<dt id="kernelmethods.base.KernelFromCallable.is_psd">
+<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.base.KernelFromCallable.is_psd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests whether kernel matrix produced via this function is PSD</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="kernelmethods.GaussianKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">GaussianKernel</code><span class="sig-paren">(</span><em class="sig-param">sigma=2.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#GaussianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.GaussianKernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Gaussian kernel function</p>
-<dl class="method">
-<dt id="kernelmethods.GaussianKernel.is_psd">
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.GaussianKernel.is_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="kernelmethods.LaplacianKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">LaplacianKernel</code><span class="sig-paren">(</span><em class="sig-param">gamma=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LaplacianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.LaplacianKernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Laplacian kernel function</p>
-<dl class="method">
-<dt id="kernelmethods.LaplacianKernel.is_psd">
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.LaplacianKernel.is_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="kernelmethods.LinearKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">LinearKernel</code><span class="sig-paren">(</span><em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LinearKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.LinearKernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Linear kernel function</p>
-<dl class="method">
-<dt id="kernelmethods.LinearKernel.is_psd">
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.LinearKernel.is_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="kernelmethods.KernelBucket">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelBucket</code><span class="sig-paren">(</span><em class="sig-param">name='KernelBucket'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">poly_degree_values=(2</em>, <em class="sig-param">3</em>, <em class="sig-param">4)</em>, <em class="sig-param">rbf_sigma_values=(0.03125</em>, <em class="sig-param">0.125</em>, <em class="sig-param">0.5</em>, <em class="sig-param">2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">laplacian_gamma_values=(2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelBucket" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelSet</span></code></p>
-<p>Class to generate a “bucket” of candidate kernels.</p>
-<p>Applications:
-1. to rank/filter/select kernels based on a given sample via many metrics</p>
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to add a new kernel to the set.</p>
-<p>Checks to ensure the new KM is compatible in size to the existing set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.attach_to" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attach all the kernel matrices in this set to a given sample.</p>
-<p>Any previous evaluations to other samples and their results will be reset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.extend">
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.extend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extends the current set by adding in all elements from another set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.num_samples">
-<em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#kernelmethods.KernelBucket.num_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of samples in each individual kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.set_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
-KernelSet, providing a separate value for each element.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#kernelmethods.KernelBucket.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of kernel matrices in this set</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelBucket.take">
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.take" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="kernelmethods.KernelSet">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelSet</code><span class="sig-paren">(</span><em class="sig-param">km_set=None</em>, <em class="sig-param">name='KernelSet'</em>, <em class="sig-param">num_samples=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Container class to manage a set of compatible KernelMatrix instances.</p>
-<p>Compatibility is checked based on the size (number of samples they operate on).
-Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.</p>
-<dl class="method">
-<dt id="kernelmethods.KernelSet.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method to add a new kernel to the set.</p>
-<p>Checks to ensure the new KM is compatible in size to the existing set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.attach_to">
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.attach_to" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attach all the kernel matrices in this set to a given sample.</p>
-<p>Any previous evaluations to other samples and their results will be reset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.extend">
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.extend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extends the current set by adding in all elements from another set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.num_samples">
-<em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#kernelmethods.KernelSet.num_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of samples in each individual kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.set_attr">
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.set_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
-KernelSet, providing a separate value for each element.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#kernelmethods.KernelSet.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of kernel matrices in this set</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelSet.take">
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.take" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="module-kernelmethods">
-<span id="composite-kernel-functions"></span><h1>Composite kernel functions<a class="headerlink" href="#module-kernelmethods" title="Permalink to this headline">¶</a></h1>
-<p>Top-level package for kernelmethods.</p>
+<div class="section" id="composite-kernel-functions">
+<h1>Composite kernel functions<a class="headerlink" href="#composite-kernel-functions" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">kernel</em>, <em class="sig-param">normalized=True</em>, <em class="sig-param">name='KernelMatrix'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A self-contained class for the Gram matrix induced by a kernel function on a
-sample.</p>
-<p>KM[i,j] –&gt; kernel between samples i and j
-KM[set_i,set_j] where len(set_i)=m and len(set_i)=n –&gt; matrix KM of size mxn</p>
-<blockquote>
-<div><p>where KM_ij = kernel between samples set_i(i) and set_j(j)</p>
-</div></blockquote>
-<dl class="method">
-<dt>
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample_one</em>, <em class="sig-param">name_one='sample'</em>, <em class="sig-param">sample_two=None</em>, <em class="sig-param">name_two=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attach_to"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Attach this kernel to a given sample.</p>
-<dl class="simple">
-<dt>Any computations from previous samples and their results will be reset,</dt><dd><p>along with all the previously set attributes.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample_one</strong> (<em>ndarray</em>) – <p>Input sample to operate on
-Must be a 2D dataset of shape (num_samples, num_features)</p>
-<blockquote>
-<div><p>e.g. MLDataset or ndarray</p>
-</div></blockquote>
-<p>When sample_two=None (e.g. during training), sample_two refers to sample_one.</p>
-</p></li>
-<li><p><strong>name_one</strong> (<em>str</em>) – Name for the first sample.</p></li>
-<li><p><strong>sample_two</strong> (<em>ndarray</em>) – <p>Second sample for the kernel matrix i.e. Y in K(X,Y)
-Must be a 2D dataset of shape (num_samples, num_features)</p>
-<blockquote>
-<div><p>e.g. MLDataset or ndarray</p>
-</div></blockquote>
-<dl class="simple">
-<dt>The dimensionality of this sample (number of columns, sample_two.shape[1])</dt><dd><p>must match with that of sample_one</p>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>name_two</strong> (<em>str</em>) – Name for the second sample.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attributes"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns all the attributes currently set.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>attributes</strong> – Dict of the all the attributes currently set.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">center</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.center"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Method to center the kernel matrix</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – If the KM is attached two separate samples.
-    Centering a KM is possible only when attached to a single sample.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">centered</code></dt>
-<dd><p>Exposes the centered version of the kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.diagonal"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the diagonal of the kernel matrix, when attached to a single sample.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – When this instance is attached to more than one sample</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">frob_norm</code></dt>
-<dd><p>Returns the Frobenius norm of the current kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">full</code></dt>
-<dd><p>Fully populated kernel matrix in dense ndarray format.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">full_sparse</code></dt>
-<dd><p>Kernel matrix populated in upper tri in sparse array format.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">attr_name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.get_attr"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Normalize the kernel matrix to have unit diagonal.</p>
-<dl class="simple">
-<dt>Cosine normalization mplements definition according to Section 5.1 in</dt><dd><p>Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”, 2004</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>method</strong> (<em>str</em>) – Identifier of the method.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">normed_km</code></dt>
-<dd><p>Access to the normalized kernel matrix.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">num_samples</code></dt>
-<dd><p>Returns the number of samples in the sample this kernel is attached to.</p>
-<p>This would be a scalar when the current instance is attached to a single sample.
-When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2
-scalars representing num_samples from those two samples.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.set_attr"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Sets user-defined attributes for the kernel matrix.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">size</code></dt>
-<dd><dl class="simple">
-<dt>Returns the size of the KernelMatrix (total number of elements)</dt><dd><p>i.e. num_samples from which the kernel matrix is computed from.
-In a single-sample case, it is the num_samples in the dataset.
-In two-sample case, it is the product of num_samples from two datasets.</p>
-</dd>
-</dl>
-<p>Defining this to correspond to .size attr of numpy arrays</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">BaseKernelFunction</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#BaseKernelFunction"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="kernelmethods.base.CompositeKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">CompositeKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">name='Composite'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#CompositeKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.CompositeKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>Abstract base class for kernel functions.</p>
-<p>Enforces each derived kernel:
-1. to be callable, with two inputs
-2. to have a name and a str representation
-3. provides a method to check whether the derived kernel func is a valid kernel</p>
-<blockquote>
-<div><p>i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)</p>
-</div></blockquote>
-<ol class="arabic simple" start="4">
-<li><p>and that it is symmetric (via tests) as required.</p></li>
-</ol>
+<p>Class to combine a set of kernels into a composite kernel.</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#BaseKernelFunction.is_psd"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
+<dt id="kernelmethods.base.CompositeKernel.composite_KM">
+<em class="property">property </em><code class="sig-name descname">composite_KM</code><a class="headerlink" href="#kernelmethods.base.CompositeKernel.composite_KM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of composite operation</p>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt>
-<em class="property">exception </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMethodsException</code><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMethodsException"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Generic exception to indicate invalid use of the kernelmethods library.</p>
-<p>Allows to distinguish improper use of KernelMatrix from other code exceptions</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">args</code></dt>
-<dd></dd></dl>
 
 <dl class="method">
-<dt>
-<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt>
-<em class="property">exception </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/base.html#KMAccessError"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelMethodsException</span></code></p>
-<p>Exception to indicate invalid access to the kernel matrix!</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">args</code></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
+<dt id="kernelmethods.base.CompositeKernel.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#CompositeKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.CompositeKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract methods that needs to be defined later.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">PolyKernel</code><span class="sig-paren">(</span><em class="sig-param">degree=2</em>, <em class="sig-param">b=0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Polynomial kernel function</p>
+<dt id="kernelmethods.base.ProductKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">ProductKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">name='ProductKernel'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#ProductKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.ProductKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kernelmethods.base.CompositeKernel" title="kernelmethods.base.CompositeKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.CompositeKernel</span></code></a></p>
+<p>Class to define and compute a Product kernel from a KernelSet</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
+<dt id="kernelmethods.base.ProductKernel.composite_KM">
+<em class="property">property </em><code class="sig-name descname">composite_KM</code><a class="headerlink" href="#kernelmethods.base.ProductKernel.composite_KM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of composite operation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.ProductKernel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#ProductKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.ProductKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the product kernel.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">GaussianKernel</code><span class="sig-paren">(</span><em class="sig-param">sigma=2.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#GaussianKernel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Gaussian kernel function</p>
+<dt id="kernelmethods.base.SumKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">SumKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">name='SumKernel'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#SumKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.SumKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kernelmethods.base.CompositeKernel" title="kernelmethods.base.CompositeKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.CompositeKernel</span></code></a></p>
+<p>Class to define and compute a weighted sum kernel from a KernelSet</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
+<dt id="kernelmethods.base.SumKernel.composite_KM">
+<em class="property">property </em><code class="sig-name descname">composite_KM</code><a class="headerlink" href="#kernelmethods.base.SumKernel.composite_KM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of composite operation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.SumKernel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">kernel_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#SumKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.SumKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the sum kernel</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">LaplacianKernel</code><span class="sig-paren">(</span><em class="sig-param">gamma=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LaplacianKernel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Laplacian kernel function</p>
+<dt id="kernelmethods.base.AverageKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">AverageKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">name='AverageKernel'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#AverageKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.AverageKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kernelmethods.base.CompositeKernel" title="kernelmethods.base.CompositeKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.CompositeKernel</span></code></a></p>
+<p>Class to define and compute an Average kernel from a KernelSet</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
+<dt id="kernelmethods.base.AverageKernel.composite_KM">
+<em class="property">property </em><code class="sig-name descname">composite_KM</code><a class="headerlink" href="#kernelmethods.base.AverageKernel.composite_KM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of composite operation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.AverageKernel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#AverageKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.AverageKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average kernel</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">LinearKernel</code><span class="sig-paren">(</span><em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#LinearKernel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
-<p>Linear kernel function</p>
+<dt id="kernelmethods.base.WeightedAverageKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">WeightedAverageKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">weights</em>, <em class="sig-param">name='WeightedAverageKernel'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#WeightedAverageKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.WeightedAverageKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kernelmethods.base.CompositeKernel" title="kernelmethods.base.CompositeKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.CompositeKernel</span></code></a></p>
+<p>Class to define and compute a weighted verage kernel from a KernelSet</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">is_psd</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Tests whether kernel matrix produced via this function is PSD</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelBucket</code><span class="sig-paren">(</span><em class="sig-param">name='KernelBucket'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">poly_degree_values=(2</em>, <em class="sig-param">3</em>, <em class="sig-param">4)</em>, <em class="sig-param">rbf_sigma_values=(0.03125</em>, <em class="sig-param">0.125</em>, <em class="sig-param">0.5</em>, <em class="sig-param">2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">laplacian_gamma_values=(2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelSet</span></code></p>
-<p>Class to generate a “bucket” of candidate kernels.</p>
-<p>Applications:
-1. to rank/filter/select kernels based on a given sample via many metrics</p>
-<dl class="method">
-<dt>
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span></dt>
-<dd><p>Method to add a new kernel to the set.</p>
-<p>Checks to ensure the new KM is compatible in size to the existing set.</p>
+<dt id="kernelmethods.base.WeightedAverageKernel.composite_KM">
+<em class="property">property </em><code class="sig-name descname">composite_KM</code><a class="headerlink" href="#kernelmethods.base.WeightedAverageKernel.composite_KM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of composite operation</p>
 </dd></dl>
 
 <dl class="method">
-<dt>
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span></dt>
-<dd><p>Attach all the kernel matrices in this set to a given sample.</p>
-<p>Any previous evaluations to other samples and their results will be reset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span></dt>
-<dd><p>Extends the current set by adding in all elements from another set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">num_samples</code></dt>
-<dd><p>Number of samples in each individual kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span></dt>
-<dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
-KernelSet, providing a separate value for each element.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">size</code></dt>
-<dd><p>Number of kernel matrices in this set</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelSet</code><span class="sig-paren">(</span><em class="sig-param">km_set=None</em>, <em class="sig-param">name='KernelSet'</em>, <em class="sig-param">num_samples=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Container class to manage a set of compatible KernelMatrix instances.</p>
-<p>Compatibility is checked based on the size (number of samples they operate on).
-Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.</p>
-<dl class="method">
-<dt>
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.append"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Method to add a new kernel to the set.</p>
-<p>Checks to ensure the new KM is compatible in size to the existing set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample</em>, <em class="sig-param">name='sample'</em>, <em class="sig-param">attr_name=None</em>, <em class="sig-param">attr_value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.attach_to"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Attach all the kernel matrices in this set to a given sample.</p>
-<p>Any previous evaluations to other samples and their results will be reset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample</strong> (<em>ndarray</em>) – Input sample to operate on
-Must be 2D of shape (num_samples, num_features)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Identifier for the sample (esp. when multiple are in the same set)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">another_km_set</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.extend"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Extends the current set by adding in all elements from another set.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_attr"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">num_samples</code></dt>
-<dd><p>Number of samples in each individual kernel matrix</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.set_attr"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
-KernelSet, providing a separate value for each element.</p>
-<p>Useful to identify this kernel matrix in various aspects!
-You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">size</code></dt>
-<dd><p>Number of kernel matrices in this set</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.take"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
+<dt id="kernelmethods.base.WeightedAverageKernel.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#WeightedAverageKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.WeightedAverageKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the weighted average kernel</p>
 </dd></dl>
 
 </dd></dl>
@@ -978,7 +197,7 @@ As they are user-defined, they are ideal to represent user needs and application
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Kernel functions</a></li>
-<li><a class="reference internal" href="#module-kernelmethods">Composite kernel functions</a></li>
+<li><a class="reference internal" href="#composite-kernel-functions">Composite kernel functions</a></li>
 </ul>
 
   <h4>Previous topic</h4>

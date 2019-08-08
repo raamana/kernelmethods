@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>kernelmethods.algorithms &#8212; kernelmethods 0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="../../_static/pd.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  </head><body>
+    <div id="header">
+        <h1>kernelmethods 0.2 documentation</h1>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+        <ul>
+            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.2 documentation</a> &#187;
+            </li>
+                <li class="nav-item nav-item-1"><a href="../index.html"
+                        accesskey="U">Module code</a> &#187;</li>
+        </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+<h1>Source code for kernelmethods.algorithms</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Module to gather various high-level algorithms based on the kernel methods,</span>
+<span class="sd">    such as kernel-based predictive models for classification and regression.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">BaseKernelFunction</span><span class="p">,</span> <span class="n">KernelMatrix</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.sampling</span> <span class="k">import</span> <span class="n">KernelBucket</span><span class="p">,</span> <span class="n">make_kernel_bucket</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.ranking</span> <span class="k">import</span> <span class="n">rank_kernels</span><span class="p">,</span> <span class="n">find_optimal_kernel</span><span class="p">,</span> <span class="n">get_estimator</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">ClassifierMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="k">import</span> <span class="n">check_X_y</span><span class="p">,</span> <span class="n">check_array</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span><span class="p">,</span> <span class="n">SVR</span><span class="p">,</span> <span class="n">NuSVC</span><span class="p">,</span> <span class="n">NuSVR</span><span class="p">,</span> <span class="n">OneClassSVM</span>
+<span class="kn">from</span> <span class="nn">sklearn.kernel_ridge</span> <span class="k">import</span> <span class="n">KernelRidge</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="KernelMachine"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine">[docs]</a><span class="k">class</span> <span class="nc">KernelMachine</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generic class to return a drop-in sklearn estimator.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">k_func</span><span class="p">,</span>
+                 <span class="n">learner_id</span><span class="o">=</span><span class="s1">&#39;SVR&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_func</span> <span class="o">=</span> <span class="n">k_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span> <span class="o">=</span> <span class="n">learner_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_grid</span> <span class="o">=</span> <span class="n">get_estimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KernelMachine.set_learner_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.set_learner_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_learner_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">learner_params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Separate method to set underlying estimator parameters&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span> <span class="o">=</span> <span class="n">learner_params</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;kernel&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;kernel is not allowed as parameter to estimator!&#39;</span>
+                              <span class="s1">&#39;As we set it via k_func. Ignoring it!&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kernel&#39;</span><span class="p">)</span>
+
+            <span class="c1"># to prevent recursive parameter setting</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;learner_params&#39;</span><span class="p">)</span>
+
+            <span class="n">valid_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">new_param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                              <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_keys</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">new_param_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KernelMachine.fit"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate the optimal kernel, and fit a SVM based on the custom kernel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix}, shape (n_samples, n_features)</span>
+<span class="sd">            Training vectors, where n_samples is the number of samples</span>
+<span class="sd">            and n_features is the number of features.</span>
+<span class="sd">            For kernel=&quot;precomputed&quot;, the expected shape of X is</span>
+<span class="sd">            (n_samples, n_samples).</span>
+
+<span class="sd">        y : array-like, shape (n_samples,)</span>
+<span class="sd">            Target values (class labels in classification, real numbers in</span>
+<span class="sd">            regression)</span>
+
+<span class="sd">        sample_weight : array-like, shape (n_samples,)</span>
+<span class="sd">            Per-sample weights. Rescale C per sample. Higher weights</span>
+<span class="sd">            force the classifier to put more emphasis on these points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        ------</span>
+<span class="sd">        If X and y are not C-ordered and contiguous arrays of np.float64 and</span>
+<span class="sd">        X is not a scipy.sparse.csr_matrix, X and/or y may be copied.</span>
+
+<span class="sd">        If X is a dense array, then the other methods will not support sparse</span>
+<span class="sd">        matrices as input.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_km</span> <span class="o">=</span> <span class="n">KernelMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;train_km&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_km</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_km</span><span class="o">.</span><span class="n">full</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span><span class="p">,</span>
+                            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="KernelMachine.predict"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform classification on samples in X.</span>
+
+<span class="sd">        For an one-class model, +1 or -1 is returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix}, shape (n_samples, n_features)</span>
+<span class="sd">            For kernel=&quot;precomputed&quot;, the expected shape of X is</span>
+<span class="sd">            [n_samples_test, n_samples_train]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_pred : array, shape (n_samples,)</span>
+<span class="sd">            Class labels for samples in X.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># sample_one must be test data to get the right shape for sklearn X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_km</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">sample_one</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_two</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">)</span>
+        <span class="n">test_train_KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_km</span><span class="o">.</span><span class="n">full</span>
+        <span class="n">predicted_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_train_KM</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predicted_y</span></div>
+        <span class="c1"># TODO we don&#39;t need data type conversion, as things can be</span>
+        <span class="c1">#  different in classifiers and regressors?</span>
+        <span class="c1"># return np.asarray(predicted_y, dtype=np.intp)</span>
+
+
+<div class="viewcode-block" id="KernelMachine.get_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns all the relevant parameters for this estimator!&quot;&quot;&quot;</span>
+
+        <span class="c1"># est_param_dict = self._estimator.get_params(deep=deep)</span>
+        <span class="c1"># est_param_dict[&#39;k_func&#39;] = self.k_func</span>
+        <span class="c1"># est_param_dict[&#39;learner_id&#39;] = self.learner_id</span>
+        <span class="c1"># est_param_dict[&#39;learner_params&#39;] = self.learner_params</span>
+        <span class="c1"># return est_param_dict</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;k_func&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_func</span><span class="p">,</span>
+                <span class="s1">&#39;learner_id&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="KernelMachine.set_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.set_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Param setter&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_func&#39;</span><span class="p">,</span> <span class="s1">&#39;learner_id&#39;</span><span class="p">):</span> <span class="c1"># &#39;learner_params&#39;</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     setattr(self._estimator, parameter, value)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="OptimalKernelSVR"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR">[docs]</a><span class="k">class</span> <span class="nc">OptimalKernelSVR</span><span class="p">(</span><span class="n">SVR</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An estimator to learn the optimal kernel for a given sample and</span>
+<span class="sd">    build a support vector regressor based on this custom kernel.</span>
+
+<span class="sd">    This class is wrapped around the sklearn SVR estimator to function as its</span>
+<span class="sd">    drop-in replacement, whose implementation is in turn based on LIBSVM.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    k_bucket : KernelBucket or sampling_strategy</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    support_ : array-like, shape = [n_SV]</span>
+<span class="sd">        Indices of support vectors.</span>
+
+<span class="sd">    support_vectors_ : array-like, shape = [nSV, n_features]</span>
+<span class="sd">        Support vectors.</span>
+
+<span class="sd">    dual_coef_ : array, shape = [1, n_SV]</span>
+<span class="sd">        Coefficients of the support vector in the decision function.</span>
+
+<span class="sd">    coef_ : array, shape = [1, n_features]</span>
+<span class="sd">        Weights assigned to the features (coefficients in the primal</span>
+<span class="sd">        problem). This is only available in the case of a linear kernel.</span>
+
+<span class="sd">        `coef_` is readonly property derived from `dual_coef_` and</span>
+<span class="sd">        `support_vectors_`.</span>
+
+<span class="sd">    intercept_ : array, shape = [1]</span>
+<span class="sd">        Constants in decision function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_bucket</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;precomputed&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span> <span class="o">=</span> <span class="n">k_bucket</span>
+
+
+<div class="viewcode-block" id="OptimalKernelSVR.fit"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate the optimal kernel, and fit a SVM based on the custom kernel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix}, shape (n_samples, n_features)</span>
+<span class="sd">            Training vectors, where n_samples is the number of samples</span>
+<span class="sd">            and n_features is the number of features.</span>
+<span class="sd">            For kernel=&quot;precomputed&quot;, the expected shape of X is</span>
+<span class="sd">            (n_samples, n_samples).</span>
+
+<span class="sd">        y : array-like, shape (n_samples,)</span>
+<span class="sd">            Target values (class labels in classification, real numbers in</span>
+<span class="sd">            regression)</span>
+
+<span class="sd">        sample_weight : array-like, shape (n_samples,)</span>
+<span class="sd">            Per-sample weights. Rescale C per sample. Higher weights</span>
+<span class="sd">            force the classifier to put more emphasis on these points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        ------</span>
+<span class="sd">        If X and y are not C-ordered and contiguous arrays of np.float64 and</span>
+<span class="sd">        X is not a scipy.sparse.csr_matrix, X and/or y may be copied.</span>
+
+<span class="sd">        If X is a dense array, then the other methods will not support sparse</span>
+<span class="sd">        matrices as input.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_kernel</span> <span class="o">=</span> <span class="n">find_optimal_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span><span class="p">,</span>
+                                              <span class="n">method</span><span class="o">=</span><span class="s1">&#39;cv_risk&#39;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kernel</span><span class="o">.</span><span class="n">full</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span><span class="p">,</span>
+                    <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="OptimalKernelSVR.predict"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform classification on samples in X.</span>
+
+<span class="sd">        For an one-class model, +1 or -1 is returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix}, shape (n_samples, n_features)</span>
+<span class="sd">            For kernel=&quot;precomputed&quot;, the expected shape of X is</span>
+<span class="sd">            [n_samples_test, n_samples_train]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_pred : array, shape (n_samples,)</span>
+<span class="sd">            Class labels for samples in X.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># sample_one must be test data to get the right shape for sklearn X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_kernel</span><span class="o">.</span><span class="n">attach_to</span><span class="p">(</span><span class="n">sample_one</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">sample_two</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">)</span>
+        <span class="n">test_train_KM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_kernel</span><span class="o">.</span><span class="n">full</span>
+        <span class="n">predicted_y</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_train_KM</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predicted_y</span></div>
+        <span class="c1"># TODO we don&#39;t need data type coversion, as its not classification?</span>
+        <span class="c1"># return np.asarray(predicted_y, dtype=np.intp)</span>
+
+<div class="viewcode-block" id="OptimalKernelSVR.get_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns all the relevant parameters for this estimator!&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;k_bucket&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">,</span> <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="OptimalKernelSVR.set_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR.set_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Param setter&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_bucket&#39;</span><span class="p">,</span> <span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     setattr(self._estimator, parameter, value)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Pradeep Reddy Raamana.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

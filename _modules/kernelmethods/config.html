@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>kernelmethods.config &#8212; kernelmethods 0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="../../_static/pd.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  </head><body>
+    <div id="header">
+        <h1>kernelmethods 0.2 documentation</h1>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+        <ul>
+            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.2 documentation</a> &#187;
+            </li>
+                <li class="nav-item nav-item-1"><a href="../index.html"
+                        accesskey="U">Module code</a> &#187;</li>
+        </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+<h1>Source code for kernelmethods.config</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">add</span><span class="p">,</span> <span class="n">mul</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="KernelMethodsException"><a class="viewcode-back" href="../../API.html#kernelmethods.KernelMethodsException">[docs]</a><span class="k">class</span> <span class="nc">KernelMethodsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic exception to indicate invalid use of the kernelmethods library.</span>
+
+
+<span class="sd">    Allows to distinguish improper use of KernelMatrix from other code exceptions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="KMAccessError"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KMAccessError">[docs]</a><span class="k">class</span> <span class="nc">KMAccessError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception to indicate invalid access to the kernel matrix!&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">class</span> <span class="nc">KMNormError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom exception to indicate error during normalization of kernel matrix&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="KMSetAdditionError"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KMSetAdditionError">[docs]</a><span class="k">class</span> <span class="nc">KMSetAdditionError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception to indicate invalid addition of kernel matrix to a KernelSet&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">VALID_KERNEL_MATRIX_OPS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">,</span> <span class="s1">&#39;average&#39;</span><span class="p">)</span>
+
+<span class="n">OPER_KM_OPS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sum&#39;</span>    <span class="p">:</span> <span class="n">add</span><span class="p">,</span>
+               <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="n">mul</span><span class="p">}</span>
+
+
+<span class="c1"># default values and ranges</span>
+
+<span class="n">kernel_bucket_strategies</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;exhaustive&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">)</span>
+<span class="c1"># strategy: exhaustive</span>
+<span class="n">default_degree_values_poly_kernel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">default_sigma_values_gaussian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="n">default_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="c1"># light</span>
+<span class="n">light_degree_values_poly_kernel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">light_sigma_values_gaussian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="n">light_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="c1"># controls the precision for kernel_matrix elements</span>
+<span class="n">km_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f8&#39;</span><span class="p">)</span>
+
+<span class="c1"># categorical variables</span>
+<span class="n">dtype_categorical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unicode_</span>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Pradeep Reddy Raamana.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>kernelmethods.operations &#8212; kernelmethods 0.1 documentation</title>
+    <title>kernelmethods.operations &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -20,11 +20,11 @@
 
   </head><body>
     <div id="header">
-        <h1>kernelmethods 0.1 documentation</h1>
+        <h1>kernelmethods 0.2 documentation</h1>
     </div>
     <div class="related" role="navigation" aria-label="related navigation">
         <ul>
-            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.1 documentation</a> &#187;
+            <li class="nav-item nav-item-0"><a href="../../index.html">kernelmethods 0.2 documentation</a> &#187;
             </li>
                 <li class="nav-item nav-item-1"><a href="../index.html"
                         accesskey="U">Module code</a> &#187;</li>
@@ -42,12 +42,15 @@
 
 <span class="sd">&quot;&quot;&quot;Module implementing common kernel operations.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">eigh</span><span class="p">,</span> <span class="n">LinAlgError</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">ensure_ndarray_1D</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">ensure_ndarray_1D</span><span class="p">,</span> <span class="n">contains_nan_inf</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">eigh</span>
+
 
 <div class="viewcode-block" id="is_positive_semidefinite"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.is_positive_semidefinite">[docs]</a><span class="k">def</span> <span class="nf">is_positive_semidefinite</span><span class="p">(</span><span class="n">sym_matrix</span><span class="p">,</span>
                              <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
@@ -152,19 +155,31 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
+            <span class="n">km_diag</span> <span class="o">=</span> <span class="n">KM</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">km_diag</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">KMNormError</span><span class="p">(</span>
+                    <span class="s1">&#39;Some diagnoal entries in KM are [close to] zero - &#39;</span>
+                    <span class="s1">&#39; this results in infinite or Nan values &#39;</span>
+                    <span class="s1">&#39;during Cosine normalization of KM!&#39;</span><span class="p">)</span>
             <span class="c1"># D = diag(1./sqrt(diag(K)))</span>
             <span class="c1"># normed_K = D * K * D;</span>
-            <span class="n">_1bySqrtDiag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">KM</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()))</span>
+            <span class="n">_1bySqrtDiag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">km_diag</span><span class="p">))</span>
             <span class="c1"># notice @ is matrix multiplication operator</span>
             <span class="n">normed_km</span> <span class="o">=</span> <span class="n">_1bySqrtDiag</span> <span class="o">@</span> <span class="n">KM</span> <span class="o">@</span> <span class="n">_1bySqrtDiag</span>
             <span class="c1"># in case of two samples K(X, Y), the left- and right-most factors</span>
-            <span class="c1">#   must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample</span>
+            <span class="c1">#  must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;normalization method </span><span class="si">{}</span><span class="s1"> is not implemented&#39;</span>
                                       <span class="s1">&#39;yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span><span class="p">):</span>
+        <span class="k">raise</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to normalize kernel matrix using method </span><span class="si">{}</span><span class="s1">&#39;</span>
                            <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contains_nan_inf</span><span class="p">(</span><span class="n">normed_km</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;normalization of kernel matrix resulted in Inf / NaN &#39;</span>
+                          <span class="s1">&#39;values - check your parameters and data!&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">normed_km</span></div>
 
@@ -207,6 +222,13 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">KMNormError</span><span class="p">(</span>
+                    <span class="s1">&#39;Some diagnoal entries in one of the KMs are [close to] zero - &#39;</span>
+                    <span class="s1">&#39; this results in infinite or Nan values &#39;</span>
+                    <span class="s1">&#39;during Cosine normalization of KM!&#39;</span><span class="p">)</span>
+
             <span class="n">diag_factor_xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">))</span>
             <span class="n">diag_factor_yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">))</span>
             <span class="c1"># notice @ is matrix multiplication operator</span>
