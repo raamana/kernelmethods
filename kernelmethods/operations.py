@@ -7,7 +7,7 @@ import warnings
 
 import numpy as np
 from kernelmethods.config import KMNormError, KernelMethodsException
-from kernelmethods.utils import ensure_ndarray_1D
+from kernelmethods.utils import ensure_ndarray_1D, contains_nan_inf
 from numpy import multiply as elem_wise_multiply
 from scipy.linalg import LinAlgError, eigh
 
@@ -137,8 +137,7 @@ def normalize_km(KM, method='cosine'):
         raise RuntimeError('Unable to normalize kernel matrix using method {}'
                            ''.format(method))
     else:
-        if (not np.isfinite(normed_km).all()) \
-            or (np.isnan(normed_km).any()):
+        if contains_nan_inf(normed_km):
             warnings.warn('normalization of kernel matrix resulted in Inf / NaN '
                           'values - check your parameters and data!')
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from copy import copy
 from itertools import product as iter_product
 
@@ -9,7 +9,7 @@ from scipy.sparse import issparse, lil_matrix
 from kernelmethods.operations import center_km, is_PSD, normalize_km, \
     normalize_km_2sample, frobenius_norm
 from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
-    get_callable_name, not_symmetric
+    get_callable_name, not_symmetric, contains_nan_inf
 from kernelmethods import config as cfg
 from kernelmethods.config import KernelMethodsException, KMAccessError, \
     KMSetAdditionError
@@ -346,8 +346,7 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 
-        if (not np.isfinite(self._full_km).all()) \
-            or (np.isnan(self._full_km).any()):
+        if contains_nan_inf(self._full_km):
             raise Warning('Kernel matrix computation resulted in Inf or NaN '
                           'values - check your parameters and data!')
 
@@ -363,7 +362,7 @@ class KernelMatrix(object):
     def full_sparse(self):
         """Kernel matrix populated in upper tri in sparse array format."""
 
-        return self._populate_fully(fill_lower_tri=False)
+        return self._populate_fully(dense_fmt=False, fill_lower_tri=False)
 
 
     def center(self):
@@ -433,8 +432,7 @@ class KernelMatrix(object):
                                                        KM_YY.diagonal())
             self._is_normed = True
 
-            if (not np.isfinite(self._normed_km).all()) \
-                or (np.isnan(self._normed_km).any()):
+            if contains_nan_inf(self._normed_km):
                 raise Warning('normalization of kernel matrix resulted in Inf / NaN '
                               'values - check your parameters and data!')
 
@@ -662,8 +660,7 @@ class KernelMatrix(object):
         if issparse(self._full_km) and dense_fmt:
             self._full_km = self._full_km.todense()
 
-        if (not np.isfinite(self._full_km).all()) \
-            or (np.isnan(self._full_km).any()):
+        if contains_nan_inf(self._full_km):
             raise Warning('Kernel matrix computation resulted in Inf or NaN '
                           'values - check your parameters and data!')
 
