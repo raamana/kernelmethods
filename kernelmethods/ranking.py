@@ -47,9 +47,27 @@ def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
 
 def rank_kernels(kernel_bucket, targets, method='align/corr', **method_params):
     """
-    Main interface.
+    Computes a given ranking metric for all the kernel matrices in the bucket.
 
     Choices for the method include: "align/corr", "cv_risk"
+
+    Parameters
+    ----------
+    kernel_bucket : KernelBucket
+
+    targets : Iterable
+        target values of the sample attached to the bucket
+
+    method : str
+        Identifies one of the metrics: ``align/corr``, ``cv_risk``
+
+    method_params : dict
+        Additional parameters to be passed on to the method chosen above.
+
+    Returns
+    -------
+    scores : ndarray
+        Values of the ranking metrics computed for the kernel matrices in the bucket
 
     """
 
@@ -65,7 +83,28 @@ def rank_kernels(kernel_bucket, targets, method='align/corr', **method_params):
 
 
 def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
-    """Ranks kernels by their performance in cross-validation."""
+    """
+    Ranks kernels by their performance measured via cross-validation (CV).
+
+    Parameters
+    ----------
+    kernel_bucket : KernelBucket
+
+    targets : Iterable
+        target values of the sample attached to the bucket
+
+    num_folds : int
+        Number of folds for the CV to be employed
+
+    estimator_name : str
+        Name of a valid Scikit-Learn estimator. Default: ``SVM``
+
+    Returns
+    -------
+    scores : ndarray
+        CV performance computed for the kernel matrices in the bucket
+
+    """
 
     from sklearn.model_selection import GridSearchCV
 
@@ -82,19 +121,40 @@ def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
 
 
 def alignment_ranking(kernel_bucket, targets, **method_params):
-    """Method to rank kernels that depend on target alignment."""
+    """Method to rank kernels that depend on target alignment.
+
+    .. note: To be implemented.
+
+    """
 
     raise NotImplementedError()
 
 
 def get_estimator(learner_id='svm'):
-    """Returns a valid kernel machine to become the base learner of the MKL methods.
-
-    This base learner must be able to accept a precomputed kernel for fit/predict methods!
-
-    TODO hyper-param optimization needs to be incorporated somewhere!!
-        Perhaps by returning a GridSearchCV(base_learner) object or similar?
     """
+    Returns a valid kernel machine to become the base learner of the MKL methods.
+
+    Base learner must be able to accept a precomputed kernel for fit/predict methods!
+
+    Parameters
+    ----------
+    learner_id : str
+        Identifier for the estimator to be chosen.
+        Options: ``SVM`` and ``SVR``.
+        Default: ``SVM``
+
+    Returns
+    -------
+    base_learner : Estimator
+        An sklearn estimator
+
+    param_grid : dict
+        Parameter grid (sklearn format) for the chosen estimator.
+
+    """
+
+    # TODO hyper-param optimization needs to be incorporated somewhere!!
+    #   Perhaps by returning a GridSearchCV(base_learner) object or similar?
 
     learner_id = learner_id.lower()
     if learner_id in ('svm', 'svc'):

@@ -5,7 +5,6 @@ class KernelMethodsException(Exception):
     """
     Generic exception to indicate invalid use of the kernelmethods library.
 
-
     Allows to distinguish improper use of KernelMatrix from other code exceptions
     """
     pass
