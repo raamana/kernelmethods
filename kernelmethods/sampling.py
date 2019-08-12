@@ -55,7 +55,7 @@ class KernelBucket(KernelSet):
 
         # start with the addition of kernel matrix for linear kernel
         init_kset = [KernelMatrix(LinearKernel(), normalized=self._norm_kernels), ]
-        super().__init__(km_set=init_kset, name=name)
+        super().__init__(km_list=init_kset, name=name)
         # not attached to a sample yet
         self._num_samples = None
 

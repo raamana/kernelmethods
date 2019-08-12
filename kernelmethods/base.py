@@ -126,12 +126,26 @@ class KernelFromCallable(BaseKernelFunction):
 
 class KernelMatrix(object):
     """
-    A self-contained class for the Gram matrix induced by a kernel function on a
-    sample.
+    KernelMatrix is a self-contained class for the Gram matrix induced by a kernel
+    function on a sample.
 
-    KM[i,j] --> kernel between samples i and j
-    KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
+    KernelMatrix behaves just like numpy arrays in terms of accessing its elements:
+
+    - KM[i,j] --> kernel function between samples i and j
+    - KM[set_i,set_j] where len(set_i)=m and len(set_i)=n => matrix KM of size m x n
         where KM_ij = kernel between samples set_i(i) and set_j(j)
+
+    Parameters
+    ----------
+    kernel : BaseKernelFunction
+        kernel function that populates the kernel matrix
+
+    normalized : bool
+        Flag to indicate whether to normalize the kernel matrix
+        Normalization is recommended, unless you have clear reasons not to.
+
+    name : str
+        short name to describe the nature of the kernel function
 
     """
 
@@ -141,7 +155,7 @@ class KernelMatrix(object):
                  normalized=True,
                  name='KernelMatrix'):
         """
-        Constructor.
+        Constructor for the KernelMatrix class.
 
         Parameters
         ----------
@@ -257,15 +271,37 @@ class KernelMatrix(object):
         You could think of them as tags or identifiers etc.
         As they are user-defined, they are ideal to represent user needs and
         applications.
+
+        Parameters
+        ----------
+        name : str or hashable
+            Names of the attribute.
+
+        value : object
+            Value of the attribute
+
         """
 
         self._attr[name] = value
 
 
     def get_attr(self, attr_name, value_if_not_found=None):
-        """Returns the value of an user-defined attribute.
+        """
+        Returns the value of the user-defined attribute.
 
-        If not set previously, or no match found, returns value_if_not_found.
+        Parameters
+        ----------
+        attr_name : str or hashable
+
+        value_if_not_found : object
+            If attribute was not set previously, returns this value
+
+        Returns
+        -------
+        attr_value : object
+            Value of the attribute if found.
+            Or value_if_not_found if attribute is not found.
+
         """
 
         return self._attr.get(attr_name, value_if_not_found)
@@ -884,10 +920,25 @@ class KernelSet(object):
 
 
     def __init__(self,
-                 km_set=None,
+                 km_list=None,
                  name='KernelSet',
                  num_samples=None):
-        """Constructor."""
+        """
+        Constructor of the KernelSet class.
+
+        Parameters
+        ----------
+        km_list : Iterable or KernelMatrix or None
+            Initial set of kernel matrices to be added to this KernelSet
+
+        name : str
+            Name for this kernel set.
+
+        num_samples : int
+            Specifying the number of samples to be expected in each kernel matrix.
+            Matching number of samples is a condition for compatibility.
+            If not set during instantiation, it is inferred from the first KM.
+        """
 
         self.name = name
 
@@ -905,12 +956,12 @@ class KernelSet(object):
             self._is_init = False
             self._num_samples = None
 
-        if isinstance(km_set, Iterable):
-            for km in km_set:
+        if isinstance(km_list, Iterable):
+            for km in km_list:
                 self.append(km)
-        elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
-            self.append(km_set)
-        elif km_set is None:
+        elif isinstance(km_list, VALID_KERNEL_MATRIX_TYPES):
+            self.append(km_list)
+        elif km_list is None:
             pass  # do nothing
         else:
             raise TypeError('Unknown type of input matrix! '
@@ -943,6 +994,12 @@ class KernelSet(object):
         Method to add a new kernel to the set.
 
         Checks to ensure the new KM is compatible in size to the existing set.
+
+        Parameters
+        ----------
+        KM : KernelMatrix or ndarray or compatible
+            kernel matrix to be appended to the KernelSet
+
         """
 
         if not isinstance(KM, (BaseKernelFunction, KernelMatrix,
@@ -979,8 +1036,24 @@ class KernelSet(object):
 
 
     def take(self, indices, name='SelectedKMs'):
-        """Returns a new KernelSet with requested kernel matrices, identified by
-        their indices."""
+        """
+        "Returns a new KernelSet with requested kernel matrices, identified by
+        their indices.
+
+        Parameters
+        ----------
+        indices : Iterable
+            List of indices identifying the kernel matrices to return
+
+        name : str
+            Name for the new kernel set.
+
+        Returns
+        -------
+        ks : KernelSet
+            New kernel set with the selected KMs
+
+        """
 
         indices = self._check_indices(indices)
 
@@ -993,13 +1066,23 @@ class KernelSet(object):
         return new_set
 
 
-    def get_kernel_funcs(self, indices, name='SelectedKernelFuncs'):
+    def get_kernel_funcs(self, indices):
         """
         Returns kernel functions underlying the specified kernel matrices in this
         kernel set.
 
         This is helpful to apply a given set of kernel functions on new sets of
         data (e.g. test set)
+
+        Parameters
+        ----------
+        indices : Iterable
+            List of indices identifying the kernel matrices to return
+
+        Returns
+        -------
+        kf_tuple : tuple
+            Tuple of kernel functinons from  the selected KMs
 
         """
 
@@ -1105,6 +1188,15 @@ class KernelSet(object):
         You could think of them as tags or identifiers etc.
         As they are user-defined, they are ideal to represent user needs and
         applications.
+
+        Parameters
+        ----------
+        name : str or hashable
+            Names of the attribute.
+
+        values : object
+            Value of the attribute
+
         """
 
         if not isinstance(values, Iterable) or isinstance(values, str):
@@ -1123,6 +1215,19 @@ class KernelSet(object):
         """Returns the value of an user-defined attribute.
 
         If not set previously, or no match found, returns value_if_not_found.
+
+        Parameters
+        ----------
+        attr_name : str or hashable
+
+        value_if_not_found : object
+            If attribute was not set previously, returns this value
+
+        Returns
+        -------
+        attr_values : object
+            Values of the attribute from each KM in the set.
+            Or value_if_not_found if attribute is not found.
         """
 
         return [self._km_set[index].get_attr(name, value_if_not_found)
