@@ -1281,6 +1281,17 @@ class CompositeKernel(ABC):
             raise ValueError('{} is not fitted yet!'.format(self.name))
 
 
+    @property
+    def full(self):
+        """
+        Returns the result of compsoite operation.
+
+        Alias for composite_KM to match the KernelMatrix interface.
+        """
+
+        return self.composite_KM
+
+
     def __str__(self):
         """human readable presentation"""
 
