@@ -9,8 +9,8 @@ Welcome to kernelmethods's documentation!
    installation
    usage
    API
-   kernel_matrix
    kernel_functions
+   kernel_matrix
    km_collections
    kernel_machine
    operations

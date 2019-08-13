@@ -3,14 +3,14 @@ API Reference
 
 A tutorial-like presentation is available at :doc:`usage`.
 
-This library consists of a set of key classes such as ``KernelMatrix`` documented in :doc:`kernel_matrix`, diverse library of :doc:`kernel_functions`, ``KernelSet`` and ``KernelBucket`` described in :doc:`km_collections`, along with a library of :doc:`operations` and related :doc:`utilities`.
+This library consists of a set of key classes and methods such as
 
+ - diverse library of :doc:`kernel_functions`,
+ - ``KernelMatrix`` documented in :doc:`kernel_matrix`,
+ - container classes ``KernelSet`` and ``KernelBucket`` described in :doc:`km_collections`,
+ - a library of :doc:`operations` and
+ - a set of related :doc:`utilities`.
 
-API Summary
----------------
-
-.. autosummary::
-   :toctree: _autosummary
 
 
 Exceptions
@@ -18,5 +18,15 @@ Exceptions
 
 .. autoclass:: kernelmethods.KernelMethodsException
    :undoc-members:
-   :inherited-members:
    :show-inheritance:
+
+
+.. autoclass:: kernelmethods.KMAccessError
+   :undoc-members:
+   :show-inheritance:
+
+
+.. autoclass:: kernelmethods.KMSetAdditionError
+   :undoc-members:
+   :show-inheritance:
+

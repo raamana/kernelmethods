@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 
 """
-This module implements the common kernel operations
+This module implements the common kernel operations such as
 
-.. autosummary::
-    :toctree: _autosummary
+ - normalization of a kernel matrix (KM),
+ - centering (one- and two-sample cases),
+ - evaluating similarity, computing alignment,
+ - frobenius norms,
+ - linear combinations and
+ - checking whether a KM is PSD.
+
+API
+----
 
 """
 
