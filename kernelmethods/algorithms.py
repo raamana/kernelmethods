@@ -5,24 +5,49 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 """
 
-from kernelmethods.base import BaseKernelFunction, KernelMatrix
-from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from kernelmethods.ranking import rank_kernels, find_optimal_kernel, get_estimator
+from kernelmethods.base import KernelMatrix
+from kernelmethods.sampling import KernelBucket
+from kernelmethods.ranking import find_optimal_kernel, get_estimator
 
-from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
 from sklearn.kernel_ridge import KernelRidge
-import numpy as np
 import warnings
 
+
 class KernelMachine(BaseEstimator):
-    """Generic class to return a drop-in sklearn estimator."""
+    """Generic class to return a drop-in sklearn estimator.
+
+    Parameters
+    ----------
+    k_func : KernelFunction
+        The kernel function the kernel machine bases itself on
+
+    learner_id : str
+        Identifier for the estimator to be built based on the kernel function.
+        Options: ``SVM`` and ``SVR``.
+        Default: ``SVR``
+
+    """
+
 
     def __init__(self,
                  k_func,
                  learner_id='SVR'):
-        """Constructor"""
+        """
+        Constructor for the KernelMachine class.
+
+        Parameters
+        ----------
+        k_func : KernelFunction
+            The kernel function the kernel machine bases itself on
+
+        learner_id : str
+            Identifier for the estimator to be built based on the kernel function.
+            Options: ``SVM`` and ``SVR``.
+            Default: ``SVR``
+        """
 
         self.k_func = k_func
         self.learner_id = learner_id
@@ -43,13 +68,13 @@ class KernelMachine(BaseEstimator):
             self.learner_params.pop('learner_params')
 
             valid_keys = self._estimator.get_params().keys()
-            new_param_dict = {key : val for key, val in self.learner_params.items()
+            new_param_dict = {key: val for key, val in self.learner_params.items()
                               if key in valid_keys}
             self._estimator.set_params(**new_param_dict)
 
 
     def fit(self, X, y, sample_weight=None):
-        """Estimate the optimal kernel, and fit a SVM based on the custom kernel.
+        """Fit the chosen Estimator based on the user-defined kernel.
 
         Parameters
         ----------
@@ -94,7 +119,7 @@ class KernelMachine(BaseEstimator):
 
     def predict(self, X):
         """
-        Perform classification on samples in X.
+        Make predictions on the new samplets in X.
 
         For an one-class model, +1 or -1 is returned.
 
@@ -109,7 +134,6 @@ class KernelMachine(BaseEstimator):
         y_pred : array, shape (n_samples,)
             Class labels for samples in X.
         """
-
 
         X = check_array(X)
 
@@ -133,15 +157,15 @@ class KernelMachine(BaseEstimator):
         # est_param_dict['learner_params'] = self.learner_params
         # return est_param_dict
 
-        return {'k_func': self.k_func,
-                'learner_id' : self.learner_id}
+        return {'k_func'    : self.k_func,
+                'learner_id': self.learner_id}
 
 
     def set_params(self, **parameters):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_func', 'learner_id'): # 'learner_params'
+            if parameter in ('k_func', 'learner_id'):  # 'learner_params'
                 setattr(self, parameter, value)
             # else:
             #     setattr(self._estimator, parameter, value)
@@ -185,6 +209,7 @@ class OptimalKernelSVR(SVR):
         Constants in decision function.
 
     """
+
 
     def __init__(self, k_bucket):
 
@@ -265,6 +290,7 @@ class OptimalKernelSVR(SVR):
         # TODO we don't need data type coversion, as its not classification?
         # return np.asarray(predicted_y, dtype=np.intp)
 
+
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
@@ -275,7 +301,7 @@ class OptimalKernelSVR(SVR):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_bucket', ):
+            if parameter in ('k_bucket',):
                 setattr(self, parameter, value)
             # else:
             #     setattr(self._estimator, parameter, value)

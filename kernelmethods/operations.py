@@ -21,9 +21,28 @@ def is_positive_semidefinite(sym_matrix,
     A symmetric matrix is PSD if ALL its eigen values >= 0 (non-negative).
         If any of its eigen values are negative, it is not PSD.
 
-    Accounting for numerical instabilities with tolerance.
+    This functions accounts for numerical instabilities with a tolerance parameter.
 
-    Shortcut: is_PSD()
+    This function can also be called with a shorthand ``is_PSD()``
+
+    Parameters
+    ----------
+    sym_matrix : ndarray
+        Matrix to be evaluted for PSDness
+
+    tolerance : float
+        Tolerance parameter to account for numerical instabilities in the eigen
+        value computations (which can result in negative eigen values very slightly
+        below 0)
+
+    verbose : bool
+        Flag to indicate whether to print traceback in case of errors
+        during the computation of the eigen values
+
+    Returns
+    -------
+    psd : bool
+        Flag indicating whether the matrix is PSD.
 
     """
 
@@ -68,12 +87,23 @@ is_PSD = is_positive_semidefinite
 
 def center_km(KM):
     """
-    Center a given kernel matrix.
+    Centers a given kernel matrix.
 
     Implements the definition according to Lemma 1 in Section 2.2 in
     Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
         "Algorithms for Learning Kernels Based on Centered Alignment",
         Journal of Machine Learning Research 13(Mar): 795–828.
+
+    Parameters
+    ----------
+    KM : ndarray
+        Symmetric matrix to be centered.
+
+    Returns
+    -------
+    centered_km : ndarray
+        Centered kernel matrix
+
     """
 
     if isinstance(KM, np.ndarray):
@@ -104,6 +134,18 @@ def normalize_km(KM, method='cosine'):
 
     Matrix must be square (and coming from a single sample: K(X,X), not K(X,Y)
 
+    Parameters
+    ----------
+    KM : ndarray
+        Symmetric matrix to be normalized
+
+    method : str
+        Method of normalization. Options: ``cosine`` only.
+
+    Returns
+    -------
+    normed_km : ndarray
+        Normalized kernel matrix
 
     """
 
@@ -167,7 +209,7 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
 
     Returns
     -------
-    normed_km
+    normed_km : ndarray
         Normalized version of K(X,Y)
 
         NOTE: K_XY may NOT have unit diagonal, as k(x,y) != sqrt(k(x,x))*sqrt(k(y,y))
@@ -175,9 +217,10 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
 
     if diag_K_XX.size != cross_K_XY.shape[0] or \
         cross_K_XY.shape[1] != diag_K_YY.size:
-        raise ValueError('Shape mismatch for multiplication across the 3 kernel matrices!'
-                         ' Length of diag_K_XX must match number of rows in K_XY, '
-                         ' and number of columns in K_XY must match length of diag_K_XX.')
+        raise ValueError('Shape mismatch for multiplication across the 3 kernel '
+                         'matrices! Length of diag_K_XX must match '
+                         'number of rows in K_XY, and number of columns in K_XY '
+                         'must match length of diag_K_XX.')
 
     try:
         method = method.lower()
@@ -197,19 +240,30 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
             raise NotImplementedError('Two-sample normalization method {} is not'
                                       'implemented yet!'.format(method))
     except:
-        raise RuntimeError('Unable to normalize two-sample kernel matrix using method {}'
-                           ''.format(method))
+        raise RuntimeError('Unable to normalize two-sample kernel matrix '
+                           'using method {}'.format(method))
 
     return normed_km
 
 
 def frobenius_product(A, B):
-    """Computes the Frobenious product between two matrices of equal dimension.
+    """
+    Computes the Frobenious product between two matrices of equal dimensions.
 
     <A, B>_F is equal to the sum of element-wise products between A and B.
 
     .. math::
         <\mathbf{A}, \mathbf{B}>_F = \sum_{i, j} \mathbf{A}_{ij} \mathbf{B}_{ij}
+
+    Parameters
+    ----------
+    A, B : ndarray
+        Two matrices of equal dimensions to compute the product.
+
+    Returns
+    -------
+    product : float
+        Frobenious product
 
     """
 
@@ -222,9 +276,18 @@ def frobenius_product(A, B):
 
 
 def frobenius_norm(A):
-    """Computes the Frobenius norm of a matrix A.
+    """Computes the Frobenius norm of a matrix A, which  is the square root of the
+    Frobenius product with itself.
 
-    It is the square root of the Frobenius product with itself.
+    Parameters
+    ----------
+    A : ndarray
+        Matrix to compute the norm of
+
+    Returns
+    -------
+    norm : float
+        Frobenious norm
 
     """
 
@@ -299,11 +362,27 @@ def alignment_centered(km_one, km_two,
 def eval_similarity(km_one, km_two):
     """Evaluate similarity between two kernel matrices"""
 
-    pass
+    raise NotImplementedError()
 
 
 def linear_combination(km_set, weights):
-    """Linear combinations of a given kernel set"""
+    """
+    Weighted linear combinations of a set of given kernel matrices
+
+    Parameters
+    ----------
+    km_set : KernelSet
+        Collection of compatible kernel matrices
+
+    weights : Iterable
+        Set of weights for the kernel matrices in km_set
+
+    Returns
+    -------
+    lin_comb_KM : ndarray
+        Final result of weighted linear combination of the kernel matrix set
+
+    """
 
     if km_set.size == len(weights):
         weights = ensure_ndarray_1D(weights)
@@ -315,7 +394,8 @@ def linear_combination(km_set, weights):
     # TODO should we not ensure weights sum to 1.0?
 
     # Computes the weighted average kernel
-    # km_set.num_samples is a tuple (N, M) when operating on two samples e.g. train x test
+    # km_set.num_samples is a tuple (N, M) when operating on two samples
+    #   e.g. train x test
     KM = np.zeros(km_set.num_samples)
     for weight, km in zip(weights, km_set):
         KM = KM + weight * km.full

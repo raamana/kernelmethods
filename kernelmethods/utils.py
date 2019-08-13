@@ -81,7 +81,7 @@ def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
 
 
 def check_callable(input_func, min_num_args=2):
-    """Ensures input func is callable, and can accept a min # args"""
+    """Ensures the input func 1) is callable, and 2) can accept a min # of args"""
 
     if not callable(input_func):
         raise TypeError('Input function must be callable!')
@@ -97,7 +97,7 @@ def check_callable(input_func, min_num_args=2):
 
 
 def get_callable_name(input_func, name=None):
-    """Provide a callable name"""
+    """Returns the callable name"""
 
     if name is None:
         if hasattr(input_func, '__name__'):
@@ -113,7 +113,7 @@ def _ensure_min_eps(x):
     return  np.maximum(_float_eps, x)
 
 def not_symmetric(matrix):
-    """Returns true if matrix is not symmetric."""
+    """Returns true if the input matrix is not symmetric."""
 
     if not np.isclose(matrix, matrix.T).all():
         return True
@@ -121,7 +121,7 @@ def not_symmetric(matrix):
         return False
 
 def check_operation_kernel_matrix(operation):
-    """Validates whether input is a valid kernel matrix"""
+    """Validates whether input is a valid operation on KernelMatrices"""
 
     opr = operation.lower()
     if opr not in config.VALID_KERNEL_MATRIX_OPS:
@@ -142,10 +142,10 @@ def min_max_scale(array):
 def contains_nan_inf(matrix):
     """
     Helper func to check for the presence of NaN or Inf.
-    Returns True if any element is not finite (Inf) or NaN. False otherwise.
 
-    Works for both dense and sparse matrices!
+    Returns True if any element is not finite (Inf) or NaN. Returns False otherwise.
 
+    This is designed to works for both dense and sparse matrices!
     """
 
     if issparse(matrix):

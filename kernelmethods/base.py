@@ -6,13 +6,14 @@ from itertools import product as iter_product
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
-from kernelmethods.operations import center_km, is_PSD, normalize_km, \
-    normalize_km_2sample, frobenius_norm
-from kernelmethods.utils import check_callable, ensure_ndarray_1D, ensure_ndarray_2D, \
-    get_callable_name, not_symmetric, contains_nan_inf
 from kernelmethods import config as cfg
-from kernelmethods.config import KernelMethodsException, KMAccessError, \
-    KMSetAdditionError
+from kernelmethods.config import (KMAccessError, KernelMethodsException,
+                                  KMSetAdditionError)
+from kernelmethods.operations import (center_km, frobenius_norm, is_PSD,
+                                      normalize_km,
+                                      normalize_km_2sample)
+from kernelmethods.utils import (check_callable, contains_nan_inf, ensure_ndarray_1D,
+                                 ensure_ndarray_2D, get_callable_name, not_symmetric)
 
 
 class BaseKernelFunction(ABC):
@@ -23,7 +24,7 @@ class BaseKernelFunction(ABC):
     1. to be callable, with two inputs
     2. to have a name and a str representation
     3. provides a method to check whether the derived kernel func is a valid kernel
-       i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)
+       i.e. kernel matrix derived on a random sample is positive semi-definite (PSD)
     4. and that it is symmetric (via tests) as required.
 
     """
@@ -125,12 +126,26 @@ class KernelFromCallable(BaseKernelFunction):
 
 class KernelMatrix(object):
     """
-    A self-contained class for the Gram matrix induced by a kernel function on a
-    sample.
+    KernelMatrix is a self-contained class for the Gram matrix induced by a kernel
+    function on a sample.
 
-    KM[i,j] --> kernel between samples i and j
-    KM[set_i,set_j] where len(set_i)=m and len(set_i)=n --> matrix KM of size mxn
+    KernelMatrix behaves just like numpy arrays in terms of accessing its elements:
+
+    - KM[i,j] --> kernel function between samples i and j
+    - KM[set_i,set_j] where len(set_i)=m and len(set_i)=n => matrix KM of size m x n
         where KM_ij = kernel between samples set_i(i) and set_j(j)
+
+    Parameters
+    ----------
+    kernel : BaseKernelFunction
+        kernel function that populates the kernel matrix
+
+    normalized : bool
+        Flag to indicate whether to normalize the kernel matrix
+        Normalization is recommended, unless you have clear reasons not to.
+
+    name : str
+        short name to describe the nature of the kernel function
 
     """
 
@@ -140,7 +155,7 @@ class KernelMatrix(object):
                  normalized=True,
                  name='KernelMatrix'):
         """
-        Constructor.
+        Constructor for the KernelMatrix class.
 
         Parameters
         ----------
@@ -195,7 +210,8 @@ class KernelMatrix(object):
             Input sample to operate on
             Must be a 2D dataset of shape (num_samples, num_features)
                 e.g. MLDataset or ndarray
-            When sample_two=None (e.g. during training), sample_two refers to sample_one.
+            When sample_two=None (e.g. during training), sample_two refers to
+            sample_one.
 
         name_one : str
             Name for the first sample.
@@ -204,7 +220,8 @@ class KernelMatrix(object):
             Second sample for the kernel matrix i.e. Y in K(X,Y)
             Must be a 2D dataset of shape (num_samples, num_features)
                 e.g. MLDataset or ndarray
-            The dimensionality of this sample (number of columns, sample_two.shape[1])
+            The dimensionality of this sample (number of columns,
+            sample_two.shape[1])
                 must match with that of sample_one
 
         name_two : str
@@ -222,7 +239,8 @@ class KernelMatrix(object):
             self.shape = (self._num_samples, self._num_samples)
             self._two_samples = False
 
-            self._sample_descr = "{} {}".format(self._sample_name, self._sample.shape)
+            self._sample_descr = "{} {}".format(self._sample_name,
+                                                self._sample.shape)
 
         else:
             self._sample_two = ensure_ndarray_2D(sample_two,
@@ -251,16 +269,39 @@ class KernelMatrix(object):
 
         Useful to identify this kernel matrix in various aspects!
         You could think of them as tags or identifiers etc.
-        As they are user-defined, they are ideal to represent user needs and applications.
+        As they are user-defined, they are ideal to represent user needs and
+        applications.
+
+        Parameters
+        ----------
+        name : str or hashable
+            Names of the attribute.
+
+        value : object
+            Value of the attribute
+
         """
 
         self._attr[name] = value
 
 
     def get_attr(self, attr_name, value_if_not_found=None):
-        """Returns the value of an user-defined attribute.
+        """
+        Returns the value of the user-defined attribute.
 
-        If not set previously, or no match found, returns value_if_not_found.
+        Parameters
+        ----------
+        attr_name : str or hashable
+
+        value_if_not_found : object
+            If attribute was not set previously, returns this value
+
+        Returns
+        -------
+        attr_value : object
+            Value of the attribute if found.
+            Or value_if_not_found if attribute is not found.
+
         """
 
         return self._attr.get(attr_name, value_if_not_found)
@@ -284,8 +325,10 @@ class KernelMatrix(object):
         """
         Returns the number of samples in the sample this kernel is attached to.
 
-        This would be a scalar when the current instance is attached to a single sample.
-        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2
+        This would be a scalar when the current instance is attached to a single
+        sample.
+        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an
+        array of 2
         scalars representing num_samples from those two samples.
         """
 
@@ -303,7 +346,8 @@ class KernelMatrix(object):
         self._is_normed = False
 
         # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
-        #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j), max(i,j))
+        #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j),
+        #  max(i,j))
         self._KM = dict()
 
         # restricting attributes to the latest sample only, to avoid leakage!!
@@ -328,13 +372,14 @@ class KernelMatrix(object):
         """
 
         if not self._two_samples:
-            return self._num_samples**2
+            return self._num_samples ** 2
         else:
             return np.prod(self._num_samples)
 
 
     def __len__(self):
-        """Convenience wrapper for .size attribute, to enable use of len(KernelMatrix)"""
+        """Convenience wrapper for .size attribute, to enable use of len(
+        KernelMatrix)"""
 
         return self.size
 
@@ -397,7 +442,8 @@ class KernelMatrix(object):
         Normalize the kernel matrix to have unit diagonal.
 
         Cosine normalization mplements definition according to Section 5.1 in
-            Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+            Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis",
+            2004
 
         Parameters
         ----------
@@ -426,7 +472,8 @@ class KernelMatrix(object):
                 KM_YY = KernelMatrix(self.kernel, normalized=False)
                 KM_YY.attach_to(sample_one=self._sample_two)
 
-                # not passing .full_km for KM_XX and KM_YY as we only need their diagonal
+                # not passing .full_km for KM_XX and KM_YY as we only need their
+                # diagonal
                 self._normed_km = normalize_km_2sample(self._full_km,
                                                        KM_XX.diagonal(),
                                                        KM_YY.diagonal())
@@ -476,7 +523,8 @@ class KernelMatrix(object):
         if self._two_samples:
             raise KMAccessError('Diagonal() not defined when attached to 2 samples!')
 
-        return np.array([self._eval_kernel(idx, idx) for idx in range(self.shape[0])])
+        return np.array(
+            [self._eval_kernel(idx, idx) for idx in range(self.shape[0])])
 
 
     @property
@@ -501,9 +549,9 @@ class KernelMatrix(object):
 
         if not (idx_one, idx_two) in self._KM:
             self._KM[(idx_one, idx_two)] = \
-                self.kernel(self._sample[idx_one, :],     # from 1st sample
-                            self._sample_two[idx_two, :]) # from 2nd sample
-                            # second refers to the first in the default case!
+                self.kernel(self._sample[idx_one, :],  # from 1st sample
+                            self._sample_two[idx_two, :])  # from 2nd sample
+            # second refers to the first in the default case!
             self._num_ker_eval += 1
 
         return self._KM[(idx_one, idx_two)]
@@ -513,10 +561,13 @@ class KernelMatrix(object):
         """
         Returns the sample [features] corresponding to a given index.
 
-        Using this would help abstract out the underlying data structure for samples and
-            their features. For example, inputs can be simply CSVs, or numpy arrays or
+        Using this would help abstract out the underlying data structure for
+        samples and
+            their features. For example, inputs can be simply CSVs, or numpy
+            arrays or
             MLDataset or xarray or pandas etc.
-        Disadvantages include the 2 extra function calls to be made for each kernel eval,
+        Disadvantages include the 2 extra function calls to be made for each
+        kernel eval,
             which could be saved when operating on a predetermined format.
         """
 
@@ -529,13 +580,15 @@ class KernelMatrix(object):
         to partial or random portions of kernel matrix!
 
         Indexing here is aimed to be compliant with numpy implementation
-        as much as possible: https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#arrays-indexing
+        as much as possible: https://docs.scipy.org/doc/numpy-1.13.0/reference
+        /arrays.indexing.html#arrays-indexing
 
         """
 
         if not len(index_obj) == 2 or not isinstance(index_obj, tuple):
             raise KMAccessError('Invalid attempt to access the kernel matrix '
-                                '-: must supply two [sets/ranges of] indices in a tuple!')
+                                '-: must supply two [sets/ranges of] indices in a '
+                                'tuple!')
 
         set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0],
                                                                         dim=0)
@@ -557,7 +610,8 @@ class KernelMatrix(object):
         into a set of row indices into sample the kernel matrix is attached to.
 
         As the kernel matrix is 2D and symmetric of known size,
-            dimension size doesn't need to be specified, it is taken from self.num_samples
+            dimension size doesn't need to be specified, it is taken from
+            self.num_samples
 
         """
 
@@ -572,7 +626,8 @@ class KernelMatrix(object):
             indices = list(range(*_slice_index_list))  # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable) and \
             not isinstance(index_obj_per_dim, str):
-            # TODO no restriction on float: float indices will be rounded down towards 0
+            # TODO no restriction on float: float indices will be rounded down
+            #  towards 0
             indices = list(map(int, index_obj_per_dim))
         else:
             raise KMAccessError('Invalid index method/indices for kernel matrix '
@@ -602,7 +657,9 @@ class KernelMatrix(object):
 
 
     def _compute_for_index_combinations(self, set_one, set_two):
-        """Computes value of kernel matrix for all combinations of given set of indices"""
+        """
+        Computes value of kernel matrix for all combinations of given set of indices
+        """
 
         return np.array([self._eval_kernel(idx_one, idx_two)
                          for idx_one, idx_two in iter_product(set_one, set_two)],
@@ -632,7 +689,8 @@ class KernelMatrix(object):
                 # kernel matrix is symmetric (in a single sample case)
                 #   so we need only compute half the matrix!
                 # computing the kernel for diagonal elements i,i as well
-                #   as ix_two, even when equal to ix_one, refers to sample_two in the two_samples case
+                #   as ix_two, even when equal to ix_one,
+                #   refers to sample_two in the two_samples case
                 for ix_one in range(self.shape[0]): # number of rows!
                     for ix_two in range(ix_one, self.shape[1]): # from second sample!
                         self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
@@ -643,7 +701,8 @@ class KernelMatrix(object):
 
         if fill_lower_tri and not self._lower_tri_km_filled:
             try:
-                # choosing k=-1 as main diag is already covered above (nested for loop)
+                # choosing k=-1 as main diag is already covered above (nested for
+                # loop)
                 ix_lower_tri = np.tril_indices(self.shape[0], m=self.shape[1], k=-1)
 
                 if not self._two_samples and self.shape[0] == self.shape[1]:
@@ -651,7 +710,8 @@ class KernelMatrix(object):
                 else:
                     # evaluating it for the lower triangle as well!
                     for ix_one, ix_two in zip(*ix_lower_tri):
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one,
+                                                                          ix_two)
             except:
                 raise RuntimeError('Unable to symmetrize the kernel matrix!')
             else:
@@ -673,7 +733,8 @@ class KernelMatrix(object):
         string = "{}: {}".format(self.name, str(self.kernel))
         if self._sample is not None:
             # showing normalization status only when attached to data!
-            string += " (normed={}) on {}".format(self._keep_normed, self._sample_descr)
+            string += " (normed={}) on {}".format(self._keep_normed,
+                                                  self._sample_descr)
 
         return string
 
@@ -700,7 +761,8 @@ class KernelMatrix(object):
 
 
 class KernelMatrixPrecomputed(object):
-    """Convenience decorator for kernel matrices in ndarray or simple matrix format."""
+    """Convenience decorator for kernel matrices in ndarray or simple matrix
+    format."""
 
 
     def __init__(self, matrix, name=None):
@@ -740,7 +802,8 @@ class KernelMatrixPrecomputed(object):
 
     @property
     def full(self):
-        """Returns the full kernel matrix (in dense format, as its already precomputed)"""
+        """Returns the full kernel matrix (in dense format, as its already
+        precomputed)"""
         return self._KM
 
 
@@ -850,16 +913,32 @@ class KernelSet(object):
     Container class to manage a set of compatible KernelMatrix instances.
 
     Compatibility is checked based on the size (number of samples they operate on).
-    Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.
+    Provides methods to iterate over the KMs, access a subset and query the
+    underlying kernel funcs.
 
     """
 
 
     def __init__(self,
-                 km_set=None,
+                 km_list=None,
                  name='KernelSet',
                  num_samples=None):
-        """Constructor."""
+        """
+        Constructor of the KernelSet class.
+
+        Parameters
+        ----------
+        km_list : Iterable or KernelMatrix or None
+            Initial set of kernel matrices to be added to this KernelSet
+
+        name : str
+            Name for this kernel set.
+
+        num_samples : int
+            Specifying the number of samples to be expected in each kernel matrix.
+            Matching number of samples is a condition for compatibility.
+            If not set during instantiation, it is inferred from the first KM.
+        """
 
         self.name = name
 
@@ -867,7 +946,8 @@ class KernelSet(object):
         self._km_set = list()
 
         # user can choose to set the properties of the kernel matrices
-        # this num_samples property is key, as only KMs with same value are allowed in
+        # this num_samples property is key, as only KMs with same value are
+        # allowed in
         if num_samples is not None:
             self._num_samples = num_samples
             self._is_init = True
@@ -876,12 +956,12 @@ class KernelSet(object):
             self._is_init = False
             self._num_samples = None
 
-        if isinstance(km_set, Iterable):
-            for km in km_set:
+        if isinstance(km_list, Iterable):
+            for km in km_list:
                 self.append(km)
-        elif isinstance(km_set, VALID_KERNEL_MATRIX_TYPES):
-            self.append(km_set)
-        elif km_set is None:
+        elif isinstance(km_list, VALID_KERNEL_MATRIX_TYPES):
+            self.append(km_list)
+        elif km_list is None:
             pass  # do nothing
         else:
             raise TypeError('Unknown type of input matrix! '
@@ -914,6 +994,12 @@ class KernelSet(object):
         Method to add a new kernel to the set.
 
         Checks to ensure the new KM is compatible in size to the existing set.
+
+        Parameters
+        ----------
+        KM : KernelMatrix or ndarray or compatible
+            kernel matrix to be appended to the KernelSet
+
         """
 
         if not isinstance(KM, (BaseKernelFunction, KernelMatrix,
@@ -935,8 +1021,8 @@ class KernelSet(object):
     def __getitem__(self, index):
         """To retrieve individual kernels"""
 
-        if not ( isinstance(index, int) or
-                 np.issubdtype(np.asanyarray(index).dtype, np.integer)):
+        if not (isinstance(index, int) or
+                np.issubdtype(np.asanyarray(index).dtype, np.integer)):
             raise ValueError('Only integer indices are permitted, '
                              'accessing one KM at a time')
 
@@ -950,7 +1036,24 @@ class KernelSet(object):
 
 
     def take(self, indices, name='SelectedKMs'):
-        """Returns a new KernelSet with requested kernel matrices, identified by their indices."""
+        """
+        "Returns a new KernelSet with requested kernel matrices, identified by
+        their indices.
+
+        Parameters
+        ----------
+        indices : Iterable
+            List of indices identifying the kernel matrices to return
+
+        name : str
+            Name for the new kernel set.
+
+        Returns
+        -------
+        ks : KernelSet
+            New kernel set with the selected KMs
+
+        """
 
         indices = self._check_indices(indices)
 
@@ -963,11 +1066,23 @@ class KernelSet(object):
         return new_set
 
 
-    def get_kernel_funcs(self, indices, name='SelectedKernelFuncs'):
+    def get_kernel_funcs(self, indices):
         """
-        Returns kernel functions underlying the specified kernel matrices in this kernel set.
+        Returns kernel functions underlying the specified kernel matrices in this
+        kernel set.
 
-        This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)
+        This is helpful to apply a given set of kernel functions on new sets of
+        data (e.g. test set)
+
+        Parameters
+        ----------
+        indices : Iterable
+            List of indices identifying the kernel matrices to return
+
+        Returns
+        -------
+        kf_tuple : tuple
+            Tuple of kernel functinons from  the selected KMs
 
         """
 
@@ -985,8 +1100,9 @@ class KernelSet(object):
         indices = np.array(indices, dtype='int64')
 
         if any(indices < 0) or any(indices >= self.size):
-            raise IndexError('One/more indices are out of range for KernelSet of size {}'
-                             ''.format(self.size))
+            raise IndexError(
+                'One/more indices are out of range for KernelSet of size {}'
+                ''.format(self.size))
 
         return indices
 
@@ -1053,7 +1169,8 @@ class KernelSet(object):
                                      'Build a KernelSet() first.')
 
         if another_km_set.num_samples != self.num_samples:
-            raise ValueError('The two KernelSets are not compatible (in size: # samples)')
+            raise ValueError(
+                'The two KernelSets are not compatible (in size: # samples)')
 
         for km in another_km_set:
             self.append(km)
@@ -1063,16 +1180,27 @@ class KernelSet(object):
         """
         Sets user-defined attributes for the kernel matrices in this set.
 
-        If len(values)==1, same value is set for all. Otherwise values must be of size as
+        If len(values)==1, same value is set for all. Otherwise values must be of
+        size as
         KernelSet, providing a separate value for each element.
 
         Useful to identify this kernel matrix in various aspects!
         You could think of them as tags or identifiers etc.
-        As they are user-defined, they are ideal to represent user needs and applications.
+        As they are user-defined, they are ideal to represent user needs and
+        applications.
+
+        Parameters
+        ----------
+        name : str or hashable
+            Names of the attribute.
+
+        values : object
+            Value of the attribute
+
         """
 
         if not isinstance(values, Iterable) or isinstance(values, str):
-            values = [values]*self.size
+            values = [values] * self.size
         elif len(values) != self.size:
             raise ValueError('Values must be single element, or '
                              'of the same size as this KernelSet ({}), '
@@ -1087,10 +1215,23 @@ class KernelSet(object):
         """Returns the value of an user-defined attribute.
 
         If not set previously, or no match found, returns value_if_not_found.
+
+        Parameters
+        ----------
+        attr_name : str or hashable
+
+        value_if_not_found : object
+            If attribute was not set previously, returns this value
+
+        Returns
+        -------
+        attr_values : object
+            Values of the attribute from each KM in the set.
+            Or value_if_not_found if attribute is not found.
         """
 
-        return [ self._km_set[index].get_attr(name, value_if_not_found)
-                 for index in range(self.size) ]
+        return [self._km_set[index].get_attr(name, value_if_not_found)
+                for index in range(self.size)]
 
 
 class CompositeKernel(ABC):
@@ -1229,9 +1370,9 @@ class WeightedAverageKernel(CompositeKernel):
         if self.km_set.size == len(weights):
             self.weights = ensure_ndarray_1D(weights)
         else:
-            raise ValueError(
-                'Number of weights ({}) supplied differ from the kernel set size ({})'
-                ''.format(self.km_set.size, len(weights)))
+            raise ValueError('Number of weights ({}) supplied differ from the '
+                             'kernel set size ({})'
+                             ''.format(self.km_set.size, len(weights)))
 
 
     def fit(self):

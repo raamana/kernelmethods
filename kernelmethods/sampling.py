@@ -10,11 +10,11 @@ from kernelmethods.operations import alignment_centered
 
 class KernelBucket(KernelSet):
     """
-    Class to generate a "bucket" of candidate kernels.
+    Class to generate and/or maintain a "bucket" of candidate kernels.
 
     Applications:
     1. to rank/filter/select kernels based on a given sample via many metrics
-
+    2. to be defined.
 
     """
 
@@ -26,13 +26,36 @@ class KernelBucket(KernelSet):
                  rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                  laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel,
                  ):
-        """constructor"""
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        name : str
+            String to identify the purpose or type of the bucket of kernels.
+            Also helps easily distinguishing it from other buckets.
+
+        normalize_kernels : bool
+            Flag to indicate whether the kernel matrices need to be normalized
+
+        poly_degree_values : Iterable
+            List of values for the degree parameter of the PolyKernel. One
+            KernelMatrix will be added to the bucket for each value.
+
+        rbf_sigma_values : Iterable
+            List of values for the sigma parameter of the GaussianKernel. One
+            KernelMatrix will be added to the bucket for each value.
+
+        laplacian_gamma_values : Iterable
+            List of values for the gamma parameter of the LaplacianKernel. One
+            KernelMatrix will be added to the bucket for each value.
+        """
 
         self._norm_kernels = normalize_kernels
 
         # start with the addition of kernel matrix for linear kernel
         init_kset = [KernelMatrix(LinearKernel(), normalized=self._norm_kernels), ]
-        super().__init__(km_set=init_kset, name=name)
+        super().__init__(km_list=init_kset, name=name)
         # not attached to a sample yet
         self._num_samples = None
 
@@ -78,7 +101,20 @@ def make_kernel_bucket(strategy='exhaustive',
 
 
 def ideal_kernel(targets):
-    """Computes the kernel matrix from the given target labels"""
+    """
+    Computes the kernel matrix from the given target labels.
+
+    Parameters
+    ----------
+    targets : Iterable
+        Target values (``y``) to compute the ideal kernel from.
+
+    Returns
+    -------
+    ideal_kernel : ndarray
+        The ideal kernel from (``yy\ :sup:`T` ``)
+
+    """
 
     targets = np.array(targets).reshape((-1, 1))  # row vector
 
@@ -86,7 +122,20 @@ def ideal_kernel(targets):
 
 
 def correlation_km(k1, k2):
-    """Computes correlation coefficient between two kernel matrices"""
+    """
+    Computes [pearson] correlation coefficient between two kernel matrices
+
+    Parameters
+    ----------
+    k1, k2 : ndarray
+        Two kernel matrices of the same size
+
+    Returns
+    -------
+    corr_coef : float
+        Correlation coefficient between the vectorized kernel matrices
+
+    """
 
     corr_coef, p_val = pearsonr(k1.ravel(), k2.ravel())
 
@@ -94,7 +143,25 @@ def correlation_km(k1, k2):
 
 
 def pairwise_similarity(k_bucket, metric='corr'):
-    """Computes the similarity between all pairs of kernel matrices in a given bucket."""
+    """
+    Computes the similarity between all pairs of kernel matrices in a given bucket.
+
+    Parameters
+    ----------
+    k_bucket : KernelBucket
+        Container of length num_km, with each an instance ``KernelMatrix``
+
+    metric : str
+        Identifies the metric to be used. Options: ``corr`` (correlation
+        coefficient) and ``align`` (centered alignment).
+
+    Returns
+    -------
+    pairwise_metric : ndarray of shape (num_km, num_km)
+        A symmetric matrix computing the pairwise similarity between the various
+        kernel matrices
+
+    """
 
     # mutual info?
     metric_func = {'corr' : correlation_km,
