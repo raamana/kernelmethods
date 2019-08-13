@@ -15,7 +15,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="next" title="Indices and tables" href="full_index.html" />
     <link rel="prev" title="String kernels (coming soon)" href="string_kernels.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -39,6 +39,22 @@
             
 <div class="section" id="graph-kernels-coming-soon">
 <h1>Graph kernels (coming soon)<a class="headerlink" href="#graph-kernels-coming-soon" title="Permalink to this headline">¶</a></h1>
+<p>The design of <code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> allows for easy implementation to accept any input data types, as that only matters in the definition of the kernel function which are modularized out of the remaining parts of library.</p>
+<p>For example, a simple graph kernel can be implemented by measuring the similarity in the <a class="reference external" href="https://en.wikipedia.org/wiki/Degree_distribution">degree distributions</a> of two graphs. An example implementation is available at <a class="reference external" href="https://networkx.github.io/documentation/stable/auto_examples/drawing/plot_degree_histogram.html">NetworkX</a>.</p>
+<p>Let’s say that method is called <code class="docutils literal notranslate"><span class="pre">degree_distr()</span></code>. Then a simple graph kernel can easily be defined in few lines via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="kn">import</span> <span class="n">KernelFromCallable</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.graphs</span> <span class="kn">import</span> <span class="n">degree_distr</span> <span class="c1"># Note: NotImplemented</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">degree_distr_similarity</span><span class="p">(</span><span class="n">graph_one</span><span class="p">,</span> <span class="n">graph_two</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">degree_distr</span><span class="p">(</span><span class="n">graph_one</span><span class="p">),</span> <span class="n">degree_distr</span><span class="p">(</span><span class="n">graph_two</span><span class="p">))</span>
+
+<span class="n">graph_kernel</span> <span class="o">=</span> <span class="n">KernelFromCallable</span><span class="p">(</span><span class="n">degree_distr_similarity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or one could also turn this into a full-fledged <code class="docutils literal notranslate"><span class="pre">DegreeDistrKernel</span></code> class, while reusing a lot of boilerplate from <code class="docutils literal notranslate"><span class="pre">kernelmethods.base</span></code> mimicking numerical or categorical kernels already defined.</p>
+<p>Once a <code class="docutils literal notranslate"><span class="pre">DegreeDistrKernel</span></code> is available, we can leverage the full functionality of the <code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> to the user domain/application.</p>
 </div>
 
 
@@ -51,8 +67,8 @@
   <p class="topless"><a href="string_kernels.html"
                         title="previous chapter">String kernels (coming soon)</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="contributing.html"
-                        title="next chapter">Contributing</a></p>
+  <p class="topless"><a href="full_index.html"
+                        title="next chapter">Indices and tables</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">

@@ -45,7 +45,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generic exception to indicate invalid use of the kernelmethods library.</span>
 
-
 <span class="sd">    Allows to distinguish improper use of KernelMatrix from other code exceptions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
@@ -56,8 +55,8 @@
     <span class="k">pass</span></div>
 
 
-<span class="k">class</span> <span class="nc">KMNormError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom exception to indicate error during normalization of kernel matrix&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="KMNormError"><a class="viewcode-back" href="../../API.html#kernelmethods.KMNormError">[docs]</a><span class="k">class</span> <span class="nc">KMNormError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom exception to indicate error during normalization of kernel matrix&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="KMSetAdditionError"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KMSetAdditionError">[docs]</a><span class="k">class</span> <span class="nc">KMSetAdditionError</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
@@ -80,9 +79,9 @@
 <span class="n">default_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
 
 <span class="c1"># light</span>
-<span class="n">light_degree_values_poly_kernel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">light_sigma_values_gaussian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
-<span class="n">light_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="n">light_degree_values_poly_kernel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">)</span>
+<span class="n">light_sigma_values_gaussian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="n">light_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
 
 <span class="c1"># controls the precision for kernel_matrix elements</span>
 <span class="n">km_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f8&#39;</span><span class="p">)</span>

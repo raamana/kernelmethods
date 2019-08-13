@@ -45,24 +45,49 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">BaseKernelFunction</span><span class="p">,</span> <span class="n">KernelMatrix</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">KernelMatrix</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.sampling</span> <span class="k">import</span> <span class="n">KernelBucket</span><span class="p">,</span> <span class="n">make_kernel_bucket</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.ranking</span> <span class="k">import</span> <span class="n">rank_kernels</span><span class="p">,</span> <span class="n">find_optimal_kernel</span><span class="p">,</span> <span class="n">get_estimator</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">ClassifierMixin</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.ranking</span> <span class="k">import</span> <span class="n">find_optimal_kernel</span><span class="p">,</span> <span class="n">get_estimator</span>
+<span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="k">import</span> <span class="n">check_X_y</span><span class="p">,</span> <span class="n">check_array</span>
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span><span class="p">,</span> <span class="n">SVR</span><span class="p">,</span> <span class="n">NuSVC</span><span class="p">,</span> <span class="n">NuSVR</span><span class="p">,</span> <span class="n">OneClassSVM</span>
 <span class="kn">from</span> <span class="nn">sklearn.kernel_ridge</span> <span class="k">import</span> <span class="n">KernelRidge</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
+
 <div class="viewcode-block" id="KernelMachine"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine">[docs]</a><span class="k">class</span> <span class="nc">KernelMachine</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generic class to return a drop-in sklearn estimator.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Generic class to return a drop-in sklearn estimator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k_func : KernelFunction</span>
+<span class="sd">        The kernel function the kernel machine bases itself on</span>
+
+<span class="sd">    learner_id : str</span>
+<span class="sd">        Identifier for the estimator to be built based on the kernel function.</span>
+<span class="sd">        Options: ``SVM`` and ``SVR``.</span>
+<span class="sd">        Default: ``SVR``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">k_func</span><span class="p">,</span>
                  <span class="n">learner_id</span><span class="o">=</span><span class="s1">&#39;SVR&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the KernelMachine class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k_func : KernelFunction</span>
+<span class="sd">            The kernel function the kernel machine bases itself on</span>
+
+<span class="sd">        learner_id : str</span>
+<span class="sd">            Identifier for the estimator to be built based on the kernel function.</span>
+<span class="sd">            Options: ``SVM`` and ``SVR``.</span>
+<span class="sd">            Default: ``SVR``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">k_func</span> <span class="o">=</span> <span class="n">k_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span> <span class="o">=</span> <span class="n">learner_id</span>
@@ -83,13 +108,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;learner_params&#39;</span><span class="p">)</span>
 
             <span class="n">valid_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="n">new_param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span> <span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="n">new_param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                               <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_keys</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">new_param_dict</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="KernelMachine.fit"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Estimate the optimal kernel, and fit a SVM based on the custom kernel.</span>
+        <span class="sd">&quot;&quot;&quot;Fit the chosen Estimator based on the user-defined kernel.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -134,7 +159,7 @@
 
 <div class="viewcode-block" id="KernelMachine.predict"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform classification on samples in X.</span>
+<span class="sd">        Make predictions on the new samplets in X.</span>
 
 <span class="sd">        For an one-class model, +1 or -1 is returned.</span>
 
@@ -149,7 +174,6 @@
 <span class="sd">        y_pred : array, shape (n_samples,)</span>
 <span class="sd">            Class labels for samples in X.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -173,15 +197,15 @@
         <span class="c1"># est_param_dict[&#39;learner_params&#39;] = self.learner_params</span>
         <span class="c1"># return est_param_dict</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;k_func&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_func</span><span class="p">,</span>
-                <span class="s1">&#39;learner_id&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;k_func&#39;</span>    <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_func</span><span class="p">,</span>
+                <span class="s1">&#39;learner_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner_id</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="KernelMachine.set_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.KernelMachine.set_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Param setter&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_func&#39;</span><span class="p">,</span> <span class="s1">&#39;learner_id&#39;</span><span class="p">):</span> <span class="c1"># &#39;learner_params&#39;</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_func&#39;</span><span class="p">,</span> <span class="s1">&#39;learner_id&#39;</span><span class="p">):</span>  <span class="c1"># &#39;learner_params&#39;</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="c1"># else:</span>
             <span class="c1">#     setattr(self._estimator, parameter, value)</span>
@@ -200,7 +224,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    k_bucket : KernelBucket or sampling_strategy</span>
+<span class="sd">    k_bucket : KernelBucket or str</span>
+<span class="sd">        An instance of KernelBucket that contains all the kernels to be compared,</span>
+<span class="sd">        or a string identifying the sampling_strategy which populates a KernelBucket.</span>
 
 
 <span class="sd">    Attributes</span>
@@ -225,6 +251,7 @@
 <span class="sd">        Constants in decision function.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_bucket</span><span class="p">):</span>
 
@@ -266,6 +293,21 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span> <span class="o">=</span> <span class="n">make_kernel_bucket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input for k_func can only an instance of &#39;</span>
+                                 <span class="s1">&#39;KernelBucket or a sampling strategy to generate &#39;</span>
+                                 <span class="s1">&#39;one with make_kernel_bucket.&#39;</span>
+                                 <span class="s1">&#39;sampling strategy must be one of </span><span class="si">{}</span><span class="s1">&#39;</span>
+                                 <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">kernel_bucket_strategies</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">,</span> <span class="n">KernelBucket</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input for k_func can only an instance of &#39;</span>
+                             <span class="s1">&#39;KernelBucket or a sampling strategy to generate &#39;</span>
+                             <span class="s1">&#39;one with make_kernel_bucket&#39;</span><span class="p">)</span>
+
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_train_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">opt_kernel</span> <span class="o">=</span> <span class="n">find_optimal_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_bucket</span><span class="p">,</span>
@@ -305,6 +347,7 @@
         <span class="c1"># TODO we don&#39;t need data type coversion, as its not classification?</span>
         <span class="c1"># return np.asarray(predicted_y, dtype=np.intp)</span>
 
+
 <div class="viewcode-block" id="OptimalKernelSVR.get_params"><a class="viewcode-back" href="../../kernel_machine.html#kernelmethods.OptimalKernelSVR.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns all the relevant parameters for this estimator!&quot;&quot;&quot;</span>
 
@@ -315,7 +358,7 @@
         <span class="sd">&quot;&quot;&quot;Param setter&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_bucket&#39;</span><span class="p">,</span> <span class="p">):</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;k_bucket&#39;</span><span class="p">,):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="c1"># else:</span>
             <span class="c1">#     setattr(self._estimator, parameter, value)</span>

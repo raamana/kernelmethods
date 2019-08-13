@@ -15,8 +15,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Kernel functions" href="kernel_functions.html" />
-    <link rel="prev" title="API Reference" href="API.html" />
+    <link rel="next" title="Collections of kernel matrices" href="km_collections.html" />
+    <link rel="prev" title="Kernel functions" href="kernel_functions.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -58,16 +58,27 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">ConstantKernelMatrix</span></code> that defines a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> with a constant everywhere</p></li>
 </ul>
 </div></blockquote>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelMatrix">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">kernel</em>, <em class="sig-param">normalized=True</em>, <em class="sig-param">name='KernelMatrix'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>A self-contained class for the Gram matrix induced by a kernel function on a
-sample.</p>
-<p>KM[i,j] –&gt; kernel between samples i and j
-KM[set_i,set_j] where len(set_i)=m and len(set_i)=n –&gt; matrix KM of size mxn</p>
-<blockquote>
-<div><p>where KM_ij = kernel between samples set_i(i) and set_j(j)</p>
-</div></blockquote>
+<dd><p>KernelMatrix is a self-contained class for the Gram matrix induced by a kernel
+function on a sample.</p>
+<p>KernelMatrix behaves just like numpy arrays in terms of accessing its elements:</p>
+<p>KM[i,j] –&gt; kernel function between samples i and j</p>
+<p>KM[set_i,set_j] where len(set_i)=m and len(set_i)=n returns a matrix KM of
+size m x n, where KM_ij = kernel between samples set_i(i) and set_j(j)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel</strong> (<a class="reference internal" href="kernel_functions.html#kernelmethods.BaseKernelFunction" title="kernelmethods.BaseKernelFunction"><em>BaseKernelFunction</em></a>) – kernel function that populates the kernel matrix</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – Flag to indicate whether to normalize the kernel matrix
+Normalization is recommended, unless you have clear reasons not to.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – short name to describe the nature of the kernel function</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.attach_to">
 <code class="sig-name descname">attach_to</code><span class="sig-paren">(</span><em class="sig-param">sample_one</em>, <em class="sig-param">name_one='sample'</em>, <em class="sig-param">sample_two=None</em>, <em class="sig-param">name_two=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.attach_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.attach_to" title="Permalink to this definition">¶</a></dt>
@@ -84,7 +95,8 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <blockquote>
 <div><p>e.g. MLDataset or ndarray</p>
 </div></blockquote>
-<p>When sample_two=None (e.g. during training), sample_two refers to sample_one.</p>
+<p>When sample_two=None (e.g. during training), sample_two refers to
+sample_one.</p>
 </p></li>
 <li><p><strong>name_one</strong> (<em>str</em>) – Name for the first sample.</p></li>
 <li><p><strong>sample_two</strong> (<em>ndarray</em>) – <p>Second sample for the kernel matrix i.e. Y in K(X,Y)
@@ -92,10 +104,11 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <blockquote>
 <div><p>e.g. MLDataset or ndarray</p>
 </div></blockquote>
-<dl class="simple">
-<dt>The dimensionality of this sample (number of columns, sample_two.shape[1])</dt><dd><p>must match with that of sample_one</p>
-</dd>
-</dl>
+<p>The dimensionality of this sample (number of columns,
+sample_two.shape[1])</p>
+<blockquote>
+<div><p>must match with that of sample_one</p>
+</div></blockquote>
 </p></li>
 <li><p><strong>name_two</strong> (<em>str</em>) – Name for the second sample.</p></li>
 </ul>
@@ -173,8 +186,22 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <dl class="method">
 <dt id="kernelmethods.KernelMatrix.get_attr">
 <code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">attr_name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of an user-defined attribute.</p>
-<p>If not set previously, or no match found, returns value_if_not_found.</p>
+<dd><p>Returns the value of the user-defined attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr_name</strong> (<em>str</em><em> or </em><em>hashable</em>) – </p></li>
+<li><p><strong>value_if_not_found</strong> (<em>object</em>) – If attribute was not set previously, returns this value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>attr_value</strong> – Value of the attribute if found.
+Or value_if_not_found if attribute is not found.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -182,7 +209,8 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize the kernel matrix to have unit diagonal.</p>
 <dl class="simple">
-<dt>Cosine normalization mplements definition according to Section 5.1 in</dt><dd><p>Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”, 2004</p>
+<dt>Cosine normalization mplements definition according to Section 5.1 in</dt><dd><p>Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”,
+2004</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -208,8 +236,10 @@ Must be a 2D dataset of shape (num_samples, num_features)</p>
 <dt id="kernelmethods.KernelMatrix.num_samples">
 <em class="property">property </em><code class="sig-name descname">num_samples</code><a class="headerlink" href="#kernelmethods.KernelMatrix.num_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of samples in the sample this kernel is attached to.</p>
-<p>This would be a scalar when the current instance is attached to a single sample.
-When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an array of 2
+<p>This would be a scalar when the current instance is attached to a single
+sample.
+When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an
+array of 2
 scalars representing num_samples from those two samples.</p>
 </dd></dl>
 
@@ -219,7 +249,16 @@ scalars representing num_samples from those two samples.</p>
 <dd><p>Sets user-defined attributes for the kernel matrix.</p>
 <p>Useful to identify this kernel matrix in various aspects!
 You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
+As they are user-defined, they are ideal to represent user needs and
+applications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>hashable</em>) – Names of the attribute.</p></li>
+<li><p><strong>value</strong> (<em>object</em>) – Value of the attribute</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -236,6 +275,7 @@ In two-sample case, it is the product of num_samples from two datasets.</p>
 
 </dd></dl>
 
+</div>
 <div class="section" id="exceptions">
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -269,17 +309,18 @@ set self.__traceback__ to tb and return self.</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">KernelMatrix class</a><ul>
+<li><a class="reference internal" href="#api">API</a></li>
 <li><a class="reference internal" href="#exceptions">Exceptions</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="API.html"
-                        title="previous chapter">API Reference</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="kernel_functions.html"
-                        title="next chapter">Kernel functions</a></p>
+                        title="previous chapter">Kernel functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="km_collections.html"
+                        title="next chapter">Collections of kernel matrices</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">

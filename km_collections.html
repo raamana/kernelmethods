@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Collection of kernel matrices &#8212; kernelmethods 0.2 documentation</title>
+    <title>Collections of kernel matrices &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Drop-in Estimator classes" href="kernel_machine.html" />
-    <link rel="prev" title="Kernel functions" href="kernel_functions.html" />
+    <link rel="prev" title="KernelMatrix class" href="kernel_matrix.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -37,22 +37,29 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-<div class="section" id="collection-of-kernel-matrices">
-<h1>Collection of kernel matrices<a class="headerlink" href="#collection-of-kernel-matrices" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="collections-of-kernel-matrices">
+<h1>Collections of kernel matrices<a class="headerlink" href="#collections-of-kernel-matrices" title="Permalink to this headline">¶</a></h1>
+<p>When dealing multiple kernel matrices e.g. as part of multiple kernel learning (MKL), a number of validation and sanity checks need to be performed. Some of these checks include ensuring compatible size of the kernel matrices (KMs), as well as knowing these matrices are generated from the same sample. We refer to such collection of KMs a <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code>. Moreover, accessing a subset of these KMs e.g. filtered by some metric is often necessary while trying to optimize algorithms like MKL. To serve as candidates for optimization, it is often necessary to <em>sample</em> and generate a large number of KMs, here referred to as a <em>bucket</em>. The <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> make these tasks easy and extensible while keeping their rich annotations and structure (meta-data etc).</p>
 <div class="section" id="kernel-set">
 <h2>Kernel Set<a class="headerlink" href="#kernel-set" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelSet">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelSet</code><span class="sig-paren">(</span><em class="sig-param">km_set=None</em>, <em class="sig-param">name='KernelSet'</em>, <em class="sig-param">num_samples=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelSet</code><span class="sig-paren">(</span><em class="sig-param">km_list=None</em>, <em class="sig-param">name='KernelSet'</em>, <em class="sig-param">num_samples=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Container class to manage a set of compatible KernelMatrix instances.</p>
 <p>Compatibility is checked based on the size (number of samples they operate on).
-Provides methods to iterate over the KMs, access a subset and query the underlying kernel funcs.</p>
+Provides methods to iterate over the KMs, access a subset and query the
+underlying kernel funcs.</p>
 <dl class="method">
 <dt id="kernelmethods.KernelSet.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to add a new kernel to the set.</p>
 <p>Checks to ensure the new KM is compatible in size to the existing set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>KM</strong> (<a class="reference internal" href="kernel_matrix.html#kernelmethods.KernelMatrix" title="kernelmethods.KernelMatrix"><em>KernelMatrix</em></a><em> or </em><em>ndarray</em><em> or </em><em>compatible</em>) – kernel matrix to be appended to the KernelSet</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -82,13 +89,41 @@ Must be 2D of shape (num_samples, num_features)</p></li>
 <code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of an user-defined attribute.</p>
 <p>If not set previously, or no match found, returns value_if_not_found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr_name</strong> (<em>str</em><em> or </em><em>hashable</em>) – </p></li>
+<li><p><strong>value_if_not_found</strong> (<em>object</em>) – If attribute was not set previously, returns this value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>attr_values</strong> – Values of the attribute from each KM in the set.
+Or value_if_not_found if attribute is not found.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelSet.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
+<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.get_kernel_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns kernel functions underlying the specified kernel matrices in this
+kernel set.</p>
+<p>This is helpful to apply a given set of kernel functions on new sets of
+data (e.g. test set)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>indices</strong> (<em>Iterable</em>) – List of indices identifying the kernel matrices to return</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kf_tuple</strong> – Tuple of kernel functinons from  the selected KMs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -101,11 +136,21 @@ Must be 2D of shape (num_samples, num_features)</p></li>
 <dt id="kernelmethods.KernelSet.set_attr">
 <code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.set_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
+<p>If len(values)==1, same value is set for all. Otherwise values must be of
+size as
 KernelSet, providing a separate value for each element.</p>
 <p>Useful to identify this kernel matrix in various aspects!
 You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
+As they are user-defined, they are ideal to represent user needs and
+applications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>hashable</em>) – Names of the attribute.</p></li>
+<li><p><strong>values</strong> (<em>object</em>) – Value of the attribute</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -117,7 +162,22 @@ As they are user-defined, they are ideal to represent user needs and application
 <dl class="method">
 <dt id="kernelmethods.KernelSet.take">
 <code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelSet.take"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelSet.take" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
+<dd><p>“Returns a new KernelSet with requested kernel matrices, identified by
+their indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>Iterable</em>) – List of indices identifying the kernel matrices to return</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name for the new kernel set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ks</strong> – New kernel set with the selected KMs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#kernelmethods.KernelSet" title="kernelmethods.KernelSet">KernelSet</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -129,14 +189,20 @@ As they are user-defined, they are ideal to represent user needs and application
 <dt id="kernelmethods.KernelBucket">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelBucket</code><span class="sig-paren">(</span><em class="sig-param">name='KernelBucket'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">poly_degree_values=(2</em>, <em class="sig-param">3</em>, <em class="sig-param">4)</em>, <em class="sig-param">rbf_sigma_values=(0.03125</em>, <em class="sig-param">0.125</em>, <em class="sig-param">0.5</em>, <em class="sig-param">2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">laplacian_gamma_values=(2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelBucket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelSet</span></code></p>
-<p>Class to generate a “bucket” of candidate kernels.</p>
+<p>Class to generate and/or maintain a “bucket” of candidate kernels.</p>
 <p>Applications:
-1. to rank/filter/select kernels based on a given sample via many metrics</p>
+1. to rank/filter/select kernels based on a given sample via many metrics
+2. to be defined.</p>
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to add a new kernel to the set.</p>
 <p>Checks to ensure the new KM is compatible in size to the existing set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>KM</strong> (<a class="reference internal" href="kernel_matrix.html#kernelmethods.KernelMatrix" title="kernelmethods.KernelMatrix"><em>KernelMatrix</em></a><em> or </em><em>ndarray</em><em> or </em><em>compatible</em>) – kernel matrix to be appended to the KernelSet</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -166,13 +232,41 @@ Must be 2D of shape (num_samples, num_features)</p></li>
 <code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value_if_not_found=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of an user-defined attribute.</p>
 <p>If not set previously, or no match found, returns value_if_not_found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr_name</strong> (<em>str</em><em> or </em><em>hashable</em>) – </p></li>
+<li><p><strong>value_if_not_found</strong> (<em>object</em>) – If attribute was not set previously, returns this value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>attr_values</strong> – Values of the attribute from each KM in the set.
+Or value_if_not_found if attribute is not found.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.get_kernel_funcs">
-<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKernelFuncs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns kernel functions underlying the specified kernel matrices in this kernel set.</p>
-<p>This is helpful to apply a given set of kernel functions on new sets of data (e.g. test set)</p>
+<code class="sig-name descname">get_kernel_funcs</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.get_kernel_funcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns kernel functions underlying the specified kernel matrices in this
+kernel set.</p>
+<p>This is helpful to apply a given set of kernel functions on new sets of
+data (e.g. test set)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>indices</strong> (<em>Iterable</em>) – List of indices identifying the kernel matrices to return</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kf_tuple</strong> – Tuple of kernel functinons from  the selected KMs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -185,11 +279,21 @@ Must be 2D of shape (num_samples, num_features)</p></li>
 <dt id="kernelmethods.KernelBucket.set_attr">
 <code class="sig-name descname">set_attr</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.set_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets user-defined attributes for the kernel matrices in this set.</p>
-<p>If len(values)==1, same value is set for all. Otherwise values must be of size as
+<p>If len(values)==1, same value is set for all. Otherwise values must be of
+size as
 KernelSet, providing a separate value for each element.</p>
 <p>Useful to identify this kernel matrix in various aspects!
 You could think of them as tags or identifiers etc.
-As they are user-defined, they are ideal to represent user needs and applications.</p>
+As they are user-defined, they are ideal to represent user needs and
+applications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>hashable</em>) – Names of the attribute.</p></li>
+<li><p><strong>values</strong> (<em>object</em>) – Value of the attribute</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -201,7 +305,22 @@ As they are user-defined, they are ideal to represent user needs and application
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.take">
 <code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">name='SelectedKMs'</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.take" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new KernelSet with requested kernel matrices, identified by their indices.</p>
+<dd><p>“Returns a new KernelSet with requested kernel matrices, identified by
+their indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>Iterable</em>) – List of indices identifying the kernel matrices to return</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name for the new kernel set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ks</strong> – New kernel set with the selected KMs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#kernelmethods.KernelSet" title="kernelmethods.KernelSet">KernelSet</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -239,7 +358,7 @@ set self.__traceback__ to tb and return self.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Collection of kernel matrices</a><ul>
+<li><a class="reference internal" href="#">Collections of kernel matrices</a><ul>
 <li><a class="reference internal" href="#kernel-set">Kernel Set</a></li>
 <li><a class="reference internal" href="#kernel-bucket">Kernel Bucket</a></li>
 <li><a class="reference internal" href="#exceptions">Exceptions</a></li>
@@ -248,8 +367,8 @@ set self.__traceback__ to tb and return self.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="kernel_functions.html"
-                        title="previous chapter">Kernel functions</a></p>
+  <p class="topless"><a href="kernel_matrix.html"
+                        title="previous chapter">KernelMatrix class</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="kernel_machine.html"
                         title="next chapter">Drop-in Estimator classes</a></p>

@@ -50,11 +50,11 @@
 
 <div class="viewcode-block" id="KernelBucket"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelBucket">[docs]</a><span class="k">class</span> <span class="nc">KernelBucket</span><span class="p">(</span><span class="n">KernelSet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to generate a &quot;bucket&quot; of candidate kernels.</span>
+<span class="sd">    Class to generate and/or maintain a &quot;bucket&quot; of candidate kernels.</span>
 
 <span class="sd">    Applications:</span>
 <span class="sd">    1. to rank/filter/select kernels based on a given sample via many metrics</span>
-
+<span class="sd">    2. to be defined.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -66,13 +66,36 @@
                  <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_sigma_values_gaussian_kernel</span><span class="p">,</span>
                  <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">,</span>
                  <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructor&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            String to identify the purpose or type of the bucket of kernels.</span>
+<span class="sd">            Also helps easily distinguishing it from other buckets.</span>
+
+<span class="sd">        normalize_kernels : bool</span>
+<span class="sd">            Flag to indicate whether the kernel matrices need to be normalized</span>
+
+<span class="sd">        poly_degree_values : Iterable</span>
+<span class="sd">            List of values for the degree parameter of the PolyKernel. One</span>
+<span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">        rbf_sigma_values : Iterable</span>
+<span class="sd">            List of values for the sigma parameter of the GaussianKernel. One</span>
+<span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">        laplacian_gamma_values : Iterable</span>
+<span class="sd">            List of values for the gamma parameter of the LaplacianKernel. One</span>
+<span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span> <span class="o">=</span> <span class="n">normalize_kernels</span>
 
         <span class="c1"># start with the addition of kernel matrix for linear kernel</span>
         <span class="n">init_kset</span> <span class="o">=</span> <span class="p">[</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">LinearKernel</span><span class="p">(),</span> <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">),</span> <span class="p">]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_set</span><span class="o">=</span><span class="n">init_kset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">km_list</span><span class="o">=</span><span class="n">init_kset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># not attached to a sample yet</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -118,7 +141,20 @@
 
 
 <span class="k">def</span> <span class="nf">ideal_kernel</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes the kernel matrix from the given target labels&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the kernel matrix from the given target labels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    targets : Iterable</span>
+<span class="sd">        Target values (``y``) to compute the ideal kernel from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ideal_kernel : ndarray</span>
+<span class="sd">        The ideal kernel from (``yy\ :sup:`T` ``)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># row vector</span>
 
@@ -126,7 +162,20 @@
 
 
 <span class="k">def</span> <span class="nf">correlation_km</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes correlation coefficient between two kernel matrices&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes [pearson] correlation coefficient between two kernel matrices</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k1, k2 : ndarray</span>
+<span class="sd">        Two kernel matrices of the same size</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    corr_coef : float</span>
+<span class="sd">        Correlation coefficient between the vectorized kernel matrices</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">corr_coef</span><span class="p">,</span> <span class="n">p_val</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">k1</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">k2</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
 
@@ -134,7 +183,25 @@
 
 
 <span class="k">def</span> <span class="nf">pairwise_similarity</span><span class="p">(</span><span class="n">k_bucket</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;corr&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes the similarity between all pairs of kernel matrices in a given bucket.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the similarity between all pairs of kernel matrices in a given bucket.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k_bucket : KernelBucket</span>
+<span class="sd">        Container of length num_km, with each an instance ``KernelMatrix``</span>
+
+<span class="sd">    metric : str</span>
+<span class="sd">        Identifies the metric to be used. Options: ``corr`` (correlation</span>
+<span class="sd">        coefficient) and ``align`` (centered alignment).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pairwise_metric : ndarray of shape (num_km, num_km)</span>
+<span class="sd">        A symmetric matrix computing the pairwise similarity between the various</span>
+<span class="sd">        kernel matrices</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># mutual info?</span>
     <span class="n">metric_func</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;corr&#39;</span> <span class="p">:</span> <span class="n">correlation_km</span><span class="p">,</span>

@@ -39,6 +39,21 @@
             
 <div class="section" id="string-kernels-coming-soon">
 <h1>String kernels (coming soon)<a class="headerlink" href="#string-kernels-coming-soon" title="Permalink to this headline">¶</a></h1>
+<p>The design of <code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> allows for easy implementation to accept any input data types, as that only matters in the definition of the kernel function which are modularized out of the remaining parts of library.</p>
+<p>For example, to implement mismatch kernels for protein sequence data, it is simply a matter of implementing <a class="reference external" href="https://en.wikipedia.org/wiki/K-mer">k-mer</a> feature extraction tool e.g. <code class="docutils literal notranslate"><span class="pre">kmer_spectrum()</span></code>. Then a simple mismatch kernel can easily be defined in few lines via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="kn">import</span> <span class="n">KernelFromCallable</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.strings</span> <span class="kn">import</span> <span class="n">kmer_spectrum</span> <span class="c1"># Note: NotImplemented</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">kmer_similarity</span><span class="p">(</span><span class="n">string_one</span><span class="p">,</span> <span class="n">string_two</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">kmer_spectrum</span><span class="p">(</span><span class="n">string_one</span><span class="p">),</span> <span class="n">kmer_spectrum</span><span class="p">(</span><span class="n">string_two</span><span class="p">))</span>
+
+<span class="n">mismatch_kernel</span> <span class="o">=</span> <span class="n">KernelFromCallable</span><span class="p">(</span><span class="n">kmer_similarity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or one could also turn this into a full-fledged <code class="docutils literal notranslate"><span class="pre">StringKernel</span></code> or <code class="docutils literal notranslate"><span class="pre">MismatchStringKernel</span></code> classes, while reusing a lot of boilerplate from <code class="docutils literal notranslate"><span class="pre">kernelmethods.base</span></code> mimicking numerical or categorical kernels already defined.</p>
+<p>Once a <code class="docutils literal notranslate"><span class="pre">MismatchStringKernel</span></code> is available, we can leverage the full functionality of the <code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> to the user domain/application.</p>
 </div>
 
 

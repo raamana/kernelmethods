@@ -40,13 +40,36 @@
 <div class="section" id="utilities">
 <h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
 <p>Here, we document several important utilities related to this library.</p>
-<span class="target" id="module-kernelmethods.ranking"></span><p>Module gathering techniques and helpers to rank kernels using various methods and
-metrics, including based on their target alignment, performance in
-cross-validation etc.</p>
+<div class="section" id="module-kernelmethods.ranking">
+<span id="ranking"></span><h2>Ranking<a class="headerlink" href="#module-kernelmethods.ranking" title="Permalink to this headline">¶</a></h2>
+<p>Module gathering techniques and helpers to rank kernels using various methods and
+metrics, such as</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>their target alignment,</p></li>
+<li><p>performance in cross-validation</p></li>
+</ul>
+</div></blockquote>
 <dl class="function">
 <dt id="kernelmethods.ranking.CV_ranking">
 <code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">CV_ranking</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">targets</em>, <em class="sig-param">num_folds=3</em>, <em class="sig-param">estimator_name='SVM'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#CV_ranking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.CV_ranking" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ranks kernels by their performance in cross-validation.</p>
+<dd><p>Ranks kernels by their performance measured via cross-validation (CV).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a>) – </p></li>
+<li><p><strong>targets</strong> (<em>Iterable</em>) – target values of the sample attached to the bucket</p></li>
+<li><p><strong>num_folds</strong> (<em>int</em>) – Number of folds for the CV to be employed</p></li>
+<li><p><strong>estimator_name</strong> (<em>str</em>) – Name of a valid Scikit-Learn estimator. Default: <code class="docutils literal notranslate"><span class="pre">SVM</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>scores</strong> – CV performance computed for the kernel matrices in the bucket</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -81,9 +104,19 @@ cross-validation etc.</p>
 <dt id="kernelmethods.ranking.get_estimator">
 <code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">get_estimator</code><span class="sig-paren">(</span><em class="sig-param">learner_id='svm'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#get_estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.get_estimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a valid kernel machine to become the base learner of the MKL methods.</p>
-<p>This base learner must be able to accept a precomputed kernel for fit/predict methods!</p>
-<dl class="simple">
-<dt>TODO hyper-param optimization needs to be incorporated somewhere!!</dt><dd><p>Perhaps by returning a GridSearchCV(base_learner) object or similar?</p>
+<p>Base learner must be able to accept a precomputed kernel for fit/predict methods!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>learner_id</strong> (<em>str</em>) – Identifier for the estimator to be chosen.
+Options: <code class="docutils literal notranslate"><span class="pre">SVM</span></code> and <code class="docutils literal notranslate"><span class="pre">SVR</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">SVM</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>base_learner</strong> (<em>Estimator</em>) – An sklearn estimator</p></li>
+<li><p><strong>param_grid</strong> (<em>dict</em>) – Parameter grid (sklearn format) for the chosen estimator.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -91,10 +124,27 @@ cross-validation etc.</p>
 <dl class="function">
 <dt id="kernelmethods.ranking.rank_kernels">
 <code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">rank_kernels</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">targets</em>, <em class="sig-param">method='align/corr'</em>, <em class="sig-param">**method_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#rank_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.rank_kernels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main interface.</p>
+<dd><p>Computes a given ranking metric for all the kernel matrices in the bucket.</p>
 <p>Choices for the method include: “align/corr”, “cv_risk”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a>) – </p></li>
+<li><p><strong>targets</strong> (<em>Iterable</em>) – target values of the sample attached to the bucket</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Identifies one of the metrics: <code class="docutils literal notranslate"><span class="pre">align/corr</span></code>, <code class="docutils literal notranslate"><span class="pre">cv_risk</span></code></p></li>
+<li><p><strong>method_params</strong> (<em>dict</em>) – Additional parameters to be passed on to the method chosen above.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>scores</strong> – Values of the ranking metrics computed for the kernel matrices in the bucket</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
+</div>
 </div>
 
 
@@ -103,6 +153,14 @@ cross-validation etc.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Utilities</a><ul>
+<li><a class="reference internal" href="#module-kernelmethods.ranking">Ranking</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="operations.html"
                         title="previous chapter">Kernel Operations</a></p>

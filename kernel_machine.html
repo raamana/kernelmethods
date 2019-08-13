@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Kernel Operations" href="operations.html" />
-    <link rel="prev" title="Collection of kernel matrices" href="km_collections.html" />
+    <link rel="prev" title="Collections of kernel matrices" href="km_collections.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -55,17 +55,27 @@
 </div>
 <p>See below for the API.</p>
 <p><strong>Stay tuned</strong> for more tutorials, examples and comprehensive docs.</p>
-<div class="section" id="kernel-machine">
-<h2>Kernel Machine<a class="headerlink" href="#kernel-machine" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="kernel-machine-api">
+<h2>Kernel Machine (API)<a class="headerlink" href="#kernel-machine-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelMachine">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMachine</code><span class="sig-paren">(</span><em class="sig-param">k_func</em>, <em class="sig-param">learner_id='SVR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code></p>
 <p>Generic class to return a drop-in sklearn estimator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_func</strong> (<em>KernelFunction</em>) – The kernel function the kernel machine bases itself on</p></li>
+<li><p><strong>learner_id</strong> (<em>str</em>) – Identifier for the estimator to be built based on the kernel function.
+Options: <code class="docutils literal notranslate"><span class="pre">SVM</span></code> and <code class="docutils literal notranslate"><span class="pre">SVR</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">SVR</span></code></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.fit">
 <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the optimal kernel, and fit a SVM based on the custom kernel.</p>
+<dd><p>Fit the chosen Estimator based on the user-defined kernel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -102,7 +112,7 @@ matrices as input.</p>
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.predict">
 <code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform classification on samples in X.</p>
+<dd><p>Make predictions on the new samplets in X.</p>
 <p>For an one-class model, +1 or -1 is returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -133,8 +143,8 @@ matrices as input.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="optimalkernelsvr">
-<h2>OptimalKernelSVR<a class="headerlink" href="#optimalkernelsvr" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="optimalkernelsvr-api">
+<h2>OptimalKernelSVR (API)<a class="headerlink" href="#optimalkernelsvr-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.OptimalKernelSVR">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">OptimalKernelSVR</code><span class="sig-paren">(</span><em class="sig-param">k_bucket</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR" title="Permalink to this definition">¶</a></dt>
@@ -145,7 +155,8 @@ build a support vector regressor based on this custom kernel.</p>
 drop-in replacement, whose implementation is in turn based on LIBSVM.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>k_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a><em> or </em><em>sampling_strategy</em>) – </p>
+<dd class="field-odd"><p><strong>k_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a><em> or </em><em>str</em>) – An instance of KernelBucket that contains all the kernels to be compared,
+or a string identifying the sampling_strategy which populates a KernelBucket.</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -327,15 +338,15 @@ built-in scorer <code class="docutils literal notranslate"><span class="pre">'r2
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Drop-in Estimator classes</a><ul>
-<li><a class="reference internal" href="#kernel-machine">Kernel Machine</a></li>
-<li><a class="reference internal" href="#optimalkernelsvr">OptimalKernelSVR</a></li>
+<li><a class="reference internal" href="#kernel-machine-api">Kernel Machine (API)</a></li>
+<li><a class="reference internal" href="#optimalkernelsvr-api">OptimalKernelSVR (API)</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="km_collections.html"
-                        title="previous chapter">Collection of kernel matrices</a></p>
+                        title="previous chapter">Collections of kernel matrices</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="operations.html"
                         title="next chapter">Kernel Operations</a></p>

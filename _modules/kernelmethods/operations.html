@@ -40,7 +40,20 @@
 <h1>Source code for kernelmethods.operations</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="sd">&quot;&quot;&quot;Module implementing common kernel operations.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements the common kernel operations such as</span>
+
+<span class="sd"> - normalization of a kernel matrix (KM),</span>
+<span class="sd"> - centering (one- and two-sample cases),</span>
+<span class="sd"> - evaluating similarity, computing alignment,</span>
+<span class="sd"> - frobenius norms,</span>
+<span class="sd"> - linear combinations and</span>
+<span class="sd"> - checking whether a KM is PSD.</span>
+
+<span class="sd">API</span>
+<span class="sd">----</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -61,9 +74,28 @@
 <span class="sd">    A symmetric matrix is PSD if ALL its eigen values &gt;= 0 (non-negative).</span>
 <span class="sd">        If any of its eigen values are negative, it is not PSD.</span>
 
-<span class="sd">    Accounting for numerical instabilities with tolerance.</span>
+<span class="sd">    This functions accounts for numerical instabilities with a tolerance parameter.</span>
 
-<span class="sd">    Shortcut: is_PSD()</span>
+<span class="sd">    This function can also be called with a shorthand ``is_PSD()``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sym_matrix : ndarray</span>
+<span class="sd">        Matrix to be evaluted for PSDness</span>
+
+<span class="sd">    tolerance : float</span>
+<span class="sd">        Tolerance parameter to account for numerical instabilities in the eigen</span>
+<span class="sd">        value computations (which can result in negative eigen values very slightly</span>
+<span class="sd">        below 0)</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Flag to indicate whether to print traceback in case of errors</span>
+<span class="sd">        during the computation of the eigen values</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    psd : bool</span>
+<span class="sd">        Flag indicating whether the matrix is PSD.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -108,12 +140,23 @@
 
 <div class="viewcode-block" id="center_km"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.center_km">[docs]</a><span class="k">def</span> <span class="nf">center_km</span><span class="p">(</span><span class="n">KM</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Center a given kernel matrix.</span>
+<span class="sd">    Centers a given kernel matrix.</span>
 
 <span class="sd">    Implements the definition according to Lemma 1 in Section 2.2 in</span>
 <span class="sd">    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,</span>
 <span class="sd">        &quot;Algorithms for Learning Kernels Based on Centered Alignment&quot;,</span>
 <span class="sd">        Journal of Machine Learning Research 13(Mar): 795–828.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    KM : ndarray</span>
+<span class="sd">        Symmetric matrix to be centered.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    centered_km : ndarray</span>
+<span class="sd">        Centered kernel matrix</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">KM</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -144,6 +187,18 @@
 
 <span class="sd">    Matrix must be square (and coming from a single sample: K(X,X), not K(X,Y)</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    KM : ndarray</span>
+<span class="sd">        Symmetric matrix to be normalized</span>
+
+<span class="sd">    method : str</span>
+<span class="sd">        Method of normalization. Options: ``cosine`` only.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    normed_km : ndarray</span>
+<span class="sd">        Normalized kernel matrix</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -207,7 +262,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    normed_km</span>
+<span class="sd">    normed_km : ndarray</span>
 <span class="sd">        Normalized version of K(X,Y)</span>
 
 <span class="sd">        NOTE: K_XY may NOT have unit diagonal, as k(x,y) != sqrt(k(x,x))*sqrt(k(y,y))</span>
@@ -215,9 +270,10 @@
 
     <span class="k">if</span> <span class="n">diag_K_XX</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">cross_K_XY</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> \
         <span class="n">cross_K_XY</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">diag_K_YY</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Shape mismatch for multiplication across the 3 kernel matrices!&#39;</span>
-                         <span class="s1">&#39; Length of diag_K_XX must match number of rows in K_XY, &#39;</span>
-                         <span class="s1">&#39; and number of columns in K_XY must match length of diag_K_XX.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Shape mismatch for multiplication across the 3 kernel &#39;</span>
+                         <span class="s1">&#39;matrices! Length of diag_K_XX must match &#39;</span>
+                         <span class="s1">&#39;number of rows in K_XY, and number of columns in K_XY &#39;</span>
+                         <span class="s1">&#39;must match length of diag_K_XX.&#39;</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -237,19 +293,30 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Two-sample normalization method </span><span class="si">{}</span><span class="s1"> is not&#39;</span>
                                       <span class="s1">&#39;implemented yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to normalize two-sample kernel matrix using method </span><span class="si">{}</span><span class="s1">&#39;</span>
-                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to normalize two-sample kernel matrix &#39;</span>
+                           <span class="s1">&#39;using method </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">normed_km</span></div>
 
 
 <div class="viewcode-block" id="frobenius_product"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.frobenius_product">[docs]</a><span class="k">def</span> <span class="nf">frobenius_product</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes the Frobenious product between two matrices of equal dimension.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Frobenious product between two matrices of equal dimensions.</span>
 
 <span class="sd">    &lt;A, B&gt;_F is equal to the sum of element-wise products between A and B.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        &lt;\mathbf{A}, \mathbf{B}&gt;_F = \sum_{i, j} \mathbf{A}_{ij} \mathbf{B}_{ij}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    A, B : ndarray</span>
+<span class="sd">        Two matrices of equal dimensions to compute the product.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    product : float</span>
+<span class="sd">        Frobenious product</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -262,9 +329,18 @@
 
 
 <div class="viewcode-block" id="frobenius_norm"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.frobenius_norm">[docs]</a><span class="k">def</span> <span class="nf">frobenius_norm</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes the Frobenius norm of a matrix A.</span>
+    <span class="sd">&quot;&quot;&quot;Computes the Frobenius norm of a matrix A, which  is the square root of the</span>
+<span class="sd">    Frobenius product with itself.</span>
 
-<span class="sd">    It is the square root of the Frobenius product with itself.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    A : ndarray</span>
+<span class="sd">        Matrix to compute the norm of</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    norm : float</span>
+<span class="sd">        Frobenious norm</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -339,11 +415,27 @@
 <div class="viewcode-block" id="eval_similarity"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.eval_similarity">[docs]</a><span class="k">def</span> <span class="nf">eval_similarity</span><span class="p">(</span><span class="n">km_one</span><span class="p">,</span> <span class="n">km_two</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate similarity between two kernel matrices&quot;&quot;&quot;</span>
 
-    <span class="k">pass</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="linear_combination"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.linear_combination">[docs]</a><span class="k">def</span> <span class="nf">linear_combination</span><span class="p">(</span><span class="n">km_set</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Linear combinations of a given kernel set&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Weighted linear combinations of a set of given kernel matrices</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        Collection of compatible kernel matrices</span>
+
+<span class="sd">    weights : Iterable</span>
+<span class="sd">        Set of weights for the kernel matrices in km_set</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lin_comb_KM : ndarray</span>
+<span class="sd">        Final result of weighted linear combination of the kernel matrix set</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">km_set</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">ensure_ndarray_1D</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
@@ -355,7 +447,8 @@
     <span class="c1"># TODO should we not ensure weights sum to 1.0?</span>
 
     <span class="c1"># Computes the weighted average kernel</span>
-    <span class="c1"># km_set.num_samples is a tuple (N, M) when operating on two samples e.g. train x test</span>
+    <span class="c1"># km_set.num_samples is a tuple (N, M) when operating on two samples</span>
+    <span class="c1">#   e.g. train x test</span>
     <span class="n">KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">km_set</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">km</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">km_set</span><span class="p">):</span>
         <span class="n">KM</span> <span class="o">=</span> <span class="n">KM</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">km</span><span class="o">.</span><span class="n">full</span>

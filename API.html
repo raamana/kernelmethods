@@ -15,7 +15,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="KernelMatrix class" href="kernel_matrix.html" />
+    <link rel="next" title="Kernel functions" href="kernel_functions.html" />
     <link rel="prev" title="Usage" href="usage.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -40,7 +40,16 @@
 <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <p>A tutorial-like presentation is available at <a class="reference internal" href="usage.html"><span class="doc">Usage</span></a>.</p>
-<p>This library consists of a set of key classes such as <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>, diverse library of <a class="reference internal" href="kernel_functions.html"><span class="doc">Kernel functions</span></a>, <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collection of kernel matrices</span></a>, along with a library of <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</p>
+<p>This library consists of a set of key classes and methods such as</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>diverse library of <a class="reference internal" href="kernel_functions.html"><span class="doc">Kernel functions</span></a>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>,</p></li>
+<li><p>container classes <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collections of kernel matrices</span></a>,</p></li>
+<li><p>a library of <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and</p></li>
+<li><p>a set of related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</p></li>
+</ul>
+</div></blockquote>
 <div class="section" id="exceptions">
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -49,18 +58,27 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Generic exception to indicate invalid use of the kernelmethods library.</p>
 <p>Allows to distinguish improper use of KernelMatrix from other code exceptions</p>
-<dl class="attribute">
-<dt id="kernelmethods.KernelMethodsException.args">
-<code class="sig-name descname">args</code><a class="headerlink" href="#kernelmethods.KernelMethodsException.args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kernelmethods.KernelMethodsException.with_traceback">
-<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelMethodsException.with_traceback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="kernelmethods.KMAccessError">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMAccessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMAccessError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
+<p>Exception to indicate invalid access to the kernel matrix!</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="kernelmethods.KMNormError">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMNormError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMNormError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMNormError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
+<p>Custom exception to indicate error during normalization of kernel matrix</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="kernelmethods.KMSetAdditionError">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMSetAdditionError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMSetAdditionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMSetAdditionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
+<p>Exception to indicate invalid addition of kernel matrix to a KernelSet</p>
 </dd></dl>
 
 </div>
@@ -84,8 +102,8 @@ set self.__traceback__ to tb and return self.</p>
   <p class="topless"><a href="usage.html"
                         title="previous chapter">Usage</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="kernel_matrix.html"
-                        title="next chapter">KernelMatrix class</a></p>
+  <p class="topless"><a href="kernel_functions.html"
+                        title="next chapter">Kernel functions</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">

@@ -9,8 +9,8 @@ Welcome to kernelmethods's documentation!
    installation
    usage
    API
-   kernel_matrix
    kernel_functions
+   kernel_matrix
    km_collections
    kernel_machine
    operations
@@ -19,8 +19,12 @@ Welcome to kernelmethods's documentation!
    categorical_kernels
    string_kernels
    graph_kernels
+   full_index
    contributing
    history
+
+
+.. automodule:: kernelmethods
 
 Indices and tables
 ==================

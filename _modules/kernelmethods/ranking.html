@@ -41,8 +41,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">Module gathering techniques and helpers to rank kernels using various methods and</span>
-<span class="sd">metrics, including based on their target alignment, performance in</span>
-<span class="sd">cross-validation etc.</span>
+<span class="sd">metrics, such as</span>
+
+<span class="sd"> - their target alignment,</span>
+<span class="sd"> - performance in cross-validation</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -87,9 +89,27 @@
 
 <div class="viewcode-block" id="rank_kernels"><a class="viewcode-back" href="../../utilities.html#kernelmethods.ranking.rank_kernels">[docs]</a><span class="k">def</span> <span class="nf">rank_kernels</span><span class="p">(</span><span class="n">kernel_bucket</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;align/corr&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">method_params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Main interface.</span>
+<span class="sd">    Computes a given ranking metric for all the kernel matrices in the bucket.</span>
 
 <span class="sd">    Choices for the method include: &quot;align/corr&quot;, &quot;cv_risk&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel_bucket : KernelBucket</span>
+
+<span class="sd">    targets : Iterable</span>
+<span class="sd">        target values of the sample attached to the bucket</span>
+
+<span class="sd">    method : str</span>
+<span class="sd">        Identifies one of the metrics: ``align/corr``, ``cv_risk``</span>
+
+<span class="sd">    method_params : dict</span>
+<span class="sd">        Additional parameters to be passed on to the method chosen above.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scores : ndarray</span>
+<span class="sd">        Values of the ranking metrics computed for the kernel matrices in the bucket</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -105,7 +125,28 @@
 
 
 <div class="viewcode-block" id="CV_ranking"><a class="viewcode-back" href="../../utilities.html#kernelmethods.ranking.CV_ranking">[docs]</a><span class="k">def</span> <span class="nf">CV_ranking</span><span class="p">(</span><span class="n">kernel_bucket</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">num_folds</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">estimator_name</span><span class="o">=</span><span class="s1">&#39;SVM&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Ranks kernels by their performance in cross-validation.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ranks kernels by their performance measured via cross-validation (CV).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kernel_bucket : KernelBucket</span>
+
+<span class="sd">    targets : Iterable</span>
+<span class="sd">        target values of the sample attached to the bucket</span>
+
+<span class="sd">    num_folds : int</span>
+<span class="sd">        Number of folds for the CV to be employed</span>
+
+<span class="sd">    estimator_name : str</span>
+<span class="sd">        Name of a valid Scikit-Learn estimator. Default: ``SVM``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scores : ndarray</span>
+<span class="sd">        CV performance computed for the kernel matrices in the bucket</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">GridSearchCV</span>
 
@@ -122,19 +163,40 @@
 
 
 <div class="viewcode-block" id="alignment_ranking"><a class="viewcode-back" href="../../utilities.html#kernelmethods.ranking.alignment_ranking">[docs]</a><span class="k">def</span> <span class="nf">alignment_ranking</span><span class="p">(</span><span class="n">kernel_bucket</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="o">**</span><span class="n">method_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Method to rank kernels that depend on target alignment.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Method to rank kernels that depend on target alignment.</span>
+
+<span class="sd">    .. note: To be implemented.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="get_estimator"><a class="viewcode-back" href="../../utilities.html#kernelmethods.ranking.get_estimator">[docs]</a><span class="k">def</span> <span class="nf">get_estimator</span><span class="p">(</span><span class="n">learner_id</span><span class="o">=</span><span class="s1">&#39;svm&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns a valid kernel machine to become the base learner of the MKL methods.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a valid kernel machine to become the base learner of the MKL methods.</span>
 
-<span class="sd">    This base learner must be able to accept a precomputed kernel for fit/predict methods!</span>
+<span class="sd">    Base learner must be able to accept a precomputed kernel for fit/predict methods!</span>
 
-<span class="sd">    TODO hyper-param optimization needs to be incorporated somewhere!!</span>
-<span class="sd">        Perhaps by returning a GridSearchCV(base_learner) object or similar?</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    learner_id : str</span>
+<span class="sd">        Identifier for the estimator to be chosen.</span>
+<span class="sd">        Options: ``SVM`` and ``SVR``.</span>
+<span class="sd">        Default: ``SVM``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    base_learner : Estimator</span>
+<span class="sd">        An sklearn estimator</span>
+
+<span class="sd">    param_grid : dict</span>
+<span class="sd">        Parameter grid (sklearn format) for the chosen estimator.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO hyper-param optimization needs to be incorporated somewhere!!</span>
+    <span class="c1">#   Perhaps by returning a GridSearchCV(base_learner) object or similar?</span>
 
     <span class="n">learner_id</span> <span class="o">=</span> <span class="n">learner_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">learner_id</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;svm&#39;</span><span class="p">,</span> <span class="s1">&#39;svc&#39;</span><span class="p">):</span>

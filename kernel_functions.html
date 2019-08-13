@@ -15,8 +15,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Collection of kernel matrices" href="km_collections.html" />
-    <link rel="prev" title="KernelMatrix class" href="kernel_matrix.html" />
+    <link rel="next" title="KernelMatrix class" href="kernel_matrix.html" />
+    <link rel="prev" title="API Reference" href="API.html" />
     <script type="text/javascript" src="_static/pd.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -39,9 +39,16 @@
             
 <div class="section" id="kernel-functions">
 <h1>Kernel functions<a class="headerlink" href="#kernel-functions" title="Permalink to this headline">¶</a></h1>
-<p>Kernel functions are the key to producing kernel matrices and hence are the backbone of kernel methods and machines. These are represented by a fundamental [abstract base] class called <code class="docutils literal notranslate"><span class="pre">BaseKernelFunction</span></code>, which defines several desirable properties, such as making it callable, easy way to check if it induces a positive semi-definite as well as a readable representation of the underlying function.</p>
-<p>We also provide a <code class="docutils literal notranslate"><span class="pre">KernelFromCallable</span></code> class which makes it even easier to define a kernel function just by specifying the underlying function, without having to define a fully separate class.</p>
-<p>In addition, the following classes are provided to enable compositional represenation of multiple kernel functions for advanced applications: <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">ProductKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">SumKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">AverageKernel</span></code>, and <code class="docutils literal notranslate"><span class="pre">WeightedAverageKernel</span></code>.</p>
+<p>Kernel functions are the key to producing kernel matrices and hence are the backbone of kernel methods and machines. These are represented by a fundamental [abstract base] class called <code class="docutils literal notranslate"><span class="pre">BaseKernelFunction</span></code>, which defines several desirable properties, such as</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>easy way to check if it induces a positive semi-definite</p></li>
+<li><p>making it callable, accepting at least two inputs (data points)</p></li>
+<li><p>a readable representation of the underlying function with a name.</p></li>
+</ul>
+</div></blockquote>
+<p>We also provide a <code class="docutils literal notranslate"><span class="pre">KernelFromCallable</span></code> class which makes it even easier to define a kernel function just by specifying the underlying computation, without having to define a fully separate class.</p>
+<p>In addition, the following classes are provided to enable compositional representation of multiple kernel functions for advanced applications: <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">ProductKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">SumKernel</span></code>, <code class="docutils literal notranslate"><span class="pre">AverageKernel</span></code>, and <code class="docutils literal notranslate"><span class="pre">WeightedAverageKernel</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">kernelmethods</span></code> offers kernel functions that can operate on the following data types:</p>
 <blockquote>
 <div><ul class="simple">
@@ -52,6 +59,8 @@
 <li><p>and others such as trees and sequences (TBA).</p></li>
 </ul>
 </div></blockquote>
+<div class="section" id="basekernelfunction">
+<h2>BaseKernelFunction<a class="headerlink" href="#basekernelfunction" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.BaseKernelFunction">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">BaseKernelFunction</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#BaseKernelFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.BaseKernelFunction" title="Permalink to this definition">¶</a></dt>
@@ -62,7 +71,7 @@
 2. to have a name and a str representation
 3. provides a method to check whether the derived kernel func is a valid kernel</p>
 <blockquote>
-<div><p>i.e. the kernel matrix derived on a random sample is positive semi-definite (PSD)</p>
+<div><p>i.e. kernel matrix derived on a random sample is positive semi-definite (PSD)</p>
 </div></blockquote>
 <ol class="arabic simple" start="4">
 <li><p>and that it is symmetric (via tests) as required.</p></li>
@@ -75,6 +84,9 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="kernelfromcallable">
+<h2>KernelFromCallable<a class="headerlink" href="#kernelfromcallable" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.base.KernelFromCallable">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">KernelFromCallable</code><span class="sig-paren">(</span><em class="sig-param">input_func</em>, <em class="sig-param">name=None</em>, <em class="sig-param">**func_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelFromCallable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.KernelFromCallable" title="Permalink to this definition">¶</a></dt>
@@ -90,7 +102,7 @@
 
 </div>
 <div class="section" id="composite-kernel-functions">
-<h1>Composite kernel functions<a class="headerlink" href="#composite-kernel-functions" title="Permalink to this headline">¶</a></h1>
+<h2>Composite kernel functions<a class="headerlink" href="#composite-kernel-functions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.base.CompositeKernel">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">CompositeKernel</code><span class="sig-paren">(</span><em class="sig-param">km_set</em>, <em class="sig-param">name='Composite'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#CompositeKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.CompositeKernel" title="Permalink to this definition">¶</a></dt>
@@ -106,6 +118,13 @@
 <dt id="kernelmethods.base.CompositeKernel.fit">
 <em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#CompositeKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.CompositeKernel.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract methods that needs to be defined later.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.CompositeKernel.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.CompositeKernel.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of compsoite operation.</p>
+<p>Alias for composite_KM to match the KernelMatrix interface.</p>
 </dd></dl>
 
 </dd></dl>
@@ -127,6 +146,13 @@
 <dd><p>Computes the product kernel.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="kernelmethods.base.ProductKernel.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.ProductKernel.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of compsoite operation.</p>
+<p>Alias for composite_KM to match the KernelMatrix interface.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -144,6 +170,13 @@
 <dt id="kernelmethods.base.SumKernel.fit">
 <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">kernel_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#SumKernel.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.SumKernel.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the sum kernel</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.SumKernel.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.SumKernel.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of compsoite operation.</p>
+<p>Alias for composite_KM to match the KernelMatrix interface.</p>
 </dd></dl>
 
 </dd></dl>
@@ -165,6 +198,13 @@
 <dd><p>Computes the average kernel</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="kernelmethods.base.AverageKernel.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.AverageKernel.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of compsoite operation.</p>
+<p>Alias for composite_KM to match the KernelMatrix interface.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -184,8 +224,16 @@
 <dd><p>Computes the weighted average kernel</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="kernelmethods.base.WeightedAverageKernel.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.WeightedAverageKernel.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of compsoite operation.</p>
+<p>Alias for composite_KM to match the KernelMatrix interface.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -196,16 +244,20 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Kernel functions</a></li>
+<li><a class="reference internal" href="#">Kernel functions</a><ul>
+<li><a class="reference internal" href="#basekernelfunction">BaseKernelFunction</a></li>
+<li><a class="reference internal" href="#kernelfromcallable">KernelFromCallable</a></li>
 <li><a class="reference internal" href="#composite-kernel-functions">Composite kernel functions</a></li>
+</ul>
+</li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="kernel_matrix.html"
-                        title="previous chapter">KernelMatrix class</a></p>
+  <p class="topless"><a href="API.html"
+                        title="previous chapter">API Reference</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="km_collections.html"
-                        title="next chapter">Collection of kernel matrices</a></p>
+  <p class="topless"><a href="kernel_matrix.html"
+                        title="next chapter">KernelMatrix class</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
