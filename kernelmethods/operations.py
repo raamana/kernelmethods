@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 
-"""Module implementing common kernel operations."""
+"""
+This module implements the common kernel operations such as
+
+ - normalization of a kernel matrix (KM),
+ - centering (one- and two-sample cases),
+ - evaluating similarity, computing alignment,
+ - frobenius norms,
+ - linear combinations and
+ - checking whether a KM is PSD.
+
+API
+----
+
+"""
 
 import traceback
 import warnings
 
 import numpy as np
-from kernelmethods.base import KernelSet
 from kernelmethods.config import KMNormError, KernelMethodsException
 from kernelmethods.utils import ensure_ndarray_1D, contains_nan_inf
 from numpy import multiply as elem_wise_multiply
@@ -384,9 +396,6 @@ def linear_combination(km_set, weights):
         Final result of weighted linear combination of the kernel matrix set
 
     """
-
-    if not isinstance(km_set, KernelSet):
-        raise TypeError('km_set must be an instance of KernelSet')
 
     if km_set.size == len(weights):
         weights = ensure_ndarray_1D(weights)

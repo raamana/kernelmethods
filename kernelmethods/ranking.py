@@ -1,8 +1,10 @@
 """
 
 Module gathering techniques and helpers to rank kernels using various methods and
-metrics, including based on their target alignment, performance in
-cross-validation etc.
+metrics, such as
+
+ - their target alignment,
+ - performance in cross-validation
 
 """
 

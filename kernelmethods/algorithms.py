@@ -6,9 +6,9 @@ Module to gather various high-level algorithms based on the kernel methods,
 """
 
 from kernelmethods.base import KernelMatrix
-from kernelmethods.sampling import KernelBucket
+from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
-
+from kernelmethods import config as cfg
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
@@ -184,7 +184,9 @@ class OptimalKernelSVR(SVR):
     Parameters
     ----------
 
-    k_bucket : KernelBucket or sampling_strategy
+    k_bucket : KernelBucket or str
+        An instance of KernelBucket that contains all the kernels to be compared,
+        or a string identifying the sampling_strategy which populates a KernelBucket.
 
 
     Attributes
@@ -250,6 +252,21 @@ class OptimalKernelSVR(SVR):
         matrices as input.
 
         """
+
+        if isinstance(self.k_bucket, str):
+            try:
+                self.k_bucket = make_kernel_bucket(self.k_bucket)
+            except:
+                raise ValueError('Input for k_func can only an instance of '
+                                 'KernelBucket or a sampling strategy to generate '
+                                 'one with make_kernel_bucket.'
+                                 'sampling strategy must be one of {}'
+                                 ''.format(cfg.kernel_bucket_strategies))
+        elif not isinstance(self.k_bucket, KernelBucket):
+            raise ValueError('Input for k_func can only an instance of '
+                             'KernelBucket or a sampling strategy to generate '
+                             'one with make_kernel_bucket')
+
 
         self._train_X, self._train_y = check_X_y(X, y)
 
