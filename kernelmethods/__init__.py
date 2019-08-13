@@ -8,7 +8,8 @@ __all__ = ['KernelMatrix',
            'KernelBucket', 'KernelSet']
 
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
-    KernelMethodsException, KMAccessError, KMSetAdditionError, KernelSet
+    KernelMethodsException, KMAccessError, KMNormError,\
+    KMSetAdditionError, KernelSet
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
     LinearKernel
 from kernelmethods.sampling import KernelBucket
