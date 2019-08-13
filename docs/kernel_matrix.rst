@@ -1,5 +1,5 @@
 KernelMatrix class
-------------------
+====================
 
 ``KernelMatrix`` is a self-contained class for the Gram matrix induced by a kernel function on a given sample. This class defines the central data structure for all kernel methods, as it acts a key bridge between input data space and the learning algorithms.
 
@@ -18,13 +18,16 @@ This library also provides convenience wrappers:
  - ``ConstantKernelMatrix`` that defines a ``KernelMatrix`` with a constant everywhere
 
 
+API
+------
+
 .. autoclass:: kernelmethods.KernelMatrix
    :members:
    :undoc-members:
 
 
 Exceptions
-==========
+-------------
 
 .. autoclass:: kernelmethods.KMAccessError
    :undoc-members:

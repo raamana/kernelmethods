@@ -1,3 +1,11 @@
+"""
+This module implements the Base classes as well as the core classes for the library.
+
+.. autosummary::
+    :toctree: _autosummary
+
+"""
+
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from copy import copy
@@ -131,9 +139,10 @@ class KernelMatrix(object):
 
     KernelMatrix behaves just like numpy arrays in terms of accessing its elements:
 
-    - KM[i,j] --> kernel function between samples i and j
-    - KM[set_i,set_j] where len(set_i)=m and len(set_i)=n => matrix KM of size m x n
-        where KM_ij = kernel between samples set_i(i) and set_j(j)
+    KM[i,j] --> kernel function between samples i and j
+
+    KM[set_i,set_j] where len(set_i)=m and len(set_i)=n returns a matrix KM of
+    size m x n, where KM_ij = kernel between samples set_i(i) and set_j(j)
 
     Parameters
     ----------

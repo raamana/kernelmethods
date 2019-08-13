@@ -29,8 +29,8 @@ See below for the API.
 **Stay tuned** for more tutorials, examples and comprehensive docs.
 
 
-Kernel Machine
-==============
+Kernel Machine (API)
+=====================
 
 .. autoclass:: kernelmethods.KernelMachine
    :undoc-members:
@@ -38,8 +38,8 @@ Kernel Machine
    :show-inheritance:
 
 
-OptimalKernelSVR
-=================
+OptimalKernelSVR (API)
+=======================
 
 .. autoclass:: kernelmethods.OptimalKernelSVR
    :undoc-members:

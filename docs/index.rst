@@ -19,8 +19,12 @@ Welcome to kernelmethods's documentation!
    categorical_kernels
    string_kernels
    graph_kernels
+   full_index
    contributing
    history
+
+
+.. automodule:: kernelmethods
 
 Indices and tables
 ==================

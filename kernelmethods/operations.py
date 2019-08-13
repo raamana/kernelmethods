@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
-"""Module implementing common kernel operations."""
+"""
+This module implements the common kernel operations
+
+.. autosummary::
+    :toctree: _autosummary
+
+"""
 
 import traceback
 import warnings

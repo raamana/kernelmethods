@@ -1,9 +1,9 @@
 Collection of kernel matrices
------------------------------
+==========================================
 
 
 Kernel Set
-==============
+-----------------------------
 
 .. autoclass:: kernelmethods.KernelSet
    :undoc-members:
@@ -12,7 +12,7 @@ Kernel Set
 
 
 Kernel Bucket
-==============
+-----------------------------
 
 .. autoclass:: kernelmethods.KernelBucket
    :undoc-members:
@@ -21,7 +21,7 @@ Kernel Bucket
 
 
 Exceptions
-==========
+-----------------------------
 
 .. autoclass:: kernelmethods.KMSetAdditionError
    :undoc-members:
