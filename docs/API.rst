@@ -25,6 +25,10 @@ Exceptions
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: kernelmethods.KMNormError
+   :undoc-members:
+   :show-inheritance:
+
 
 .. autoclass:: kernelmethods.KMSetAdditionError
    :undoc-members:

@@ -15,7 +15,7 @@ import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
 from kernelmethods import config as cfg
-from kernelmethods.config import (KMAccessError, KernelMethodsException,
+from kernelmethods.config import (KMAccessError, KMNormError, KernelMethodsException,
                                   KMSetAdditionError)
 from kernelmethods.operations import (center_km, frobenius_norm, is_PSD,
                                       normalize_km,
