@@ -10,7 +10,21 @@ from kernelmethods.utils import check_input_arrays, _ensure_min_eps
 
 
 class PolyKernel(BaseKernelFunction):
-    """Polynomial kernel function"""
+    """Polynomial kernel function
+
+    Parameters
+    ----------
+    degree : int
+        degree to raise the inner product
+
+    b : float
+        intercept
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+    """
 
     def __init__(self, degree=2, b=0, skip_input_checks=False):
         """
@@ -54,7 +68,19 @@ class PolyKernel(BaseKernelFunction):
 
 
 class GaussianKernel(BaseKernelFunction):
-    """Gaussian kernel function"""
+    """Gaussian kernel function
+
+    Parameters
+    ----------
+    sigma : float
+        bandwidth
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+
+    """
 
     def __init__(self, sigma=2.0, skip_input_checks=False):
         """
@@ -96,7 +122,19 @@ class GaussianKernel(BaseKernelFunction):
 
 
 class LaplacianKernel(BaseKernelFunction):
-    """Laplacian kernel function"""
+    """Laplacian kernel function
+
+    Parameters
+    ----------
+    gamma : float
+        scale factor
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+
+    """
 
     def __init__(self, gamma=1.0, skip_input_checks=False):
         """
@@ -135,7 +173,15 @@ class LaplacianKernel(BaseKernelFunction):
 
 
 class LinearKernel(BaseKernelFunction):
-    """Linear kernel function"""
+    """Linear kernel function
+
+    Parameters
+    ----------
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+    """
 
     def __init__(self, skip_input_checks=False):
         """
