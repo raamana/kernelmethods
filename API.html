@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>API Reference &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -11,8 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Kernel functions" href="kernel_functions.html" />
@@ -43,18 +44,18 @@
 <p>This library consists of a set of key classes and methods such as</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>diverse library of <a class="reference internal" href="kernel_functions.html"><span class="doc">Kernel functions</span></a>,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>,</p></li>
-<li><p>container classes <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collections of kernel matrices</span></a>,</p></li>
-<li><p>a library of <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and</p></li>
-<li><p>a set of related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</p></li>
+<li>diverse library of <a class="reference internal" href="kernel_functions.html"><span class="doc">Kernel functions</span></a>,</li>
+<li><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> documented in <a class="reference internal" href="kernel_matrix.html"><span class="doc">KernelMatrix class</span></a>,</li>
+<li>container classes <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> described in <a class="reference internal" href="km_collections.html"><span class="doc">Collections of kernel matrices</span></a>,</li>
+<li>a library of <a class="reference internal" href="operations.html"><span class="doc">Kernel Operations</span></a> and</li>
+<li>a set of related <a class="reference internal" href="utilities.html"><span class="doc">Utilities</span></a>.</li>
 </ul>
 </div></blockquote>
 <div class="section" id="exceptions">
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelMethodsException">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMethodsException</code><a class="reference internal" href="_modules/kernelmethods/config.html#KernelMethodsException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMethodsException" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">KernelMethodsException</code><a class="reference internal" href="_modules/kernelmethods/config.html#KernelMethodsException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMethodsException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Generic exception to indicate invalid use of the kernelmethods library.</p>
 <p>Allows to distinguish improper use of KernelMatrix from other code exceptions</p>
@@ -62,21 +63,21 @@
 
 <dl class="class">
 <dt id="kernelmethods.KMAccessError">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMAccessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMAccessError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">KMAccessError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMAccessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMAccessError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
 <p>Exception to indicate invalid access to the kernel matrix!</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="kernelmethods.KMNormError">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMNormError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMNormError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMNormError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">KMNormError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMNormError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMNormError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
 <p>Custom exception to indicate error during normalization of kernel matrix</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="kernelmethods.KMSetAdditionError">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KMSetAdditionError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMSetAdditionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMSetAdditionError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">KMSetAdditionError</code><a class="reference internal" href="_modules/kernelmethods/config.html#KMSetAdditionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KMSetAdditionError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.config.KernelMethodsException</span></code></p>
 <p>Exception to indicate invalid addition of kernel matrix to a KernelSet</p>
 </dd></dl>
@@ -90,7 +91,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
+  <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
 <li><a class="reference internal" href="#exceptions">Exceptions</a></li>
@@ -112,11 +113,13 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -127,7 +130,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Pradeep Reddy Raamana.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
     </div>
   </body>
 </html>
