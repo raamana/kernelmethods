@@ -7,9 +7,9 @@ __all__ = ['KernelMatrix',
            'PolyKernel', 'GaussianKernel', 'LaplacianKernel', 'LinearKernel',
            'KernelBucket', 'KernelSet']
 
-from kernelmethods.base import BaseKernelFunction, KernelMatrix, \
-    KernelMethodsException, KMAccessError, KMNormError,\
-    KMSetAdditionError, KernelSet
+from kernelmethods.config import KernelMethodsException, \
+    KMAccessError, KMNormError, KMSetAdditionError
+from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
     LinearKernel
 from kernelmethods.sampling import KernelBucket
