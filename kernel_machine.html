@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Drop-in Estimator classes &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Kernel Operations" href="operations.html" />
@@ -60,51 +59,43 @@
 <h2>Kernel Machine (API)<a class="headerlink" href="#kernel-machine-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelMachine">
-<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">KernelMachine</code><span class="sig-paren">(</span><em>k_func</em>, <em>learner_id='SVR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMachine</code><span class="sig-paren">(</span><em class="sig-param">k_func</em>, <em class="sig-param">learner_id='SVR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code></p>
 <p>Generic class to return a drop-in sklearn estimator.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>k_func</strong> (<em>KernelFunction</em>) – The kernel function the kernel machine bases itself on</li>
-<li><strong>learner_id</strong> (<em>str</em>) – Identifier for the estimator to be built based on the kernel function.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_func</strong> (<em>KernelFunction</em>) – The kernel function the kernel machine bases itself on</p></li>
+<li><p><strong>learner_id</strong> (<em>str</em>) – Identifier for the estimator to be built based on the kernel function.
 Options: <code class="docutils literal notranslate"><span class="pre">SVM</span></code> and <code class="docutils literal notranslate"><span class="pre">SVR</span></code>.
-Default: <code class="docutils literal notranslate"><span class="pre">SVR</span></code></li>
+Default: <code class="docutils literal notranslate"><span class="pre">SVR</span></code></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the chosen Estimator based on the user-defined kernel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training vectors, where n_samples is the number of samples
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training vectors, where n_samples is the number of samples
 and n_features is the number of features.
 For kernel=”precomputed”, the expected shape of X is
-(n_samples, n_samples).</li>
-<li><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Target values (class labels in classification, real numbers in
-regression)</li>
-<li><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Per-sample weights. Rescale C per sample. Higher weights
-force the classifier to put more emphasis on these points.</li>
+(n_samples, n_samples).</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Target values (class labels in classification, real numbers in
+regression)</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Per-sample weights. Rescale C per sample. Higher weights
+force the classifier to put more emphasis on these points.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>If X and y are not C-ordered and contiguous arrays of np.float64 and
 X is not a scipy.sparse.csr_matrix, X and/or y may be copied.</p>
@@ -114,39 +105,38 @@ matrices as input.</p>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.get_params">
-<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.get_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param">deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all the relevant parameters for this estimator!</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions on the new samplets in X.</p>
 <p>For an one-class model, +1 or -1 is returned.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – For kernel=”precomputed”, the expected shape of X is
-[n_samples_test, n_samples_train]</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>y_pred</strong> – Class labels for samples in X.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array, shape (n_samples,)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – For kernel=”precomputed”, the expected shape of X is
+[n_samples_test, n_samples_train]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_pred</strong> – Class labels for samples in X.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, shape (n_samples,)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.set_learner_params">
-<code class="descname">set_learner_params</code><span class="sig-paren">(</span><em>**learner_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_learner_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_learner_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_learner_params</code><span class="sig-paren">(</span><em class="sig-param">**learner_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_learner_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_learner_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Separate method to set underlying estimator parameters</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.KernelMachine.set_params">
-<code class="descname">set_params</code><span class="sig-paren">(</span><em>**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param">**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Param setter</p>
 </dd></dl>
 
@@ -157,127 +147,105 @@ matrices as input.</p>
 <h2>OptimalKernelSVR (API)<a class="headerlink" href="#optimalkernelsvr-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.OptimalKernelSVR">
-<em class="property">class </em><code class="descclassname">kernelmethods.</code><code class="descname">OptimalKernelSVR</code><span class="sig-paren">(</span><em>k_bucket</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">OptimalKernelSVR</code><span class="sig-paren">(</span><em class="sig-param">k_bucket</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.svm.classes.SVR</span></code></p>
 <p>An estimator to learn the optimal kernel for a given sample and
 build a support vector regressor based on this custom kernel.</p>
 <p>This class is wrapped around the sklearn SVR estimator to function as its
 drop-in replacement, whose implementation is in turn based on LIBSVM.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a><em> or </em><em>str</em>) – An instance of KernelBucket that contains all the kernels to be compared,
-or a string identifying the sampling_strategy which populates a KernelBucket.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>k_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a><em> or </em><em>str</em>) – An instance of KernelBucket that contains all the kernels to be compared,
+or a string identifying the sampling_strategy which populates a KernelBucket.</p>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="kernelmethods.OptimalKernelSVR.support_">
-<code class="descname">support_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.support_" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">support_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.support_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indices of support vectors.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array-like, shape = [n_SV]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like, shape = [n_SV]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="kernelmethods.OptimalKernelSVR.support_vectors_">
-<code class="descname">support_vectors_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.support_vectors_" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">support_vectors_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.support_vectors_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Support vectors.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array-like, shape = [nSV, n_features]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like, shape = [nSV, n_features]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="kernelmethods.OptimalKernelSVR.dual_coef_">
-<code class="descname">dual_coef_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.dual_coef_" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dual_coef_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.dual_coef_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coefficients of the support vector in the decision function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array, shape = [1, n_SV]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array, shape = [1, n_SV]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="kernelmethods.OptimalKernelSVR.coef_">
-<code class="descname">coef_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.coef_" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">coef_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.coef_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Weights assigned to the features (coefficients in the primal
 problem). This is only available in the case of a linear kernel.</p>
 <p><cite>coef_</cite> is readonly property derived from <cite>dual_coef_</cite> and
 <cite>support_vectors_</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array, shape = [1, n_features]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array, shape = [1, n_features]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="kernelmethods.OptimalKernelSVR.intercept_">
-<code class="descname">intercept_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.intercept_" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">intercept_</code><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.intercept_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constants in decision function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array, shape = [1]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array, shape = [1]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt>
-<code class="descname">coef_</code></dt>
+<em class="property">property </em><code class="sig-name descname">coef_</code></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.OptimalKernelSVR.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the optimal kernel, and fit a SVM based on the custom kernel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training vectors, where n_samples is the number of samples
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training vectors, where n_samples is the number of samples
 and n_features is the number of features.
 For kernel=”precomputed”, the expected shape of X is
-(n_samples, n_samples).</li>
-<li><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Target values (class labels in classification, real numbers in
-regression)</li>
-<li><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Per-sample weights. Rescale C per sample. Higher weights
-force the classifier to put more emphasis on these points.</li>
+(n_samples, n_samples).</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Target values (class labels in classification, real numbers in
+regression)</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Per-sample weights. Rescale C per sample. Higher weights
+force the classifier to put more emphasis on these points.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>If X and y are not C-ordered and contiguous arrays of np.float64 and
 X is not a scipy.sparse.csr_matrix, X and/or y may be copied.</p>
@@ -287,33 +255,32 @@ matrices as input.</p>
 
 <dl class="method">
 <dt id="kernelmethods.OptimalKernelSVR.get_params">
-<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.get_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param">deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all the relevant parameters for this estimator!</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.OptimalKernelSVR.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform classification on samples in X.</p>
 <p>For an one-class model, +1 or -1 is returned.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – For kernel=”precomputed”, the expected shape of X is
-[n_samples_test, n_samples_train]</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>y_pred</strong> – Class labels for samples in X.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array, shape (n_samples,)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – For kernel=”precomputed”, the expected shape of X is
+[n_samples_test, n_samples_train]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_pred</strong> – Class labels for samples in X.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, shape (n_samples,)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.OptimalKernelSVR.score">
-<code class="descname">score</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>sample_weight=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the coefficient of determination R^2 of the prediction.</p>
 <p>The coefficient R^2 is defined as (1 - u/v), where u is the residual
 sum of squares ((y_true - y_pred) ** 2).sum() and v is the total
@@ -322,33 +289,38 @@ The best possible score is 1.0 and it can be negative (because the
 model can be arbitrarily worse). A constant model that always
 predicts the expected value of y, disregarding the input features,
 would get a R^2 score of 0.0.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Test samples. For some estimators this may be a
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Test samples. For some estimators this may be a
 precomputed kernel matrix instead, shape = (n_samples,
 n_samples_fitted], where n_samples_fitted is the number of
-samples used in the fitting for the estimator.</li>
-<li><strong>y</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> (</em><em>n_samples</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_outputs</em><em>)</em>) – True values for X.</li>
-<li><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> [</em><em>n_samples</em><em>]</em><em>, </em><em>optional</em>) – Sample weights.</li>
+samples used in the fitting for the estimator.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> (</em><em>n_samples</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_outputs</em><em>)</em>) – True values for X.</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like</em><em>, </em><em>shape =</em><em> [</em><em>n_samples</em><em>]</em><em>, </em><em>optional</em>) – Sample weights.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>score</strong> – R^2 of self.predict(X) wrt. y.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – R^2 of self.predict(X) wrt. y.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The R2 score used when calling <code class="docutils literal notranslate"><span class="pre">score</span></code> on a regressor will use
+<code class="docutils literal notranslate"><span class="pre">multioutput='uniform_average'</span></code> from version 0.23 to keep consistent
+with <cite>metrics.r2_score</cite>. This will influence the <code class="docutils literal notranslate"><span class="pre">score</span></code> method of
+all the multioutput regressors (except for
+<cite>multioutput.MultiOutputRegressor</cite>). To specify the default value
+manually and avoid the warning, please either call <cite>metrics.r2_score</cite>
+directly or make a custom scorer with <cite>metrics.make_scorer</cite> (the
+built-in scorer <code class="docutils literal notranslate"><span class="pre">'r2'</span></code> uses <code class="docutils literal notranslate"><span class="pre">multioutput='uniform_average'</span></code>).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="kernelmethods.OptimalKernelSVR.set_params">
-<code class="descname">set_params</code><span class="sig-paren">(</span><em>**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.set_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param">**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR.set_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Param setter</p>
 </dd></dl>
 
@@ -363,7 +335,7 @@ samples used in the fitting for the estimator.</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Drop-in Estimator classes</a><ul>
 <li><a class="reference internal" href="#kernel-machine-api">Kernel Machine (API)</a></li>
@@ -386,13 +358,11 @@ samples used in the fitting for the estimator.</li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -403,7 +373,7 @@ samples used in the fitting for the estimator.</li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Pradeep Reddy Raamana.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

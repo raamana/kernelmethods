@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>kernelmethods.operations &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <script type="text/javascript" src="../../_static/pd.js"></script>
@@ -60,10 +59,11 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">ensure_ndarray_1D</span><span class="p">,</span> <span class="n">contains_nan_inf</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">eigh</span>
+
+<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">contains_nan_inf</span><span class="p">,</span> <span class="n">ensure_ndarray_1D</span>
 
 
 <div class="viewcode-block" id="is_positive_semidefinite"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.is_positive_semidefinite">[docs]</a><span class="k">def</span> <span class="nf">is_positive_semidefinite</span><span class="p">(</span><span class="n">sym_matrix</span><span class="p">,</span>
@@ -73,7 +73,7 @@
 <span class="sd">    Tests whether a given matrix is positive-semidefinite (PSD).</span>
 
 <span class="sd">    A symmetric matrix is PSD if ALL its eigen values &gt;= 0 (non-negative).</span>
-<span class="sd">        If any of its eigen values are negative, it is not PSD.</span>
+<span class="sd">    If any of its eigen values are negative, it is not PSD.</span>
 
 <span class="sd">    This functions accounts for numerical instabilities with a tolerance parameter.</span>
 
@@ -144,9 +144,9 @@
 <span class="sd">    Centers a given kernel matrix.</span>
 
 <span class="sd">    Implements the definition according to Lemma 1 in Section 2.2 in</span>
-<span class="sd">    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,</span>
-<span class="sd">        &quot;Algorithms for Learning Kernels Based on Centered Alignment&quot;,</span>
-<span class="sd">        Journal of Machine Learning Research 13(Mar): 795–828.</span>
+<span class="sd">    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012, &quot;Algorithms for</span>
+<span class="sd">    Learning Kernels Based on Centered Alignment&quot;, Journal of Machine Learning</span>
+<span class="sd">    Research 13(Mar): 795–828.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -183,8 +183,8 @@
 <span class="sd">    Normalize a kernel matrix to have unit diagonal.</span>
 
 <span class="sd">    Cosine normalization normalizes the kernel matrix to have unit diagonal.</span>
-<span class="sd">        Implements definition according to Section 5.1 in book (Page 113)</span>
-<span class="sd">        Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
+<span class="sd">    Implements definition according to Section 5.1 in book (Page 113)</span>
+<span class="sd">    Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
 
 <span class="sd">    Matrix must be square (and coming from a single sample: K(X,X), not K(X,Y)</span>
 
@@ -245,8 +245,8 @@
 <span class="sd">    Normalize a kernel matrix K(X,Y) to have unit diagonal.</span>
 
 <span class="sd">    Cosine normalization normalizes the kernel matrix to have unit diagonal.</span>
-<span class="sd">        Implements definition _similar_ to Section 5.1 in book (Page 113)</span>
-<span class="sd">        Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
+<span class="sd">    Implements definition _similar_ to Section 5.1 in book (Page 113)</span>
+<span class="sd">    Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
 
 
 <span class="sd">    Parameters</span>
@@ -356,10 +356,10 @@
 
 <span class="sd">    (Alignment is computed on centered kernel matrices)</span>
 
-<span class="sd">    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in</span>
-<span class="sd">    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,</span>
-<span class="sd">        &quot;Algorithms for Learning Kernels Based on Centered Alignment&quot;,</span>
-<span class="sd">        Journal of Machine Learning Research 13(Mar): 795–828.</span>
+<span class="sd">    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in Cortes,</span>
+<span class="sd">    Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012, &quot;Algorithms for</span>
+<span class="sd">    Learning Kernels Based on Centered Alignment&quot;, Journal of Machine Learning</span>
+<span class="sd">    Research 13(Mar): 795–828.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -463,13 +463,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -480,7 +478,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Pradeep Reddy Raamana.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>

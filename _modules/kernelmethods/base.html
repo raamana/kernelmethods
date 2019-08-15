@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>kernelmethods.base &#8212; kernelmethods 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/pd.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <script type="text/javascript" src="../../_static/pd.js"></script>
@@ -56,8 +55,7 @@
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">issparse</span><span class="p">,</span> <span class="n">lil_matrix</span>
 
 <span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="p">(</span><span class="n">KMAccessError</span><span class="p">,</span> <span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span><span class="p">,</span>
-                                  <span class="n">KMSetAdditionError</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="p">(</span><span class="n">KMAccessError</span><span class="p">,</span> <span class="n">KMSetAdditionError</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.operations</span> <span class="k">import</span> <span class="p">(</span><span class="n">center_km</span><span class="p">,</span> <span class="n">frobenius_norm</span><span class="p">,</span> <span class="n">is_PSD</span><span class="p">,</span>
                                       <span class="n">normalize_km</span><span class="p">,</span>
                                       <span class="n">normalize_km_2sample</span><span class="p">)</span>
@@ -127,7 +125,21 @@
 
 
 <div class="viewcode-block" id="KernelFromCallable"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.KernelFromCallable">[docs]</a><span class="k">class</span> <span class="nc">KernelFromCallable</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to create a custom kernel from a given callable.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to create a custom kernel from a given callable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_func : callable</span>
+<span class="sd">        A callable that can accept atleast 2 args</span>
+<span class="sd">        Must not be builtin or C function.</span>
+<span class="sd">        If func is a C or builtin func, wrap it in a python def</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        A name to identify this kernel in a human readable way</span>
+
+<span class="sd">    func_params : dict</span>
+<span class="sd">        Parameters to func</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_func</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">func_params</span><span class="p">):</span>
@@ -252,27 +264,24 @@
 <span class="sd">        Attach this kernel to a given sample.</span>
 
 <span class="sd">        Any computations from previous samples and their results will be reset,</span>
-<span class="sd">            along with all the previously set attributes.</span>
+<span class="sd">        along with all the previously set attributes.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sample_one : ndarray</span>
 <span class="sd">            Input sample to operate on</span>
-<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features)</span>
-<span class="sd">                e.g. MLDataset or ndarray</span>
-<span class="sd">            When sample_two=None (e.g. during training), sample_two refers to</span>
-<span class="sd">            sample_one.</span>
+<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features) e.g.</span>
+<span class="sd">            MLDataset or ndarray When sample_two=None (e.g. during training),</span>
+<span class="sd">            sample_two refers to sample_one.</span>
 
 <span class="sd">        name_one : str</span>
 <span class="sd">            Name for the first sample.</span>
 
 <span class="sd">        sample_two : ndarray</span>
 <span class="sd">            Second sample for the kernel matrix i.e. Y in K(X,Y)</span>
-<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features)</span>
-<span class="sd">                e.g. MLDataset or ndarray</span>
-<span class="sd">            The dimensionality of this sample (number of columns,</span>
-<span class="sd">            sample_two.shape[1])</span>
-<span class="sd">                must match with that of sample_one</span>
+<span class="sd">            Must be a 2D dataset of shape (num_samples, num_features) e.g.</span>
+<span class="sd">            MLDataset or ndarray The dimensionality of this sample (number of</span>
+<span class="sd">            columns, sample_two.shape[1]) must match with that of sample_one</span>
 
 <span class="sd">        name_two : str</span>
 <span class="sd">            Name for the second sample.</span>
@@ -376,10 +385,8 @@
 <span class="sd">        Returns the number of samples in the sample this kernel is attached to.</span>
 
 <span class="sd">        This would be a scalar when the current instance is attached to a single</span>
-<span class="sd">        sample.</span>
-<span class="sd">        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an</span>
-<span class="sd">        array of 2</span>
-<span class="sd">        scalars representing num_samples from those two samples.</span>
+<span class="sd">        sample. When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an</span>
+<span class="sd">        array of 2 scalars representing num_samples from those two samples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span>
@@ -414,9 +421,9 @@
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the size of the KernelMatrix (total number of elements)</span>
-<span class="sd">            i.e. num_samples from which the kernel matrix is computed from.</span>
-<span class="sd">            In a single-sample case, it is the num_samples in the dataset.</span>
-<span class="sd">            In two-sample case, it is the product of num_samples from two datasets.</span>
+<span class="sd">        i.e. num_samples from which the kernel matrix is computed from.</span>
+<span class="sd">        In a single-sample case, it is the num_samples in the dataset.</span>
+<span class="sd">        In two-sample case, it is the product of num_samples from two datasets.</span>
 
 <span class="sd">        Defining this to correspond to .size attr of numpy arrays</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -492,8 +499,7 @@
 <span class="sd">        Normalize the kernel matrix to have unit diagonal.</span>
 
 <span class="sd">        Cosine normalization mplements definition according to Section 5.1 in</span>
-<span class="sd">            Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;,</span>
-<span class="sd">            2004</span>
+<span class="sd">        Shawe-Taylor and Cristianini, &quot;Kernels Methods for Pattern Analysis&quot;, 2004</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -612,13 +618,10 @@
 <span class="sd">        Returns the sample [features] corresponding to a given index.</span>
 
 <span class="sd">        Using this would help abstract out the underlying data structure for</span>
-<span class="sd">        samples and</span>
-<span class="sd">            their features. For example, inputs can be simply CSVs, or numpy</span>
-<span class="sd">            arrays or</span>
-<span class="sd">            MLDataset or xarray or pandas etc.</span>
-<span class="sd">        Disadvantages include the 2 extra function calls to be made for each</span>
-<span class="sd">        kernel eval,</span>
-<span class="sd">            which could be saved when operating on a predetermined format.</span>
+<span class="sd">        samples and their features. For example, inputs can be simply CSVs,</span>
+<span class="sd">        or numpy arrays or MLDataset or xarray or pandas etc. Disadvantages</span>
+<span class="sd">        include the 2 extra function calls to be made for each kernel eval,</span>
+<span class="sd">        which could be saved when operating on a predetermined format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
@@ -660,8 +663,8 @@
 <span class="sd">        into a set of row indices into sample the kernel matrix is attached to.</span>
 
 <span class="sd">        As the kernel matrix is 2D and symmetric of known size,</span>
-<span class="sd">            dimension size doesn&#39;t need to be specified, it is taken from</span>
-<span class="sd">            self.num_samples</span>
+<span class="sd">        dimension size doesn&#39;t need to be specified, it is taken from</span>
+<span class="sd">        self.num_samples</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1231,8 +1234,7 @@
 <span class="sd">        Sets user-defined attributes for the kernel matrices in this set.</span>
 
 <span class="sd">        If len(values)==1, same value is set for all. Otherwise values must be of</span>
-<span class="sd">        size as</span>
-<span class="sd">        KernelSet, providing a separate value for each element.</span>
+<span class="sd">        size as KernelSet, providing a separate value for each element.</span>
 
 <span class="sd">        Useful to identify this kernel matrix in various aspects!</span>
 <span class="sd">        You could think of them as tags or identifiers etc.</span>
@@ -1285,7 +1287,18 @@
 
 
 <div class="viewcode-block" id="CompositeKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.CompositeKernel">[docs]</a><span class="k">class</span> <span class="nc">CompositeKernel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to combine a set of kernels into a composite kernel.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to combine a set of kernels into a composite kernel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        KernelSet on which the composite kernel will be applied to</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier for the composite kernel</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Composite&#39;</span><span class="p">):</span>
@@ -1345,7 +1358,16 @@
 
 
 <div class="viewcode-block" id="SumKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.SumKernel">[docs]</a><span class="k">class</span> <span class="nc">SumKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted sum kernel from a KernelSet&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted sum kernel from a KernelSet</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        KernelSet from which the summ kernel will be computed from</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier for the composite kernel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SumKernel&#39;</span><span class="p">):</span>
@@ -1374,7 +1396,17 @@
 
 
 <div class="viewcode-block" id="ProductKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.ProductKernel">[docs]</a><span class="k">class</span> <span class="nc">ProductKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to define and compute a Product kernel from a KernelSet&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a Product kernel from a KernelSet</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        KernelSet from which the product kernel will be computed from</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier for the composite kernel</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ProductKernel&#39;</span><span class="p">):</span>
@@ -1394,7 +1426,16 @@
 
 
 <div class="viewcode-block" id="AverageKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.AverageKernel">[docs]</a><span class="k">class</span> <span class="nc">AverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to define and compute an Average kernel from a KernelSet&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute an Average kernel from a KernelSet</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        KernelSet from which the average kernel will be computed</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier for the composite kernel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">km_set</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;AverageKernel&#39;</span><span class="p">):</span>
@@ -1417,7 +1458,17 @@
 
 
 <div class="viewcode-block" id="WeightedAverageKernel"><a class="viewcode-back" href="../../kernel_functions.html#kernelmethods.WeightedAverageKernel">[docs]</a><span class="k">class</span> <span class="nc">WeightedAverageKernel</span><span class="p">(</span><span class="n">CompositeKernel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted verage kernel from a KernelSet&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to define and compute a weighted verage kernel from a KernelSet</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    km_set : KernelSet</span>
+<span class="sd">        KernelSet from which the average kernel will be computed</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier for the composite kernel</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -1445,11 +1496,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_fitted</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
-
-<span class="k">class</span> <span class="nc">PredictiveModelFromKernelMatrix</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class to turn a given kernel into a predictive model&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span>  <span class="c1"># raise NotImplementedError()</span>
 </pre></div>
 
           </div>
@@ -1458,13 +1504,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -1475,7 +1519,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Pradeep Reddy Raamana.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
   </body>
 </html>
