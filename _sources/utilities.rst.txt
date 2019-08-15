@@ -4,6 +4,16 @@ Utilities
 Here, we document several important utilities related to this library.
 
 
+Sampling
+-----------
+
+.. automodule:: kernelmethods.sampling
+   :members:
+   :undoc-members:
+   :exclude-members: KernelBucket
+   :show-inheritance:
+
+
 Ranking
 ----------
 

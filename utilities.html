@@ -40,6 +40,86 @@
 <div class="section" id="utilities">
 <h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
 <p>Here, we document several important utilities related to this library.</p>
+<div class="section" id="module-kernelmethods.sampling">
+<span id="sampling"></span><h2>Sampling<a class="headerlink" href="#module-kernelmethods.sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="kernelmethods.sampling.correlation_km">
+<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">correlation_km</code><span class="sig-paren">(</span><em class="sig-param">k1</em>, <em class="sig-param">k2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#correlation_km"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.correlation_km" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes [pearson] correlation coefficient between two kernel matrices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>k2</strong> (<em>k1</em><em>,</em>) – Two kernel matrices of the same size</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>corr_coef</strong> – Correlation coefficient between the vectorized kernel matrices</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.sampling.ideal_kernel">
+<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">ideal_kernel</code><span class="sig-paren">(</span><em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#ideal_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.ideal_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the kernel matrix from the given target labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>targets</strong> (<em>Iterable</em>) – Target values (<code class="docutils literal notranslate"><span class="pre">y</span></code>) to compute the ideal kernel from.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ideal_kernel</strong> – The ideal kernel from (<a href="#id1"><span class="problematic" id="id2">``</span></a>yy<sup>T</sup> <a href="#id3"><span class="problematic" id="id4">``</span></a>)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.sampling.make_kernel_bucket">
+<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">make_kernel_bucket</code><span class="sig-paren">(</span><em class="sig-param">strategy='exhaustive'</em>, <em class="sig-param">normalize_kernels=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#make_kernel_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.make_kernel_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a candidate kernels based on user preferences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strategy</strong> (<em>str</em>) – Name of the strategy for populating the kernel bucket.
+Options: ‘exhaustive’ and ‘light’. Default: ‘exhaustive’</p></li>
+<li><p><strong>normalize_kernels</strong> (<em>bool</em>) – Flag to indicate whether to normalize the kernel matrices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kb</strong> – Kernel bucket populated according to the requested strategy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket">KernelBucket</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="kernelmethods.sampling.pairwise_similarity">
+<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">pairwise_similarity</code><span class="sig-paren">(</span><em class="sig-param">k_bucket</em>, <em class="sig-param">metric='corr'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#pairwise_similarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.pairwise_similarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the similarity between all pairs of kernel matrices in a given bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_bucket</strong> (<a class="reference internal" href="km_collections.html#kernelmethods.KernelBucket" title="kernelmethods.KernelBucket"><em>KernelBucket</em></a>) – Container of length num_km, with each an instance <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code></p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – Identifies the metric to be used. Options: <code class="docutils literal notranslate"><span class="pre">corr</span></code> (correlation
+coefficient) and <code class="docutils literal notranslate"><span class="pre">align</span></code> (centered alignment).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pairwise_metric</strong> – A symmetric matrix computing the pairwise similarity between the various
+kernel matrices</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray of shape (num_km, num_km)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-kernelmethods.ranking">
 <span id="ranking"></span><h2>Ranking<a class="headerlink" href="#module-kernelmethods.ranking" title="Permalink to this headline">¶</a></h2>
 <p>Module gathering techniques and helpers to rank kernels using various methods and
@@ -156,6 +236,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">SVM</span>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Utilities</a><ul>
+<li><a class="reference internal" href="#module-kernelmethods.sampling">Sampling</a></li>
 <li><a class="reference internal" href="#module-kernelmethods.ranking">Ranking</a></li>
 </ul>
 </li>

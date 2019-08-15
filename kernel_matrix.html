@@ -256,6 +256,77 @@ In two-sample case, it is the product of num_samples from two datasets.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="special-kernel-matrices">
+<h2>Special Kernel Matrices<a class="headerlink" href="#special-kernel-matrices" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="kernelmethods.base.ConstantKernelMatrix">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">ConstantKernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">num_samples</em>, <em class="sig-param">value=0.0</em>, <em class="sig-param">name='Constant'</em>, <em class="sig-param">dtype='float'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#ConstantKernelMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.ConstantKernelMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Custom KernelMatrix (KM) to efficiently represent a constant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_samples</strong> (<em>int</em>) – Number of samples (size) for this KM</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – Constant value for all elements in this KM</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Identifier and name for this KM</p></li>
+<li><p><strong>dtype</strong> (<em>dtype</em>) – Data type for the constant value</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="kernelmethods.base.ConstantKernelMatrix.diag">
+<em class="property">property </em><code class="sig-name descname">diag</code><a class="headerlink" href="#kernelmethods.base.ConstantKernelMatrix.diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the diagonal of the kernel matrix</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.ConstantKernelMatrix.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.ConstantKernelMatrix.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full kernel matrix (in dense format)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.ConstantKernelMatrix.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#kernelmethods.base.ConstantKernelMatrix.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of the kernel matrix</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.ConstantKernelMatrix.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#kernelmethods.base.ConstantKernelMatrix.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of kernel matrix</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="kernelmethods.base.KernelMatrixPrecomputed">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.base.</code><code class="sig-name descname">KernelMatrixPrecomputed</code><span class="sig-paren">(</span><em class="sig-param">matrix</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrixPrecomputed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.base.KernelMatrixPrecomputed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Convenience decorator for kernel matrices in ndarray or simple matrix
+format.</p>
+<dl class="method">
+<dt id="kernelmethods.base.KernelMatrixPrecomputed.diag">
+<em class="property">property </em><code class="sig-name descname">diag</code><a class="headerlink" href="#kernelmethods.base.KernelMatrixPrecomputed.diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the diagonal of the kernel matrix</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.KernelMatrixPrecomputed.full">
+<em class="property">property </em><code class="sig-name descname">full</code><a class="headerlink" href="#kernelmethods.base.KernelMatrixPrecomputed.full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full kernel matrix (in dense format, as its already
+precomputed)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="kernelmethods.base.KernelMatrixPrecomputed.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#kernelmethods.base.KernelMatrixPrecomputed.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>size of kernel matrix</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="exceptions">
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -290,6 +361,7 @@ set self.__traceback__ to tb and return self.</p>
   <ul>
 <li><a class="reference internal" href="#">KernelMatrix class</a><ul>
 <li><a class="reference internal" href="#api">API</a></li>
+<li><a class="reference internal" href="#special-kernel-matrices">Special Kernel Matrices</a></li>
 <li><a class="reference internal" href="#exceptions">Exceptions</a></li>
 </ul>
 </li>

@@ -133,6 +133,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kernel_functions.html#kernelmethods.base.CompositeKernel">CompositeKernel (class in kernelmethods.base)</a>
 </li>
+      <li><a href="kernel_matrix.html#kernelmethods.base.ConstantKernelMatrix">ConstantKernelMatrix (class in kernelmethods.base)</a>
+</li>
+      <li><a href="utilities.html#kernelmethods.sampling.correlation_km">correlation_km() (in module kernelmethods.sampling)</a>
+</li>
       <li><a href="utilities.html#kernelmethods.ranking.CV_ranking">CV_ranking() (in module kernelmethods.ranking)</a>
 </li>
   </ul></td>
@@ -141,10 +145,16 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix.diagonal">diagonal() (kernelmethods.KernelMatrix method)</a>
+      <li><a href="kernel_matrix.html#kernelmethods.base.ConstantKernelMatrix.diag">diag() (kernelmethods.base.ConstantKernelMatrix property)</a>
+
+      <ul>
+        <li><a href="kernel_matrix.html#kernelmethods.base.KernelMatrixPrecomputed.diag">(kernelmethods.base.KernelMatrixPrecomputed property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix.diagonal">diagonal() (kernelmethods.KernelMatrix method)</a>
+</li>
       <li><a href="kernel_machine.html#kernelmethods.OptimalKernelSVR.dual_coef_">dual_coef_ (kernelmethods.OptimalKernelSVR attribute)</a>
 </li>
   </ul></td>
@@ -189,10 +199,10 @@
       </ul></li>
       <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix.frob_norm">frob_norm() (kernelmethods.KernelMatrix property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="operations.html#kernelmethods.operations.frobenius_norm">frobenius_norm() (in module kernelmethods.operations)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="operations.html#kernelmethods.operations.frobenius_product">frobenius_product() (in module kernelmethods.operations)</a>
 </li>
       <li><a href="kernel_functions.html#kernelmethods.base.AverageKernel.full">full() (kernelmethods.base.AverageKernel property)</a>
@@ -201,6 +211,10 @@
         <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix.full">(kernelmethods.KernelMatrix property)</a>
 </li>
         <li><a href="kernel_functions.html#kernelmethods.base.CompositeKernel.full">(kernelmethods.base.CompositeKernel property)</a>
+</li>
+        <li><a href="kernel_matrix.html#kernelmethods.base.ConstantKernelMatrix.full">(kernelmethods.base.ConstantKernelMatrix property)</a>
+</li>
+        <li><a href="kernel_matrix.html#kernelmethods.base.KernelMatrixPrecomputed.full">(kernelmethods.base.KernelMatrixPrecomputed property)</a>
 </li>
         <li><a href="kernel_functions.html#kernelmethods.base.ProductKernel.full">(kernelmethods.base.ProductKernel property)</a>
 </li>
@@ -249,6 +263,8 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="utilities.html#kernelmethods.sampling.ideal_kernel">ideal_kernel() (in module kernelmethods.sampling)</a>
+</li>
       <li><a href="kernel_machine.html#kernelmethods.OptimalKernelSVR.intercept_">intercept_ (kernelmethods.OptimalKernelSVR attribute)</a>
 </li>
       <li><a href="operations.html#kernelmethods.operations.is_positive_semidefinite">is_positive_semidefinite() (in module kernelmethods.operations)</a>
@@ -277,6 +293,8 @@
 </li>
       <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix">KernelMatrix (class in kernelmethods)</a>
 </li>
+      <li><a href="kernel_matrix.html#kernelmethods.base.KernelMatrixPrecomputed">KernelMatrixPrecomputed (class in kernelmethods.base)</a>
+</li>
       <li><a href="index.html#module-kernelmethods">kernelmethods (module)</a>
 </li>
       <li><a href="categorical_kernels.html#module-kernelmethods.categorical">kernelmethods.categorical (module)</a>
@@ -288,6 +306,8 @@
       <li><a href="operations.html#module-kernelmethods.operations">kernelmethods.operations (module)</a>
 </li>
       <li><a href="utilities.html#module-kernelmethods.ranking">kernelmethods.ranking (module)</a>
+</li>
+      <li><a href="utilities.html#module-kernelmethods.sampling">kernelmethods.sampling (module)</a>
 </li>
       <li><a href="API.html#kernelmethods.KernelMethodsException">KernelMethodsException (class in kernelmethods)</a>
 </li>
@@ -318,6 +338,10 @@
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="utilities.html#kernelmethods.sampling.make_kernel_bucket">make_kernel_bucket() (in module kernelmethods.sampling)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="categorical_kernels.html#kernelmethods.categorical.MatchCountKernel">MatchCountKernel (class in kernelmethods.categorical)</a>
 </li>
@@ -359,16 +383,18 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="utilities.html#kernelmethods.sampling.pairwise_similarity">pairwise_similarity() (in module kernelmethods.sampling)</a>
+</li>
       <li><a href="numeric_kernels.html#kernelmethods.numeric_kernels.PolyKernel">PolyKernel (class in kernelmethods.numeric_kernels)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kernel_machine.html#kernelmethods.KernelMachine.predict">predict() (kernelmethods.KernelMachine method)</a>
 
       <ul>
         <li><a href="kernel_machine.html#kernelmethods.OptimalKernelSVR.predict">(kernelmethods.OptimalKernelSVR method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kernel_functions.html#kernelmethods.base.ProductKernel">ProductKernel (class in kernelmethods.base)</a>
 </li>
   </ul></td>
@@ -403,14 +429,20 @@
         <li><a href="kernel_machine.html#kernelmethods.OptimalKernelSVR.set_params">(kernelmethods.OptimalKernelSVR method)</a>
 </li>
       </ul></li>
+      <li><a href="kernel_matrix.html#kernelmethods.base.ConstantKernelMatrix.shape">shape() (kernelmethods.base.ConstantKernelMatrix property)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="km_collections.html#kernelmethods.KernelBucket.size">size() (kernelmethods.KernelBucket property)</a>
+      <li><a href="kernel_matrix.html#kernelmethods.base.ConstantKernelMatrix.size">size() (kernelmethods.base.ConstantKernelMatrix property)</a>
 
       <ul>
+        <li><a href="km_collections.html#kernelmethods.KernelBucket.size">(kernelmethods.KernelBucket property)</a>
+</li>
         <li><a href="kernel_matrix.html#kernelmethods.KernelMatrix.size">(kernelmethods.KernelMatrix property)</a>
 </li>
         <li><a href="km_collections.html#kernelmethods.KernelSet.size">(kernelmethods.KernelSet property)</a>
+</li>
+        <li><a href="kernel_matrix.html#kernelmethods.base.KernelMatrixPrecomputed.size">(kernelmethods.base.KernelMatrixPrecomputed property)</a>
 </li>
       </ul></li>
       <li><a href="kernel_functions.html#kernelmethods.base.SumKernel">SumKernel (class in kernelmethods.base)</a>

@@ -813,7 +813,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">KernelMatrixPrecomputed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="KernelMatrixPrecomputed"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.KernelMatrixPrecomputed">[docs]</a><span class="k">class</span> <span class="nc">KernelMatrixPrecomputed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convenience decorator for kernel matrices in ndarray or simple matrix</span>
 <span class="sd">    format.&quot;&quot;&quot;</span>
 
@@ -884,17 +884,49 @@
 
     <span class="c1"># aliasing them to __str__ for now</span>
     <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
-    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span></div>
 
 
-<span class="k">class</span> <span class="nc">ConstantKernelMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom KM to represent a constant.</span>
+<div class="viewcode-block" id="ConstantKernelMatrix"><a class="viewcode-back" href="../../kernel_matrix.html#kernelmethods.ConstantKernelMatrix">[docs]</a><span class="k">class</span> <span class="nc">ConstantKernelMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom KernelMatrix (KM) to efficiently represent a constant.</span>
 
-<span class="sd">    TODO this is not fully though-out, or well. Consider removing or rewriting!</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_samples : int</span>
+<span class="sd">        Number of samples (size) for this KM</span>
+
+<span class="sd">    value : float</span>
+<span class="sd">        Constant value for all elements in this KM</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        Identifier and name for this KM</span>
+
+<span class="sd">    dtype : dtype</span>
+<span class="sd">        Data type for the constant value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">num_samples</span><span class="p">,</span>
+                 <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Constant&#39;</span><span class="p">,</span>
+                 <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constant kernel matrix</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">):</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_samples : int</span>
+<span class="sd">            Number of samples (size) for this KM</span>
+
+<span class="sd">        value : float</span>
+<span class="sd">            Constant value for all elements in this KM</span>
+
+<span class="sd">        name : str</span>
+<span class="sd">            Identifier and name for this KM</span>
+
+<span class="sd">        dtype : dtype</span>
+<span class="sd">            Data type for the constant value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">const_value</span> <span class="o">=</span> <span class="n">value</span>
@@ -914,9 +946,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;size of kernel matrix&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Size of kernel matrix&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
 
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape of the kernel matrix&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -924,7 +961,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_KM&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">),</span>
-                               <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                               <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span>
+                               <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span>
 
@@ -940,22 +978,72 @@
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Access the matrix&quot;&quot;&quot;</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KM</span><span class="p">[</span><span class="n">index_obj</span><span class="p">]</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid attempt to access the 2D kernel matrix!&#39;</span><span class="p">)</span>
+        <span class="c1"># full-fledged behavior and eval of this getitem is needed to make this</span>
+        <span class="c1"># fully compatible with the generic KernelMatrix class</span>
+        <span class="n">row_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_in_sample</span><span class="p">(</span><span class="n">index_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">col_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_in_sample</span><span class="p">(</span><span class="n">index_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
+        <span class="c1"># all we need to know is the number of indices selected</span>
+        <span class="c1"># (and they were indeed in admissible range)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">row_indices</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">col_indices</span><span class="p">)),</span>
+                       <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span>
+                       <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_get_indices_in_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_obj_per_dim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Turn an index or slice object on a given dimension</span>
+<span class="sd">        into a set of row indices into sample the kernel matrix is attached to.</span>
+
+<span class="sd">        As the kernel matrix is 2D and symmetric of known size,</span>
+<span class="sd">        dimension size doesn&#39;t need to be specified, it is taken from</span>
+<span class="sd">        self.num_samples</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="p">]</span>  <span class="c1"># making it iterable</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">_slice_index_list</span> <span class="o">=</span> <span class="n">index_obj_per_dim</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">_slice_index_list</span><span class="p">))</span>  <span class="c1"># *list expands it as args</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_obj_per_dim</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># TODO no restriction on float: float indices will be rounded down</span>
+            <span class="c1">#  towards 0</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">index_obj_per_dim</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid index method/indices for kernel matrix &#39;</span>
+                                <span class="s1">&#39;of shape : </span><span class="si">{km_shape}</span><span class="s1">.&#39;</span>
+                                <span class="s1">&#39; Only int, slice or iterable objects are allowed!&#39;</span>
+                                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">km_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># enforcing constraints</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;Invalid index method/indices for kernel matrix!</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                <span class="s1">&#39; Some indices in </span><span class="si">{}</span><span class="s1"> are out of range: &#39;</span>
+                                <span class="s1">&#39; shape : </span><span class="si">{km_shape}</span><span class="s1">,&#39;</span>
+                                <span class="s1">&#39; index values must all be &gt;=0 and &lt; corr. dimension&#39;</span>
+                                <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">km_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># slice object returns empty list if all specified are out of range</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KMAccessError</span><span class="p">(</span><span class="s1">&#39;No samples were selected in dim </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+        <span class="c1"># removing duplicates and sorting</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">indices</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;human readable presentation&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(value=</span><span class="si">{}</span><span class="s2">,num_samples=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span>
-                                                    <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(value=</span><span class="si">{}</span><span class="s2">,size=</span><span class="si">{}</span><span class="s2">)&quot;</span> \
+               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
 
 
     <span class="c1"># aliasing them to __str__ for now</span>
     <span class="fm">__format__</span> <span class="o">=</span> <span class="fm">__str__</span>
-    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="fm">__str__</span></div>
 
 
 <span class="n">VALID_KERNEL_MATRIX_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="n">KernelMatrix</span><span class="p">,</span> <span class="n">KernelMatrixPrecomputed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
