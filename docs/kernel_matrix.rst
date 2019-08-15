@@ -26,6 +26,22 @@ API
    :undoc-members:
 
 
+Special Kernel Matrices
+---------------------------
+
+
+.. autoclass:: kernelmethods.base.ConstantKernelMatrix
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. autoclass:: kernelmethods.base.KernelMatrixPrecomputed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Exceptions
 -------------
 
