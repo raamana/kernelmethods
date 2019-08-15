@@ -19,10 +19,11 @@ import traceback
 import warnings
 
 import numpy as np
-from kernelmethods.config import KMNormError, KernelMethodsException
-from kernelmethods.utils import ensure_ndarray_1D, contains_nan_inf
 from numpy import multiply as elem_wise_multiply
 from scipy.linalg import LinAlgError, eigh
+
+from kernelmethods.config import KMNormError, KernelMethodsException
+from kernelmethods.utils import contains_nan_inf, ensure_ndarray_1D
 
 
 def is_positive_semidefinite(sym_matrix,
@@ -103,9 +104,9 @@ def center_km(KM):
     Centers a given kernel matrix.
 
     Implements the definition according to Lemma 1 in Section 2.2 in
-    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
-        "Algorithms for Learning Kernels Based on Centered Alignment",
-        Journal of Machine Learning Research 13(Mar): 795–828.
+    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012, "Algorithms for
+    Learning Kernels Based on Centered Alignment", Journal of Machine Learning
+    Research 13(Mar): 795–828.
 
     Parameters
     ----------
@@ -315,10 +316,10 @@ def alignment_centered(km_one, km_two,
 
     (Alignment is computed on centered kernel matrices)
 
-    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in
-    Cortes, Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012,
-        "Algorithms for Learning Kernels Based on Centered Alignment",
-        Journal of Machine Learning Research 13(Mar): 795–828.
+    Implements Definition 4 (Kernel matrix alignment) from Section 2.3 in Cortes,
+    Corinna, Mehryar Mohri, and Afshin Rostamizadeh, 2012, "Algorithms for
+    Learning Kernels Based on Centered Alignment", Journal of Machine Learning
+    Research 13(Mar): 795–828.
 
     Parameters
     ----------
