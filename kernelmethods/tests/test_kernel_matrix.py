@@ -8,6 +8,7 @@ from pytest import raises
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     DEFINED_KERNEL_FUNCS
 from kernelmethods import KernelMatrix, KMAccessError, KernelMethodsException
+from kernelmethods.base import ConstantKernelMatrix
 from kernelmethods.operations import is_PSD
 
 num_samples = np.random.randint(30, 100)
@@ -196,4 +197,26 @@ def test_attributes():
         assert attr in kma
 
 
-test_attributes()
+def test_constant_km():
+
+    rand_val = np.random.random()
+    rand_size = np.random.randint(50)
+
+    const = ConstantKernelMatrix(num_samples=rand_size, value=rand_val)
+
+    assert const.num_samples == rand_size == const.size
+    assert len(const) == rand_size
+    assert const.shape == (rand_size, rand_size)
+
+    for _ in range(min(5, rand_size)):
+        indices = np.random.randint(0, rand_size, 2)
+        assert all(const[indices[0], indices[1]] == rand_val)
+
+    assert np.unique(const.diag) == rand_val
+
+    expected = np.full((rand_size, rand_size), fill_value=rand_val)
+    assert np.isclose(const.full, expected).all()
+
+
+# test_attributes()
+test_constant_km()
