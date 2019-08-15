@@ -848,13 +848,45 @@ class KernelMatrixPrecomputed(object):
 
 
 class ConstantKernelMatrix(object):
-    """Custom KM to represent a constant.
+    """Custom KernelMatrix (KM) to efficiently represent a constant.
 
-    TODO this is not fully though-out, or well. Consider removing or rewriting!
+    Parameters
+    ----------
+    num_samples : int
+        Number of samples (size) for this KM
+
+    value : float
+        Constant value for all elements in this KM
+
+    name : str
+        Identifier and name for this KM
+
+    dtype : dtype
+        Data type for the constant value
     """
 
+    def __init__(self,
+                 num_samples,
+                 value=0.0,
+                 name='Constant',
+                 dtype='float'):
+        """
+        Constant kernel matrix
 
-    def __init__(self, num_samples=None, value=0.0, name=None, dtype='float'):
+        Parameters
+        ----------
+        num_samples : int
+            Number of samples (size) for this KM
+
+        value : float
+            Constant value for all elements in this KM
+
+        name : str
+            Identifier and name for this KM
+
+        dtype : dtype
+            Data type for the constant value
+        """
 
         self.num_samples = num_samples
         self.const_value = value
@@ -874,9 +906,14 @@ class ConstantKernelMatrix(object):
 
     @property
     def size(self):
-        """size of kernel matrix"""
+        """Size of kernel matrix"""
         return self.num_samples
 
+
+    @property
+    def shape(self):
+        """Shape of the kernel matrix"""
+        return (self.num_samples, self.num_samples)
 
     @property
     def full(self):
@@ -884,7 +921,8 @@ class ConstantKernelMatrix(object):
 
         if not hasattr(self, '_KM'):
             self._KM = np.full((self.num_samples, self.num_samples),
-                               fill_value=self.const_value, dtype=self.dtype)
+                               fill_value=self.const_value,
+                               dtype=self.dtype)
 
         return self._KM
 
@@ -900,17 +938,67 @@ class ConstantKernelMatrix(object):
     def __getitem__(self, index_obj):
         """Access the matrix"""
 
-        try:
-            return self._KM[index_obj]
-        except:
-            raise KMAccessError('Invalid attempt to access the 2D kernel matrix!')
+        # full-fledged behavior and eval of this getitem is needed to make this
+        # fully compatible with the generic KernelMatrix class
+        row_indices = self._get_indices_in_sample(index_obj[0])
+        col_indices = self._get_indices_in_sample(index_obj[1])
 
+        # all we need to know is the number of indices selected
+        # (and they were indeed in admissible range)
+        return np.full((len(row_indices),len(col_indices)),
+                       fill_value=self.const_value,
+                       dtype=self.dtype)
+
+
+    def _get_indices_in_sample(self, index_obj_per_dim):
+        """
+        Turn an index or slice object on a given dimension
+        into a set of row indices into sample the kernel matrix is attached to.
+
+        As the kernel matrix is 2D and symmetric of known size,
+        dimension size doesn't need to be specified, it is taken from
+        self.num_samples
+
+        """
+
+        if isinstance(index_obj_per_dim, int) or np.isscalar(index_obj_per_dim):
+            indices = [index_obj_per_dim, ]  # making it iterable
+        elif isinstance(index_obj_per_dim, slice):
+            _slice_index_list = index_obj_per_dim.indices(self.num_samples)
+            indices = list(range(*_slice_index_list))  # *list expands it as args
+        elif isinstance(index_obj_per_dim, Iterable) and \
+            not isinstance(index_obj_per_dim, str):
+            # TODO no restriction on float: float indices will be rounded down
+            #  towards 0
+            indices = list(map(int, index_obj_per_dim))
+        else:
+            raise KMAccessError('Invalid index method/indices for kernel matrix '
+                                'of shape : {km_shape}.'
+                                ' Only int, slice or iterable objects are allowed!'
+                                ''.format(km_shape=self.shape))
+
+        # enforcing constraints
+        if any([index >= self.num_samples or index < 0 for index in indices]):
+            raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
+                                ' Some indices in {} are out of range: '
+                                ' shape : {km_shape},'
+                                ' index values must all be >=0 and < corr. dimension'
+                                ''.format(indices, km_shape=self.shape))
+
+        # slice object returns empty list if all specified are out of range
+        if len(indices) == 0:
+            raise KMAccessError('No samples were selected in dim {}'.format(dim))
+
+        # removing duplicates and sorting
+        indices = sorted(list(set(indices)))
+
+        return indices
 
     def __str__(self):
         """human readable presentation"""
 
-        return "{}(value={},num_samples={})".format(self.name, self.const_value,
-                                                    self.num_samples)
+        return "{}(value={},size={})" \
+               "".format(self.name, self.const_value, self.num_samples)
 
 
     # aliasing them to __str__ for now

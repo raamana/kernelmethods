@@ -1,16 +1,10 @@
 
 import numpy as np
-from scipy.sparse import issparse
-from scipy.linalg import eigh
 from pytest import raises
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel
-from kernelmethods.base import KernelMatrix, KernelSet, \
-    SumKernel, ProductKernel, AverageKernel, \
-    KMAccessError, KernelMethodsException, KMSetAdditionError
-from kernelmethods.operations import is_PSD
-from kernelmethods.sampling import KernelBucket, pairwise_similarity
-from kernelmethods.operations import alignment_centered, center_km
-from pytest import raises
+
+from kernelmethods.base import KMSetAdditionError, KernelMatrix, KernelSet
+from kernelmethods.numeric_kernels import GaussianKernel, LinearKernel, PolyKernel
+
 
 num_samples = 50 # 9
 sample_dim = 3 # 2
