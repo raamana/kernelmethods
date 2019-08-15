@@ -15,8 +15,7 @@ import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
 from kernelmethods import config as cfg
-from kernelmethods.config import (KMAccessError, KMNormError, KernelMethodsException,
-                                  KMSetAdditionError)
+from kernelmethods.config import (KMAccessError, KMSetAdditionError)
 from kernelmethods.operations import (center_km, frobenius_norm, is_PSD,
                                       normalize_km,
                                       normalize_km_2sample)
@@ -86,7 +85,21 @@ class BaseKernelFunction(ABC):
 
 
 class KernelFromCallable(BaseKernelFunction):
-    """Class to create a custom kernel from a given callable."""
+    """Class to create a custom kernel from a given callable.
+
+    Parameters
+    ----------
+    input_func : callable
+        A callable that can accept atleast 2 args
+        Must not be builtin or C function.
+        If func is a C or builtin func, wrap it in a python def
+
+    name : str
+        A name to identify this kernel in a human readable way
+
+    func_params : dict
+        Parameters to func
+    """
 
 
     def __init__(self, input_func, name=None, **func_params):
@@ -211,27 +224,24 @@ class KernelMatrix(object):
         Attach this kernel to a given sample.
 
         Any computations from previous samples and their results will be reset,
-            along with all the previously set attributes.
+        along with all the previously set attributes.
 
         Parameters
         ----------
         sample_one : ndarray
             Input sample to operate on
-            Must be a 2D dataset of shape (num_samples, num_features)
-                e.g. MLDataset or ndarray
-            When sample_two=None (e.g. during training), sample_two refers to
-            sample_one.
+            Must be a 2D dataset of shape (num_samples, num_features) e.g.
+            MLDataset or ndarray When sample_two=None (e.g. during training),
+            sample_two refers to sample_one.
 
         name_one : str
             Name for the first sample.
 
         sample_two : ndarray
             Second sample for the kernel matrix i.e. Y in K(X,Y)
-            Must be a 2D dataset of shape (num_samples, num_features)
-                e.g. MLDataset or ndarray
-            The dimensionality of this sample (number of columns,
-            sample_two.shape[1])
-                must match with that of sample_one
+            Must be a 2D dataset of shape (num_samples, num_features) e.g.
+            MLDataset or ndarray The dimensionality of this sample (number of
+            columns, sample_two.shape[1]) must match with that of sample_one
 
         name_two : str
             Name for the second sample.
@@ -335,10 +345,8 @@ class KernelMatrix(object):
         Returns the number of samples in the sample this kernel is attached to.
 
         This would be a scalar when the current instance is attached to a single
-        sample.
-        When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an
-        array of 2
-        scalars representing num_samples from those two samples.
+        sample. When a product of two samples i.e. K(X,Y) instead of K(X,X), it is an
+        array of 2 scalars representing num_samples from those two samples.
         """
 
         return self._num_samples
@@ -373,9 +381,9 @@ class KernelMatrix(object):
     def size(self):
         """
         Returns the size of the KernelMatrix (total number of elements)
-            i.e. num_samples from which the kernel matrix is computed from.
-            In a single-sample case, it is the num_samples in the dataset.
-            In two-sample case, it is the product of num_samples from two datasets.
+        i.e. num_samples from which the kernel matrix is computed from.
+        In a single-sample case, it is the num_samples in the dataset.
+        In two-sample case, it is the product of num_samples from two datasets.
 
         Defining this to correspond to .size attr of numpy arrays
         """
@@ -451,8 +459,7 @@ class KernelMatrix(object):
         Normalize the kernel matrix to have unit diagonal.
 
         Cosine normalization mplements definition according to Section 5.1 in
-            Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis",
-            2004
+        Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
 
         Parameters
         ----------
@@ -571,13 +578,10 @@ class KernelMatrix(object):
         Returns the sample [features] corresponding to a given index.
 
         Using this would help abstract out the underlying data structure for
-        samples and
-            their features. For example, inputs can be simply CSVs, or numpy
-            arrays or
-            MLDataset or xarray or pandas etc.
-        Disadvantages include the 2 extra function calls to be made for each
-        kernel eval,
-            which could be saved when operating on a predetermined format.
+        samples and their features. For example, inputs can be simply CSVs,
+        or numpy arrays or MLDataset or xarray or pandas etc. Disadvantages
+        include the 2 extra function calls to be made for each kernel eval,
+        which could be saved when operating on a predetermined format.
         """
 
         return self._sample[index, :]
@@ -619,8 +623,8 @@ class KernelMatrix(object):
         into a set of row indices into sample the kernel matrix is attached to.
 
         As the kernel matrix is 2D and symmetric of known size,
-            dimension size doesn't need to be specified, it is taken from
-            self.num_samples
+        dimension size doesn't need to be specified, it is taken from
+        self.num_samples
 
         """
 
@@ -1190,8 +1194,7 @@ class KernelSet(object):
         Sets user-defined attributes for the kernel matrices in this set.
 
         If len(values)==1, same value is set for all. Otherwise values must be of
-        size as
-        KernelSet, providing a separate value for each element.
+        size as KernelSet, providing a separate value for each element.
 
         Useful to identify this kernel matrix in various aspects!
         You could think of them as tags or identifiers etc.
@@ -1244,7 +1247,18 @@ class KernelSet(object):
 
 
 class CompositeKernel(ABC):
-    """Class to combine a set of kernels into a composite kernel."""
+    """
+    Class to combine a set of kernels into a composite kernel.
+
+    Parameters
+    -----------
+    km_set : KernelSet
+        KernelSet on which the composite kernel will be applied to
+
+    name : str
+        Identifier for the composite kernel
+
+    """
 
 
     def __init__(self, km_set, name='Composite'):
@@ -1304,7 +1318,16 @@ class CompositeKernel(ABC):
 
 
 class SumKernel(CompositeKernel):
-    """Class to define and compute a weighted sum kernel from a KernelSet"""
+    """Class to define and compute a weighted sum kernel from a KernelSet
+
+    Parameters
+    -----------
+    km_set : KernelSet
+        KernelSet from which the summ kernel will be computed from
+
+    name : str
+        Identifier for the composite kernel
+    """
 
 
     def __init__(self, km_set, name='SumKernel'):
@@ -1333,7 +1356,17 @@ class SumKernel(CompositeKernel):
 
 
 class ProductKernel(CompositeKernel):
-    """Class to define and compute a Product kernel from a KernelSet"""
+    """Class to define and compute a Product kernel from a KernelSet
+
+    Parameters
+    -----------
+    km_set : KernelSet
+        KernelSet from which the product kernel will be computed from
+
+    name : str
+        Identifier for the composite kernel
+
+    """
 
 
     def __init__(self, km_set, name='ProductKernel'):
@@ -1353,7 +1386,16 @@ class ProductKernel(CompositeKernel):
 
 
 class AverageKernel(CompositeKernel):
-    """Class to define and compute an Average kernel from a KernelSet"""
+    """Class to define and compute an Average kernel from a KernelSet
+
+    Parameters
+    -----------
+    km_set : KernelSet
+        KernelSet from which the average kernel will be computed
+
+    name : str
+        Identifier for the composite kernel
+    """
 
 
     def __init__(self, km_set, name='AverageKernel'):
@@ -1376,7 +1418,17 @@ class AverageKernel(CompositeKernel):
 
 
 class WeightedAverageKernel(CompositeKernel):
-    """Class to define and compute a weighted verage kernel from a KernelSet"""
+    """Class to define and compute a weighted verage kernel from a KernelSet
+
+    Parameters
+    -----------
+    km_set : KernelSet
+        KernelSet from which the average kernel will be computed
+
+    name : str
+        Identifier for the composite kernel
+
+    """
 
 
     def __init__(self,
@@ -1404,8 +1456,3 @@ class WeightedAverageKernel(CompositeKernel):
 
         self._is_fitted = True
 
-
-class PredictiveModelFromKernelMatrix(KernelMatrix):
-    """Class to turn a given kernel into a predictive model"""
-
-    pass  # raise NotImplementedError()

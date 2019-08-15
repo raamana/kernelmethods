@@ -32,7 +32,7 @@ def is_positive_semidefinite(sym_matrix,
     Tests whether a given matrix is positive-semidefinite (PSD).
 
     A symmetric matrix is PSD if ALL its eigen values >= 0 (non-negative).
-        If any of its eigen values are negative, it is not PSD.
+    If any of its eigen values are negative, it is not PSD.
 
     This functions accounts for numerical instabilities with a tolerance parameter.
 
@@ -142,8 +142,8 @@ def normalize_km(KM, method='cosine'):
     Normalize a kernel matrix to have unit diagonal.
 
     Cosine normalization normalizes the kernel matrix to have unit diagonal.
-        Implements definition according to Section 5.1 in book (Page 113)
-        Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+    Implements definition according to Section 5.1 in book (Page 113)
+    Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
 
     Matrix must be square (and coming from a single sample: K(X,X), not K(X,Y)
 
@@ -204,8 +204,8 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
     Normalize a kernel matrix K(X,Y) to have unit diagonal.
 
     Cosine normalization normalizes the kernel matrix to have unit diagonal.
-        Implements definition _similar_ to Section 5.1 in book (Page 113)
-        Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
+    Implements definition _similar_ to Section 5.1 in book (Page 113)
+    Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
 
 
     Parameters

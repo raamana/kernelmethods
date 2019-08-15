@@ -125,7 +125,9 @@ def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
 def alignment_ranking(kernel_bucket, targets, **method_params):
     """Method to rank kernels that depend on target alignment.
 
-    .. note: To be implemented.
+    .. note:
+
+        To be implemented.
 
     """
 
