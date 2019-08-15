@@ -12,9 +12,10 @@ class KernelBucket(KernelSet):
     """
     Class to generate and/or maintain a "bucket" of candidate kernels.
 
-    Applications:
-    1. to rank/filter/select kernels based on a given sample via many metrics
-    2. to be defined.
+    Applications
+
+        1. to rank/filter/select kernels based on a given sample via many metrics
+        2. to be defined.
 
     """
 
@@ -75,7 +76,24 @@ class KernelBucket(KernelSet):
 
 def make_kernel_bucket(strategy='exhaustive',
                        normalize_kernels=True):
-    """Generates a candidate kernels based on user preferences."""
+    """
+    Generates a candidate kernels based on user preferences.
+
+    Parameters
+    ----------
+    strategy : str
+        Name of the strategy for populating the kernel bucket.
+        Options: 'exhaustive' and 'light'. Default: 'exhaustive'
+
+    normalize_kernels : bool
+        Flag to indicate whether to normalize the kernel matrices
+
+    Returns
+    -------
+    kb : KernelBucket
+        Kernel bucket populated according to the requested strategy
+
+    """
 
     if isinstance(strategy, (KernelBucket, KernelSet)):
         import warnings

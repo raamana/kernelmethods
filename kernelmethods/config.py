@@ -3,7 +3,7 @@ import numpy as np
 
 class KernelMethodsException(Exception):
     """
-    Generic exception to indicate invalid use of the kernelmethods library.
+    Generic exception to indicate invalid use of the ``kernelmethods`` library.
 
     Allows to distinguish improper use of KernelMatrix from other code exceptions
     """
@@ -11,12 +11,13 @@ class KernelMethodsException(Exception):
 
 
 class KMAccessError(KernelMethodsException):
-    """Exception to indicate invalid access to the kernel matrix!"""
+    """Exception to indicate invalid access to the kernel matrix elements!"""
     pass
 
 
 class KMNormError(KernelMethodsException):
     """Custom exception to indicate error during normalization of kernel matrix"""
+    pass
 
 
 class KMSetAdditionError(KernelMethodsException):
