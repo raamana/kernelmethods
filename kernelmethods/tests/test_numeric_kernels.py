@@ -12,8 +12,8 @@ from kernelmethods.base import KernelMatrix, KernelFromCallable, BaseKernelFunct
 from kernelmethods.operations import is_positive_semidefinite
 
 default_feature_dim = 10
-range_feature_dim = [10, 500]
-range_num_samples = [50, 500]
+range_feature_dim = [10, 50]
+range_num_samples = [50, 100]
 
 range_polynomial_degree = [2, 10] # degree=1 is tested in LinearKernel()
 
