@@ -3,6 +3,8 @@ numpy
 scikit-learn
 pytest
 pytest-runner
+pyyaml
+python-coveralls
 hypothesis
 bumpversion
 wheel

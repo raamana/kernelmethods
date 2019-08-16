@@ -11,5 +11,8 @@ python:
   - 3.6
 
 script:
-  - pytest --cov
+  - pytest --cov coveralls --cov-report
+
+after_success:
+    - coveralls
 
