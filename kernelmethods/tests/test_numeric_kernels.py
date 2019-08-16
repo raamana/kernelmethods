@@ -8,7 +8,7 @@ from hypothesis import HealthCheck
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     LaplacianKernel
 from kernelmethods.utils import check_callable
-from kernelmethods.base import KernelMatrix
+from kernelmethods.base import KernelMatrix, KernelFromCallable, BaseKernelFunction
 from kernelmethods.operations import is_positive_semidefinite
 
 default_feature_dim = 10
@@ -57,7 +57,11 @@ def _test_for_all_kernels(kernel, sample_dim):
 
     if kernel(y, x) != result:
         raise ValueError('{} is not symmetric!'
-                         'x={}\n y={}\n kernel={}\n'.format(kernel.name, x, y, kernel))
+                         'x={}\n y={}\n kernel={}\n'
+                         ''.format(kernel.name, x, y, kernel))
+
+    # ensuring it produces a PSD KM
+    kernel.is_psd()
 
 
 def test_kernel_design():
