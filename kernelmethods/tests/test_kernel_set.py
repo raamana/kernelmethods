@@ -80,6 +80,23 @@ def test_take():
     assert isinstance(k2, KernelSet)
     assert k2.size == 2
 
+def test_extend():
+
+    kset1 = KernelSet([poly, rbf, lin])
+    kset2 = KernelSet([poly, rbf])
+    kset1.extend(kset2)
+
+    if kset1.size != 5:
+        raise ValueError('KernelSet.extend() failed')
+
+    with raises(KMSetAdditionError):
+        kset1.extend(['blah', ])
+
+    with raises(KMSetAdditionError):
+        k4_diff_size = KernelSet(num_samples=kset.size+1)
+        kset1.extend(k4_diff_size)
+
+
 def test_attributes():
 
     kset.set_attr('name', 'linear')

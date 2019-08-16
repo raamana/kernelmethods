@@ -1274,8 +1274,8 @@ class KernelSet(object):
                                      'Build a KernelSet() first.')
 
         if another_km_set.num_samples != self.num_samples:
-            raise ValueError(
-                'The two KernelSets are not compatible (in size: # samples)')
+            raise KMSetAdditionError('The two KernelSets are not compatible'
+                                     ', in size (# samples)')
 
         for km in another_km_set:
             self.append(km)
