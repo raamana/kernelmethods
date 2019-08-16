@@ -7,12 +7,15 @@ exclude_lines =
     __format__
     __repr__
     __str__
+    if contains_nan_inf*
     if self.debug:
     if settings.DEBUG
+    raise RuntimeError
     raise AssertionError
     raise NotImplementedError
     if 0:
     if __name__ == .__main__.:
+
 ignore_errors = True
 
 [run]
