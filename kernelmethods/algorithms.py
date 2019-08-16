@@ -301,7 +301,5 @@ class OptimalKernelSVR(SVR):
         for parameter, value in parameters.items():
             if parameter in ('k_bucket',):
                 setattr(self, parameter, value)
-            # else:
-            #     setattr(self._estimator, parameter, value)
 
         return self
