@@ -11,7 +11,7 @@ python:
   - 3.6
 
 script:
-  - pytest --cov coveralls --cov-report
+  - pytest --cov kernelmethods --cov-config=.coveragerc
 
 after_success:
     - coveralls
