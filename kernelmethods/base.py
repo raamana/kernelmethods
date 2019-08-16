@@ -598,6 +598,9 @@ class KernelMatrix(object):
 
         """
 
+        if isinstance(index_obj, int):
+            index_obj = np.unravel_index(index_obj, self.shape)
+
         if not len(index_obj) == 2 or not isinstance(index_obj, tuple):
             raise KMAccessError('Invalid attempt to access the kernel matrix '
                                 '-: must supply two [sets/ranges of] indices in a '
