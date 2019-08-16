@@ -54,25 +54,6 @@ class KernelMachine(BaseEstimator):
         self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
-    def set_learner_params(self, **learner_params):
-        """Separate method to set underlying estimator parameters"""
-
-        self.learner_params = learner_params
-        if len(self.learner_params) > 0:
-            if 'kernel' in self.learner_params:
-                warnings.warn('kernel is not allowed as parameter to estimator!'
-                              'As we set it via k_func. Ignoring it!')
-                self.learner_params.pop('kernel')
-
-            # to prevent recursive parameter setting
-            self.learner_params.pop('learner_params')
-
-            valid_keys = self._estimator.get_params().keys()
-            new_param_dict = {key: val for key, val in self.learner_params.items()
-                              if key in valid_keys}
-            self._estimator.set_params(**new_param_dict)
-
-
     def fit(self, X, y, sample_weight=None):
         """Fit the chosen Estimator based on the user-defined kernel.
 
