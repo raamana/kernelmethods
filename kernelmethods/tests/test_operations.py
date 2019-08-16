@@ -1,6 +1,7 @@
 
 from kernelmethods.operations import center_km, frobenius_product, frobenius_norm, \
-    normalize_km, normalize_km_2sample, alignment_centered, linear_combination
+    normalize_km, normalize_km_2sample, alignment_centered, linear_combination, \
+    is_positive_semidefinite, is_PSD
 from kernelmethods.config import KMNormError
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     LaplacianKernel
@@ -36,6 +37,28 @@ def gen_random_sample(num_samples, sample_dim):
 
     # TODO input sparse arrays for test
     return np.random.rand(num_samples, sample_dim)
+
+
+def test_psd():
+
+    with raises(TypeError):
+        is_PSD([2, 34, 23])
+
+    if is_PSD(np.random.rand(2, 4)):
+        raise ValueError('Non-square matrix is being deemed PSD!!! Big error!')
+
+    if is_PSD(np.random.rand(5, 5)):
+        raise ValueError('Non-symmetric matrix is being deemed PSD!!! Big error!')
+
+    negative_semi_def_matrix = np.array([[-1, 0], [0, -1]])
+    if is_PSD(negative_semi_def_matrix):
+        raise ValueError('Implementation for PSD check failed. '
+                         'negative_semi_def_matrix is approved as PSD.')
+
+    # from scipy.linalg import LinAlgError
+    # TODO find a matrix that produces LinAlgError
+    # bad_matrix = {}
+    # raises(LinAlgError, is_PSD, bad_matrix)
 
 
 def test_frobenius_product():
@@ -143,4 +166,4 @@ def test_linear_comb():
         lc = linear_combination(kset, np.random.randn(kset.size+1))
 
 
-test_alignment_centered()
+test_psd()
