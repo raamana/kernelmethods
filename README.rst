@@ -9,6 +9,9 @@ Kernel methods and classes
 .. image:: https://img.shields.io/travis/raamana/kernelmethods.svg
         :target: https://travis-ci.org/raamana/kernelmethods
 
+.. image:: https://coveralls.io/repos/github/raamana/kernelmethods/badge.svg?branch=master
+    :target: https://coveralls.io/github/raamana/kernelmethods?branch=master
+
 
 Docs: https://raamana.github.io/kernelmethods/
 
