@@ -202,7 +202,11 @@ def test_constant_km():
     rand_val = np.random.random()
     rand_size = np.random.randint(50)
 
-    const = ConstantKernelMatrix(num_samples=rand_size, value=rand_val)
+    const = ConstantKernelMatrix(num_samples=rand_size,
+                                 value=rand_val)
+    # trying name param also
+    const = ConstantKernelMatrix(num_samples=rand_size,
+                                 value=rand_val, name=None)
 
     assert const.num_samples == rand_size == const.size
     assert len(const) == rand_size

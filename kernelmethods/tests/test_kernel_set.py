@@ -2,7 +2,8 @@
 import numpy as np
 from pytest import raises
 
-from kernelmethods.base import KMSetAdditionError, KernelMatrix, KernelSet
+from kernelmethods.base import KMSetAdditionError, KernelMatrix, KernelSet, \
+    BaseKernelFunction
 from kernelmethods.numeric_kernels import GaussianKernel, LinearKernel, PolyKernel
 
 
@@ -59,6 +60,14 @@ def test_get_item():
         with raises(ValueError):
             print(kset[invalid_index])
 
+
+def test_get_ker_funcs():
+
+    for index in (0, 1):
+        kf_list = kset.get_kernel_funcs([index, ])
+        for kf in kf_list:
+            if not isinstance(kf, BaseKernelFunction):
+                raise TypeError('get_kernel_funcs not returning proper output type')
 
 def test_take():
     """access by index"""

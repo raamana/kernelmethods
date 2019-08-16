@@ -7,18 +7,20 @@ from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     LaplacianKernel
-from kernelmethods.utils import check_callable
 from kernelmethods.base import KernelMatrix, KernelFromCallable, \
-    BaseKernelFunction, KernelMatrixPrecomputed, ConstantKernelMatrix
+    BaseKernelFunction, KernelMatrixPrecomputed, ConstantKernelMatrix, \
+    CompositeKernel, AverageKernel, SumKernel, WeightedAverageKernel, ProductKernel
+from kernelmethods.sampling import make_kernel_bucket
 from kernelmethods.operations import is_positive_semidefinite
 from kernelmethods.config import KMAccessError, KMNormError
+
+from kernelmethods.tests.test_numeric_kernels import _test_for_all_kernels
 
 default_feature_dim = 10
 range_feature_dim = [10, 500]
 range_num_samples = [50, 500]
 num_samples = np.random.randint(20)
 sample_dim = np.random.randint(10)
-
 range_polynomial_degree = [2, 10] # degree=1 is tested in LinearKernel()
 
 np.random.seed(42)
@@ -52,6 +54,8 @@ def test_kernel_from_callable():
     kf = KernelFromCallable(simple_callable)
     if not isinstance(kf, BaseKernelFunction):
         raise TypeError('Error in implementation of KernelFromCallable')
+
+    _test_for_all_kernels(kf, 5)
 
 
 def test_KernelMatrix_design():
@@ -96,18 +100,16 @@ def test_KM_results_in_NaN_Inf():
 
 def test_km_precomputed():
 
-    rand_size = np.random.randint(50)
+    rand_size = np.random.randint(5, 50)
     rand_matrix = np.random.rand(rand_size, rand_size)
     # making symmetric
     rand_matrix = rand_matrix + rand_matrix.T
-    pre = KernelMatrixPrecomputed(rand_matrix)
+    pre = KernelMatrixPrecomputed(rand_matrix, name='rand')
 
     assert pre.size == rand_size == len(pre)
     assert np.isclose(pre.full, rand_matrix).all()
     assert np.isclose(pre.diag, rand_matrix.diagonal()).all()
     # __getitem__
-    assert pre[1,0] == rand_matrix[1,0]
-
     for _ in range(min(5, rand_size)):
         indices = np.random.randint(0, rand_size, 2)
         assert pre[indices[0], indices[1]] == rand_matrix[indices[0], indices[1]]
@@ -121,3 +123,35 @@ def test_km_precomputed():
 
     with raises(ValueError):
         pre = KernelMatrixPrecomputed(np.random.rand(rand_size))
+
+    with raises(ValueError):
+        # not convertible ndarray
+        pre = KernelMatrixPrecomputed(dict())
+
+    with raises(KMAccessError):
+        _= pre[np.Inf, 0]
+
+
+def test_composite_kernels():
+
+    kset = make_kernel_bucket()
+    kset.attach_to(gen_random_sample(num_samples, sample_dim))
+
+    for ck in (AverageKernel, SumKernel, WeightedAverageKernel, ProductKernel):
+
+        if issubclass(ck, WeightedAverageKernel):
+            result_km = ck(kset, np.random.rand(kset.size))
+        else:
+            result_km = ck(kset)
+
+        if not isinstance(result_km, CompositeKernel):
+            raise TypeError(' Composite kernel {} not defined properly: '
+                            'it must be a child of {}'
+                            ''.format(result_km, CompositeKernel))
+
+        result_km.fit()
+
+        reqd_attrs = ('composite_KM', 'full')
+        for reqd in reqd_attrs:
+            if not hasattr(result_km, reqd):
+                raise TypeError('{} does not have attr {}'.format(result_km, reqd))

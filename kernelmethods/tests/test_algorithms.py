@@ -34,11 +34,11 @@ sample_dim = 10
 n_training = 100
 n_testing  = 30
 
-def _test_estimator_can_fit_predict(estimator, est_name):
+train_data, labels = make_classification(n_features=sample_dim,
+                                         n_samples=n_training)
+test_data = gen_random_sample(n_testing, sample_dim)
 
-    train_data, labels = make_classification(n_features=sample_dim,
-                                             n_samples=n_training)
-    test_data = gen_random_sample(n_testing, sample_dim)
+def _test_estimator_can_fit_predict(estimator, est_name):
 
     try:
         check_estimator(estimator)
@@ -76,6 +76,13 @@ def test_optimal_kernel_svr():
 
     _test_estimator_can_fit_predict(OKSVR, 'OptimalKernelSVR')
 
+    for invalid_value in (np.random.randint(10), 10.1, ('tuple')):
+        with raises(ValueError):
+            OKSVR = OptimalKernelSVR(k_bucket=invalid_value)
+            OKSVR.fit(train_data, labels)
+
+    OKSVR = OptimalKernelSVR(k_bucket=k_bucket)
+    OKSVR.set_params(k_bucket=k_bucket)
 
 
 def test_kernel_machine():
