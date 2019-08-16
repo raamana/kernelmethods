@@ -1,0 +1,30 @@
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    def __format__
+    __format__
+    __repr__
+    __str__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+ignore_errors = True
+
+[run]
+omit =
+    # omit anything in a .local directory anywhere
+    */.local/*
+
+    # omit everything in /usr
+    /usr/*
+    */tests/*.py
+
+    # irrelevant files
+    kernelmethods/__*__.py
+    kernelmethods/_version.py
+

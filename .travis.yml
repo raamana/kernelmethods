@@ -11,5 +11,5 @@ python:
   - 3.6
 
 script:
-  - pytest
+  - pytest --cov
 
