@@ -649,7 +649,8 @@ class KernelMatrix(object):
                                 ''.format(km_shape=self.shape))
 
         # enforcing constraints
-        if any([index >= self.shape[dim] or index < 0 for index in indices]):
+        if any([index >= self.shape[dim] or index < 0 or np.isnan(index)
+                for index in indices]):
             raise KMAccessError('Invalid index method/indices for kernel matrix!\n'
                                 ' Some indices in {} are out of range: '
                                 ' shape : {km_shape},'
