@@ -8,12 +8,12 @@ from hypothesis import HealthCheck
 from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
     LaplacianKernel
 from kernelmethods.utils import check_callable
-from kernelmethods.base import KernelMatrix
+from kernelmethods.base import KernelMatrix, KernelFromCallable, BaseKernelFunction
 from kernelmethods.operations import is_positive_semidefinite
 
 default_feature_dim = 10
-range_feature_dim = [10, 500]
-range_num_samples = [50, 500]
+range_feature_dim = [10, 50]
+range_num_samples = [50, 100]
 
 range_polynomial_degree = [2, 10] # degree=1 is tested in LinearKernel()
 
@@ -59,6 +59,7 @@ def _test_for_all_kernels(kernel, sample_dim):
         raise ValueError('{} is not symmetric!'
                          'x={}\n y={}\n kernel={}\n'.format(kernel.name, x, y, kernel))
 
+    kernel.is_psd()
 
 def test_kernel_design():
     """
