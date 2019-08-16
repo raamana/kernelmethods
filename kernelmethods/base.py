@@ -1193,7 +1193,7 @@ class KernelSet(object):
 
         indices = self._check_indices(indices)
 
-        return (self._km_set[idx].kernel for index in indices)
+        return (self._km_set[index].kernel for index in indices)
 
 
     def _check_indices(self, indices):
