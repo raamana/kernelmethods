@@ -351,6 +351,9 @@ def alignment_centered(km_one, km_two,
                          'to compute their alignment! They differ: {}, {}'
                          ''.format(km_one.shape, km_two.shape))
 
+    if not isinstance(km_one, np.ndarray) or not isinstance(km_two, np.ndarray):
+        raise TypeError('Input KMs must be numpy arrays')
+
     if not centered_already:
         kC_one = center_km(km_one)
         kC_two = center_km(km_two)
