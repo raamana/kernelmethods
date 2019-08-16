@@ -13,9 +13,9 @@ import numpy as np
 from scipy.sparse import issparse
 from scipy.linalg import eigh
 
-from pytest import raises
+from pytest import raises, warns
 
-num_samples = 50 # 9
+num_samples = np.random.randint(20, 50)
 sample_dim = 3 # 2
 target_label_set = [1, 2]
 
@@ -103,20 +103,31 @@ def test_alignment_centered():
     km2.attach_to(gen_random_sample(num_samples, sample_dim))
 
     km3_bad_size = KernelMatrix(kernel=LinearKernel())
-    km3_bad_size.attach_to(gen_random_sample(num_samples, sample_dim))
+    km3_bad_size.attach_to(gen_random_sample(num_samples+2, sample_dim))
 
     with raises(ValueError):
-        alignment_centered(km1, km3_bad_size)
+        alignment_centered(km1.full, km3_bad_size.full)
+
+    # bad type : must be ndarray
+    with raises(TypeError):
+        alignment_centered(km1, km2.full)
+
+    # bad type : must be ndarray
+    with raises(TypeError):
+        alignment_centered(km1.full, km2)
 
     for flag in (True, False):
-        _ = alignment_centered(km1, km2, centered_already=flag)
+        _ = alignment_centered(km1.full, km2.full, centered_already=flag)
 
-    _ = alignment_centered(np.zeros((10, 10)), np.random.randn(10, 10),
-                           value_if_zero_division='raise')
+    with raises(ValueError):
+        _ = alignment_centered(np.zeros((10, 10)), np.random.randn(10, 10),
+                               value_if_zero_division='raise')
+
     return_val_requested = 'random_set_value'
-    ret_value = alignment_centered(np.random.randn(10, 10),
-                           np.zeros((10, 10)),
-                           value_if_zero_division=return_val_requested)
+    with warns(UserWarning):
+        ret_value = alignment_centered(np.random.randn(10, 10),
+                               np.zeros((10, 10)),
+                               value_if_zero_division=return_val_requested)
     if ret_value != return_val_requested:
         raise ValueError('Not returning the value requested in case of error!')
 
@@ -130,3 +141,6 @@ def test_linear_comb():
 
     with raises(ValueError):
         lc = linear_combination(kset, np.random.randn(kset.size+1))
+
+
+test_alignment_centered()
