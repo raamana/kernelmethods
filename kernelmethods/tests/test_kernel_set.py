@@ -5,7 +5,7 @@ from pytest import raises
 from kernelmethods.base import KMSetAdditionError, KernelMatrix, KernelSet, \
     BaseKernelFunction
 from kernelmethods.numeric_kernels import GaussianKernel, LinearKernel, PolyKernel
-
+from kernelmethods.sampling import make_kernel_bucket
 
 num_samples = 50 # 9
 sample_dim = 3 # 2
@@ -34,6 +34,8 @@ def test_creation():
     except:
         raise SyntaxError('empty set creation failed.')
 
+    with raises(TypeError):
+        ks = KernelSet(km_list='blah')
 
 def test_size_property_mismatch():
 
@@ -76,6 +78,14 @@ def test_take():
         with raises(IndexError):
             print(kset.take([invalid_index]))
 
+    for valid_index in np.random.randint(0, min(kset.size, 3), 3):
+        _ks = kset.take(valid_index)
+        if not isinstance(_ks, KernelSet):
+            raise TypeError('.take not returning KernelSet')
+        for _km in _ks:
+            if not isinstance(_km, KernelMatrix):
+                raise TypeError('Elements of KernelSet are not KernelMatrix!')
+
     k2 = kset.take([0, 1])
     assert isinstance(k2, KernelSet)
     assert k2.size == 2
@@ -109,10 +119,14 @@ def test_attributes():
     for ii, km in enumerate(kset):
         assert km.get_attr('weight') == values[ii]
 
+    kb = make_kernel_bucket()
+    kb.attach_to(sample_data, attr_name='a', attr_value='b')
+    # differing length
+    with raises(ValueError):
+        kb.set_attr('a', ['value']*(kb.size-1))
 
-# kb = KernelBucket()
-# # this attach is necessary for anything useful! :)
-# kb.attach_to(sample_data)
+    kb.get_attr('a')
+
 #
 # print('Alignment to Ideal Kernel:')
 # ag = np.zeros(kb.size)
@@ -120,4 +134,4 @@ def test_attributes():
 #     ag[ix] = alignment_centered(km.full, IdealKM)
 #     print('{:4} {:>60} : {:10.5f}'.format(ix, str(km),ag[ix]))
 
-test_attributes()
+test_take()

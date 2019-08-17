@@ -21,8 +21,9 @@ sample_two_dim = sample_dim
 sample_data = np.random.rand(num_samples, sample_dim)
 target_labels = np.random.choice(target_label_set, num_samples)
 
+poly = PolyKernel(degree=2, skip_input_checks=True)
 # suffix 1 to indicate one sample case
-km1 = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
+km1 = KernelMatrix(poly)
 km1.attach_to(sample_data)
 
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
@@ -47,6 +48,24 @@ def test_normalization():
         raise ValueError('One or more diagonal elements of normalized KM != 1.0:\n\t'
                          '{}'.format(km1.normed_km.diagonal()))
 
+    km2 = KernelMatrix(poly)
+    km2.attach_to(sample_data)
+    normed_km = km2.normed_km
+    assert normed_km.shape == km2.shape
+
+    frob = km1.frob_norm
+    assert np.isreal(frob)
+
+    # during init
+    with raises(TypeError):
+        _ = KernelMatrix(poly, normalized='True')
+
+def test_centering():
+
+    km2 = KernelMatrix(poly)
+    km2.attach_to(sample_data)
+    assert km2.centered.shape == km2.shape
+
 def test_get_item():
 
     for invalid_index in [-1, num_samples+1]:
@@ -65,6 +84,27 @@ def test_get_item():
                            ]:
         with raises((KMAccessError, TypeError)):
             print(km1[invalid_access])
+
+    with raises(KMAccessError):
+        km1[1, 2, 3] # no 3-dim access
+
+    with raises(KMAccessError):
+        km1[1, 2, 3, 4] # no 4-dim access either
+
+    # selection must result in valid indices
+    with raises(KMAccessError):
+        km1[0,km1.size+5]
+
+    with raises(KMAccessError):
+        km1[km1.size + 5, 0]
+
+    # linear indexing is now allowed
+    for valid_index in np.random.randint(0, km1.size, 5):
+        _ = km1[valid_index]
+
+    # as well as vectorized/colon
+    _ = km1[:,0]
+    _ = km1[0, :]
 
 
 def test_random_submatrix_access():
@@ -216,6 +256,12 @@ def test_constant_km():
         indices = np.random.randint(0, rand_size, 2)
         assert all(const[indices[0], indices[1]] == rand_val)
 
+    for invalid_index in ('index', ':',
+                          [np.Inf, ], [ 1,-rand_size-2],
+                          [], [None, 2]):
+        with raises(KMAccessError):
+            const[invalid_index]
+
     assert np.unique(const.diag) == rand_val
 
     expected = np.full((rand_size, rand_size), fill_value=rand_val)
@@ -223,4 +269,5 @@ def test_constant_km():
 
 
 # test_attributes()
-test_constant_km()
+# test_constant_km()
+test_get_item()

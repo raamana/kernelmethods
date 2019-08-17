@@ -117,6 +117,9 @@ def test_km_precomputed():
     with raises(ValueError): # not symmtric
         pre = KernelMatrixPrecomputed(np.random.rand(rand_size, rand_size+1))
 
+    with raises(ValueError):
+        pre = KernelMatrixPrecomputed([[1, 2], [2, 3, 4, 9]])
+
     # 3D or 1D
     with raises(ValueError):
         pre = KernelMatrixPrecomputed(np.random.rand(rand_size, rand_size, 2))
@@ -124,9 +127,9 @@ def test_km_precomputed():
     with raises(ValueError):
         pre = KernelMatrixPrecomputed(np.random.rand(rand_size))
 
+    # must have real values
     with raises(ValueError):
-        # not convertible ndarray
-        pre = KernelMatrixPrecomputed(dict())
+        pre = KernelMatrixPrecomputed([[1, 2+4j], [9+2j, 3]])
 
     with raises(KMAccessError):
         _= pre[np.Inf, 0]

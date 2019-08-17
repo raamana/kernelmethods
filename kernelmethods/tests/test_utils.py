@@ -32,23 +32,28 @@ SupportedKernels = (GaussianKernel(), PolyKernel(), LinearKernel(),
 num_tests_psd_kernel = 3
 
 
-def test_inpur_arrays():
+def test_check_input_arrays():
 
     with raises(ValueError):
         check_input_arrays(np.random.rand(10, 5), np.random.rand(5, 4))
+
+    with raises(ValueError):
+        check_input_arrays(np.random.rand(10), np.random.rand(5))
 
     # from scipy.sparse import csr_matrix
     # s1 = csr_matrix((3,4))
     # s2 = csr_matrix((3, 4))
     # _, _ = check_input_arrays(s1, s2)
 
-
-
 def test_valid_op():
 
     for invalid_op in ('foo', 'bar', 'adition', 'some'):
         with raises(ValueError):
             check_operation_kernel_matrix(invalid_op)
+
+    from kernelmethods.config import VALID_KERNEL_MATRIX_OPS
+    for valid_op in VALID_KERNEL_MATRIX_OPS:
+        _ = check_operation_kernel_matrix(valid_op)
 
 def test_ensure_array_dim():
 
@@ -82,3 +87,5 @@ def test_misc():
 
     with raises(TypeError):
         check_callable(func_with_less_than_min_args, 3)
+
+    assert not_symmetric(np.array([[1, 2], [1, 2]])) is True
