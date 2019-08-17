@@ -598,13 +598,15 @@ class KernelMatrix(object):
 
         """
 
-        if isinstance(index_obj, int):
+        if np.issubdtype(type(index_obj), np.int_):
             index_obj = np.unravel_index(index_obj, self.shape)
 
-        if not len(index_obj) == 2 or not isinstance(index_obj, tuple):
-            raise KMAccessError('Invalid attempt to access the kernel matrix '
-                                '-: must supply two [sets/ranges of] indices in a '
-                                'tuple!')
+        if (not isinstance(index_obj, Iterable)) or len(index_obj) != 2 or \
+            isinstance(index_obj, str) or index_obj is None:
+            raise KMAccessError('Indexing object must be an iterable of length 2. '
+                                'Supply two [sets/ranges of] indices in a tuple! '
+                                'It can not be a string or None either. '
+                                'Provided: {}'.format(index_obj))
 
         set_one, are_all_selected_dim_one = self._get_indices_in_sample(index_obj[0],
                                                                         dim=0)
@@ -633,7 +635,7 @@ class KernelMatrix(object):
 
         are_all_selected = False
 
-        if isinstance(index_obj_per_dim, int) or np.isscalar(index_obj_per_dim):
+        if np.issubdtype(type(index_obj_per_dim), np.int_):
             indices = [index_obj_per_dim, ]  # making it iterable
         elif isinstance(index_obj_per_dim, slice):
             if index_obj_per_dim is None:
@@ -942,6 +944,11 @@ class ConstantKernelMatrix(object):
     def __getitem__(self, index_obj):
         """Access the matrix"""
 
+        if (not isinstance(index_obj, Iterable)) or len(index_obj) != 2 or \
+            isinstance(index_obj, str) or index_obj is None:
+            raise KMAccessError('Indexing object must be an iterable of length 2.'
+                                'It can not be a string or None either.')
+
         # full-fledged behavior and eval of this getitem is needed to make this
         # fully compatible with the generic KernelMatrix class
         row_indices = self._get_indices_in_sample(index_obj[0])
@@ -965,21 +972,24 @@ class ConstantKernelMatrix(object):
 
         """
 
-        if isinstance(index_obj_per_dim, int) or np.isscalar(index_obj_per_dim):
+        if isinstance(index_obj_per_dim, str) or index_obj_per_dim is None:
+            raise KMAccessError('Indices can not be strings!')
+
+        if np.issubdtype(type(index_obj_per_dim), np.int_):
             indices = [index_obj_per_dim, ]  # making it iterable
         elif isinstance(index_obj_per_dim, slice):
             _slice_index_list = index_obj_per_dim.indices(self.num_samples)
             indices = list(range(*_slice_index_list))  # *list expands it as args
-        elif isinstance(index_obj_per_dim, Iterable) and \
-            not isinstance(index_obj_per_dim, str):
+        elif isinstance(index_obj_per_dim, Iterable):
             # TODO no restriction on float: float indices will be rounded down
             #  towards 0
             indices = list(map(int, index_obj_per_dim))
         else:
-            raise KMAccessError('Invalid index method/indices for kernel matrix '
-                                'of shape : {km_shape}.'
+            raise KMAccessError('Invalid index method/indices {indices} '
+                                'for kernel matrix of shape : {km_shape}.'
                                 ' Only int, slice or iterable objects are allowed!'
-                                ''.format(km_shape=self.shape))
+                                ''.format(km_shape=self.shape,
+                                          indices=index_obj_per_dim))
 
         # enforcing constraints
         if any([index >= self.num_samples or index < 0 for index in indices]):
