@@ -194,11 +194,12 @@ class OptimalKernelSVR(SVR):
     """
 
 
-    def __init__(self, k_bucket):
+    def __init__(self, k_bucket, method='cv_risk'):
 
         super().__init__(kernel='precomputed')
 
         self.k_bucket = k_bucket
+        self.method = method
 
 
     def fit(self, X, y, sample_weight=None):
@@ -253,7 +254,7 @@ class OptimalKernelSVR(SVR):
 
         self.opt_kernel = find_optimal_kernel(self.k_bucket,
                                               self._train_X, self._train_y,
-                                              method='cv_risk')
+                                              method=self.method)
 
         super().fit(X=self.opt_kernel.full, y=self._train_y,
                     sample_weight=sample_weight)
@@ -292,14 +293,15 @@ class OptimalKernelSVR(SVR):
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
-        return {'k_bucket': self.k_bucket, }
+        return {'k_bucket': self.k_bucket,
+                'method': self.method}
 
 
     def set_params(self, **parameters):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_bucket',):
+            if parameter in ('k_bucket', 'method'):
                 setattr(self, parameter, value)
 
         return self

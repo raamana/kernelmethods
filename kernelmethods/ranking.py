@@ -9,7 +9,8 @@ metrics, such as
 """
 
 import numpy as np
-from kernelmethods.sampling import make_kernel_bucket, KernelBucket
+from kernelmethods import config as cfg
+from kernelmethods.sampling import KernelBucket
 from kernelmethods.utils import min_max_scale
 
 
@@ -40,6 +41,11 @@ def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
 
     if not isinstance(kernel_bucket, KernelBucket):
         raise TypeError('Input is not of required type: KernelBucket')
+
+    method = method.lower()
+    if method not in cfg.VALID_RANKING_METHODS:
+        raise NotImplementedError('Ranking method not recognized. Choose one of {}'
+                                  ''.format(cfg.VALID_RANKING_METHODS))
 
     kernel_bucket.attach_to(sample=sample)
     metric = rank_kernels(kernel_bucket, targets, method=method)
@@ -73,15 +79,15 @@ def rank_kernels(kernel_bucket, targets, method='align/corr', **method_params):
 
     """
 
-    ranking_methods = ("align/corr", "cv_risk")
     method = method.lower()
+    if method not in cfg.VALID_RANKING_METHODS:
+        raise NotImplementedError('Ranking method not recognized. Choose one of {}'
+                                  ''.format(cfg.VALID_RANKING_METHODS))
 
     if method in ("align/corr",):
         return alignment_ranking(kernel_bucket, targets, **method_params)
     elif method in ('cv_risk', 'cv'):
         return CV_ranking(kernel_bucket, targets, **method_params)
-    else:
-        raise NotImplementedError('Choose one of {}'.format(ranking_methods))
 
 
 def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
