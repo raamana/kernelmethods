@@ -76,6 +76,8 @@ def is_positive_semidefinite(sym_matrix,
     except LinAlgError:
         if verbose:
             traceback.print_exc()
+        # we are not actually raising LinAlgError, just using it to categorize as
+        # not PSD. So, can't use test cases to try raise LinAlgError, so not testable!
         print('LinAlgError raised - eigen value computation failed --> not PSD')
         psd = False
     except:
