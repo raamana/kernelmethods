@@ -1070,7 +1070,7 @@ class KernelSet(object):
             self._is_init = False
             self._num_samples = None
 
-        if isinstance(km_list, Iterable):
+        if (not isinstance(km_list, str)) and isinstance(km_list, Iterable):
             for km in km_list:
                 self.append(km)
         elif isinstance(km_list, VALID_KERNEL_MATRIX_TYPES):
