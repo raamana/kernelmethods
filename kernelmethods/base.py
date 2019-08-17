@@ -793,9 +793,11 @@ class KernelMatrixPrecomputed(object):
         except:
             raise ValueError('Input matrix is not convertible to numpy array!')
 
-        if matrix.ndim != 2 or not_symmetric(matrix):
-            raise ValueError('Input matrix appears to be NOT 2D or symmetric! '
-                             'Symmetry is needed for a valid kernel.')
+        if matrix.ndim != 2 or not_symmetric(matrix) or \
+            (not np.isreal(matrix).all()):
+            raise ValueError('Input matrix appears to be NOT 2D or symmetric or '
+                             'not real! A real-valued symmetric matrix is needed '
+                             'for a valid kernel.')
 
         self._KM = matrix
         self.num_samples = self._KM.shape[0]
