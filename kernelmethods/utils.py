@@ -34,13 +34,6 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
         raise ValueError('x (n={}) and y (n={}) differ in size! '
                          'They must be of same length'.format(x.size, y.size))
 
-    # sparse to dense
-    if issparse(x):
-        x = np.array(x.todense())
-
-    if issparse(y):
-        y = np.array(y.todense())
-
     return x, y
 
 
