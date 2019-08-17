@@ -787,11 +787,8 @@ class KernelMatrixPrecomputed(object):
     def __init__(self, matrix, name=None):
         """Constructor"""
 
-        try:
-            if not isinstance(matrix, np.ndarray):
-                matrix = np.array(matrix)
-        except:
-            raise ValueError('Input matrix is not convertible to numpy array!')
+        if not isinstance(matrix, np.ndarray):
+            matrix = np.array(matrix)
 
         if matrix.ndim != 2 or not_symmetric(matrix) or \
             (not np.isreal(matrix).all()):
