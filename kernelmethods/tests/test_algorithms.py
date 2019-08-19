@@ -13,16 +13,11 @@ from kernelmethods.config import KMNormError, KernelMethodsException
 from kernelmethods.operations import is_positive_semidefinite
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
-    LaplacianKernel
+from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
 from kernelmethods.algorithms import OptimalKernelSVR, KernelMachine
 from traceback import print_exc
 
 rnd = np.random.RandomState(0)
-
-SupportedKernels = (GaussianKernel(),
-                    PolyKernel(), LinearKernel(),
-                    LaplacianKernel())
 
 def gen_random_sample(num_samples, sample_dim):
     """To better control precision and type of floats"""
@@ -87,7 +82,7 @@ def test_optimal_kernel_svr():
 
 def test_kernel_machine():
 
-    for kernel in SupportedKernels:
+    for kernel in DEFINED_KERNEL_FUNCS:
         # print('\n\nTesting {}'.format(kernel))
         try:
             k_machine = KernelMachine(kernel)
