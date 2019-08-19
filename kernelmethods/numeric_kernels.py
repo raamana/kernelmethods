@@ -172,6 +172,68 @@ class LaplacianKernel(BaseKernelFunction):
         return "{}(gamma={})".format(self.name, self.gamma)
 
 
+class SigmoidKernel(BaseKernelFunction):
+    """
+    Sigmoid kernel function (also known as hyperbolic tangent kernel)
+
+    NOTE: This kernel is not always PSD, and normalizing its kernel matrix can
+    result in numerical issues or errors.
+
+    Parameters
+    ----------
+    gamma : float
+        scale factor
+
+    offset : float
+        value of offset/bias
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+
+    """
+
+    def __init__(self, gamma=1.0, offset=1.0, skip_input_checks=False):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        gamma : float
+            scale factor
+
+        offset : float
+            value of offset/bias
+
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
+        """
+
+        super().__init__(name='sigmoid')
+
+        self.gamma = gamma
+        self.offset = offset
+
+        self.skip_input_checks = skip_input_checks
+
+    def __call__(self, x, y):
+        """Actual implementation of kernel func"""
+
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+
+        return np.tanh(self.offset + (self.gamma * np.dot(x, y)))
+
+    def __str__(self):
+        """human readable repr"""
+
+        return "{}(gamma={},offset={})".format(self.name, self.gamma, self.offset)
+
+
 class LinearKernel(BaseKernelFunction):
     """Linear kernel function
 
@@ -213,5 +275,8 @@ class LinearKernel(BaseKernelFunction):
         return self.name
 
 
-DEFINED_KERNEL_FUNCS = (PolyKernel(), GaussianKernel(), LaplacianKernel(),
-                        LinearKernel())
+DEFINED_KERNEL_FUNCS = (PolyKernel(),
+                        GaussianKernel(),
+                        LaplacianKernel(),
+                        LinearKernel(),
+                        SigmoidKernel())
