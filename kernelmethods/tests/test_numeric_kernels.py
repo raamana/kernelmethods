@@ -59,8 +59,9 @@ def _test_for_all_kernels(kernel, sample_dim, check_PSDness=True):
                          'x={}\n y={}\n kernel={}\n'
                          ''.format(kernel.name, x, y, kernel))
 
-    # ensuring it produces a PSD KM
-    kernel.is_psd()
+    if check_PSDness:
+        # ensuring it produces a PSD KM
+        kernel.is_psd()
 
 
 def test_kernel_design():
