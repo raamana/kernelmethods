@@ -262,7 +262,9 @@ def test_constant_km():
         with raises(KMAccessError):
             const[invalid_index]
 
-    assert np.unique(const.diag) == rand_val
+    # there must be a single unique value in the matrix or diagonal
+    assert np.isclose(np.unique(const.full), rand_val).all()
+    assert np.isclose(np.unique(const.diag), rand_val).all()
 
     expected = np.full((rand_size, rand_size), fill_value=rand_val)
     assert np.isclose(const.full, expected).all()
