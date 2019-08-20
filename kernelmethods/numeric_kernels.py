@@ -172,6 +172,62 @@ class LaplacianKernel(BaseKernelFunction):
         return "{}(gamma={})".format(self.name, self.gamma)
 
 
+class Chi2Kernel(BaseKernelFunction):
+    """Chi-squared kernel function
+
+    The chi-squared kernel is given by::
+
+        k(x, y) = exp(-gamma Sum [(x - y)^2 / (x + y)])
+
+
+    Parameters
+    ----------
+    gamma : float
+        scale factor
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+
+    """
+
+    def __init__(self, gamma=1.0, skip_input_checks=False):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        gamma : float
+            scale factor
+
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
+        """
+
+        super().__init__(name='chi2')
+
+        self.gamma = gamma
+
+        self.skip_input_checks = skip_input_checks
+
+    def __call__(self, x, y):
+        """Actual implementation of kernel func"""
+
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+
+        return np.exp(-self.gamma * np.sum(np.power(x - y, 2) / (x + y)))
+
+    def __str__(self):
+        """human readable repr"""
+
+        return "{}(gamma={})".format(self.name, self.gamma)
+
+
 class SigmoidKernel(BaseKernelFunction):
     """
     Sigmoid kernel function (also known as hyperbolic tangent kernel)
@@ -279,4 +335,5 @@ DEFINED_KERNEL_FUNCS = (PolyKernel(),
                         GaussianKernel(),
                         LaplacianKernel(),
                         LinearKernel(),
-                        SigmoidKernel())
+                        SigmoidKernel(),
+                        Chi2Kernel())
