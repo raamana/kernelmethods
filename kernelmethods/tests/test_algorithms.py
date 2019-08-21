@@ -1,23 +1,18 @@
-import numpy as np
-from numbers import Number
-from pytest import raises, warns
-from hypothesis import given, strategies, unlimited
-from hypothesis import settings as hyp_settings
-from hypothesis import HealthCheck
-import warnings
 import traceback
+import warnings
+
+import numpy as np
+from kernelmethods.algorithms import KernelMachine, OptimalKernelSVR
+from kernelmethods.config import KMNormError, KernelMethodsException, \
+    KernelMethodsWarning, Chi2NegativeValuesException
+from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
+from kernelmethods.sampling import make_kernel_bucket
+from pytest import raises
 from sklearn.datasets import make_classification
 from sklearn.utils.estimator_checks import check_estimator
-from kernelmethods.base import KernelMatrix
-from kernelmethods.config import KMNormError, KernelMethodsException
-from kernelmethods.operations import is_positive_semidefinite
-from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-
-from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
-from kernelmethods.algorithms import OptimalKernelSVR, KernelMachine
-from traceback import print_exc
 
 rnd = np.random.RandomState(0)
+np.set_printoptions(precision=3, linewidth=120)
 
 def gen_random_sample(num_samples, sample_dim):
     """To better control precision and type of floats"""
@@ -25,22 +20,31 @@ def gen_random_sample(num_samples, sample_dim):
     # TODO input sparse arrays for test
     return np.random.rand(num_samples, sample_dim)
 
-sample_dim = 10
-n_training = 100
-n_testing  = 30
 
-train_data, labels = make_classification(n_features=sample_dim,
-                                         n_samples=n_training)
-test_data = gen_random_sample(n_testing, sample_dim)
+sample_dim = 5
+n_training = 100
+n_testing = 30
+
 
 def _test_estimator_can_fit_predict(estimator, est_name):
 
+    # fresh data for each call
+    train_data, labels = make_classification(n_features=sample_dim,
+                                             n_samples=n_training)
+    test_data = gen_random_sample(n_testing, sample_dim)
+
+    if hasattr(estimator, 'k_func') and 'chi2' in estimator.k_func.name:
+        train_data = np.abs(train_data)
+        test_data = np.abs(test_data)
+
     try:
         check_estimator(estimator)
-    except (KMNormError, KernelMethodsException, RuntimeError) as kme:
+    except (KMNormError, Chi2NegativeValuesException,
+            KernelMethodsException, KernelMethodsWarning,
+            RuntimeError) as kme:
         print('KernelMethodsException encountered during estimator checks - '
               'ignoring it!')
-        # traceback.print_exc()
+        traceback.print_exc()
         pass
     except:
         traceback.print_exc()
@@ -62,10 +66,13 @@ def _test_estimator_can_fit_predict(estimator, est_name):
 
 def test_optimal_kernel_svr():
 
-    k_bucket = make_kernel_bucket('light')
+    train_data, labels = make_classification(n_features=sample_dim, n_classes=2,
+                                             n_samples=n_training)
+    test_data = gen_random_sample(n_testing, sample_dim)
 
+    strategy = 'light'
     try:
-        OKSVR = OptimalKernelSVR(k_bucket=k_bucket)
+        OKSVR = OptimalKernelSVR(k_bucket=strategy)
     except:
         raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
@@ -76,12 +83,11 @@ def test_optimal_kernel_svr():
             OKSVR = OptimalKernelSVR(k_bucket=invalid_value)
             OKSVR.fit(train_data, labels)
 
-    OKSVR = OptimalKernelSVR(k_bucket=k_bucket)
-    OKSVR.set_params(k_bucket=k_bucket)
+    OKSVR = OptimalKernelSVR(k_bucket=strategy)
+    OKSVR.set_params(k_bucket=strategy)
 
 
 def test_kernel_machine():
-
     for kernel in DEFINED_KERNEL_FUNCS:
         # print('\n\nTesting {}'.format(kernel))
         try:
@@ -95,4 +101,4 @@ def test_kernel_machine():
                                         'kernel machine with ' + str(kernel))
 
 
-test_kernel_machine()
+test_optimal_kernel_svr()

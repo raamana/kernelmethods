@@ -87,7 +87,7 @@ class KernelMachine(BaseEstimator):
 
         """
 
-        self._train_X, self._train_y = check_X_y(X, y)
+        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
         self._km = KernelMatrix(self.k_func, name='train_km')
         self._km.attach_to(self._train_X)
@@ -249,6 +249,7 @@ class OptimalKernelSVR(SVR):
                              'KernelBucket or a sampling strategy to generate '
                              'one with make_kernel_bucket')
 
+        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
         self._train_X, self._train_y = check_X_y(X, y)
 
@@ -279,6 +280,11 @@ class OptimalKernelSVR(SVR):
         y_pred : array, shape (n_samples,)
             Class labels for samples in X.
         """
+
+        # if not hasattr(self, 'opt_kernel_'):
+        #     raise ValueError("Can't predict - not fitted yet! Run .fit() first.")
+
+        X = check_array(X)
 
         # sample_one must be test data to get the right shape for sklearn X
         self.opt_kernel.attach_to(sample_one=X, sample_two=self._train_X)
