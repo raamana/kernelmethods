@@ -355,7 +355,8 @@ class LinearKernel(BaseKernelFunction):
         return self.name
 
 
-DEFINED_KERNEL_FUNCS = (PolyKernel(),
+DEFINED_KERNEL_FUNCS = (Chi2Kernel(),
+                        PolyKernel(),
                         GaussianKernel(),
                         LaplacianKernel(),
                         LinearKernel(),

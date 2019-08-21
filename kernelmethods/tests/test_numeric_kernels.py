@@ -5,8 +5,8 @@ from pytest import raises, warns
 from hypothesis import given, strategies, unlimited
 from hypothesis import settings as hyp_settings
 from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
-    LaplacianKernel, SigmoidKernel, DEFINED_KERNEL_FUNCS
+from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS, PolyKernel, \
+    GaussianKernel, LinearKernel, LaplacianKernel, SigmoidKernel, Chi2Kernel
 from kernelmethods.utils import check_callable
 from kernelmethods.base import KernelMatrix, KernelFromCallable, BaseKernelFunction
 from kernelmethods.operations import is_positive_semidefinite
@@ -174,3 +174,16 @@ def test_sigmoid_kernel(sample_dim, num_samples, gamma, offset):
     # sigmoid is not always PSD
     _test_for_all_kernels(sigmoid, sample_dim, check_PSDness=False)
 
+
+@hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
+              timeout=unlimited, suppress_health_check=HealthCheck.all())
+@given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
+       strategies.integers(range_num_samples[0], range_num_samples[1]),
+       strategies.floats(min_value=0, max_value=1e6,
+                         allow_nan=False, allow_infinity=False))
+def test_chi2_kernel(sample_dim, num_samples, gamma):
+    """Tests specific for Laplacian kernel."""
+
+    chi2 = Chi2Kernel(gamma=gamma, skip_input_checks=False)
+    _test_for_all_kernels(chi2, sample_dim)
+    _test_func_is_valid_kernel(chi2, sample_dim, num_samples)
