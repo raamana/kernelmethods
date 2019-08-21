@@ -14,7 +14,7 @@ from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
 from sklearn.kernel_ridge import KernelRidge
 import warnings
-
+from copy import deepcopy
 
 class KernelMachine(BaseEstimator):
     """Generic class to return a drop-in sklearn estimator.
@@ -30,7 +30,6 @@ class KernelMachine(BaseEstimator):
         Default: ``SVR``
 
     """
-
 
     def __init__(self,
                  k_func,
@@ -154,7 +153,7 @@ class KernelMachine(BaseEstimator):
         return self
 
 
-class OptimalKernelSVR(SVR):
+class OptimalKernelSVR(SVR, RegressorMixin):
     """
     An estimator to learn the optimal kernel for a given sample and
     build a support vector regressor based on this custom kernel.
@@ -194,7 +193,7 @@ class OptimalKernelSVR(SVR):
     """
 
 
-    def __init__(self, k_bucket, method='cv_risk'):
+    def __init__(self, k_bucket='exhaustive', method='cv_risk'):
 
         super().__init__(kernel='precomputed')
 
@@ -237,14 +236,17 @@ class OptimalKernelSVR(SVR):
 
         if isinstance(self.k_bucket, str):
             try:
-                self.k_bucket = make_kernel_bucket(self.k_bucket)
+                # using a new internal variable to retain user supplied param
+                self._k_bucket = make_kernel_bucket(self.k_bucket)
             except:
                 raise ValueError('Input for k_func can only an instance of '
                                  'KernelBucket or a sampling strategy to generate '
                                  'one with make_kernel_bucket.'
                                  'sampling strategy must be one of {}'
                                  ''.format(cfg.kernel_bucket_strategies))
-        elif not isinstance(self.k_bucket, KernelBucket):
+        elif isinstance(self.k_bucket, KernelBucket):
+            self._k_bucket = deepcopy(self.k_bucket)
+        else:
             raise ValueError('Input for k_func can only an instance of '
                              'KernelBucket or a sampling strategy to generate '
                              'one with make_kernel_bucket')
