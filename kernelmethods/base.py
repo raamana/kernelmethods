@@ -705,7 +705,9 @@ class KernelMatrix(object):
             if not dense_fmt:
                 self._full_km = lil_matrix(self.shape, dtype=cfg.km_dtype)
             else:
-                self._full_km = np.empty(self.shape, dtype=cfg.km_dtype)
+                # filling with nan to avoid unexpected usage!
+                self._full_km = np.full(self.shape, fill_value=np.nan,
+                                        dtype=cfg.km_dtype)
 
             try:
                 # kernel matrix is symmetric (in a single sample case)
