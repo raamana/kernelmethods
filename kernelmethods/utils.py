@@ -66,9 +66,13 @@ def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
                          'It has {} dims with shape {} '
                          ''.format(ensure_num_dim, array.ndim, array.shape))
 
-    if not np.issubdtype(array.dtype, ensure_dtype):
-        raise ValueError('input data type {} is not compatible with the required {}'
-                         ''.format(array.dtype, ensure_dtype))
+    if not np.issubdtype(ensure_dtype, array.dtype):
+        prev_dtype = array.dtype
+        try:
+            array = array.astype(ensure_dtype)
+        except:
+            raise ValueError('Unable to recast input dtype from {} to required {}!'
+                             ''.format(prev_dtype, ensure_dtype))
 
     return array
 
