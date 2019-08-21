@@ -9,7 +9,7 @@ from kernelmethods.base import KernelMatrix
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
 from kernelmethods import config as cfg
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
 from sklearn.kernel_ridge import KernelRidge
@@ -253,13 +253,12 @@ class OptimalKernelSVR(SVR, RegressorMixin):
 
         self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
-        self._train_X, self._train_y = check_X_y(X, y)
+        self.opt_kernel_ = find_optimal_kernel(self._k_bucket,
+                                               self._train_X, self._train_y,
+                                               method=self.method,
+                                               estimator_name='SVR')
 
-        self.opt_kernel = find_optimal_kernel(self.k_bucket,
-                                              self._train_X, self._train_y,
-                                              method=self.method)
-
-        super().fit(X=self.opt_kernel.full, y=self._train_y,
+        super().fit(X=self.opt_kernel_.full, y=self._train_y,
                     sample_weight=sample_weight)
 
         return self
@@ -289,8 +288,8 @@ class OptimalKernelSVR(SVR, RegressorMixin):
         X = check_array(X)
 
         # sample_one must be test data to get the right shape for sklearn X
-        self.opt_kernel.attach_to(sample_one=X, sample_two=self._train_X)
-        test_train_KM = self.opt_kernel.full
+        self.opt_kernel_.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self.opt_kernel_.full
         predicted_y = super().predict(test_train_KM)
 
         return predicted_y
