@@ -13,8 +13,6 @@ from itertools import product as iter_product
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import issparse, lil_matrix
-
 from kernelmethods import config as cfg
 from kernelmethods.config import (KMAccessError, KMSetAdditionError,
                                   KernelMethodsWarning)
@@ -23,6 +21,7 @@ from kernelmethods.operations import (center_km, frobenius_norm, is_PSD,
                                       normalize_km_2sample)
 from kernelmethods.utils import (check_callable, contains_nan_inf, ensure_ndarray_1D,
                                  ensure_ndarray_2D, get_callable_name, not_symmetric)
+from scipy.sparse import issparse, lil_matrix
 
 
 class BaseKernelFunction(ABC):
@@ -460,7 +459,7 @@ class KernelMatrix(object):
 
         Normalize the kernel matrix to have unit diagonal.
 
-        Cosine normalization mplements definition according to Section 5.1 in
+        Cosine normalization implements definition according to Section 5.1 in
         Shawe-Taylor and Cristianini, "Kernels Methods for Pattern Analysis", 2004
 
         Parameters
@@ -717,7 +716,8 @@ class KernelMatrix(object):
                 #   refers to sample_two in the two_samples case
                 for ix_one in range(self.shape[0]): # number of rows!
                     for ix_two in range(ix_one, self.shape[1]): # from second sample!
-                        self._full_km[ix_one, ix_two] = self._eval_kernel(ix_one, ix_two)
+                        self._full_km[ix_one, ix_two] = \
+                            self._eval_kernel(ix_one, ix_two)
             except:
                 raise RuntimeError('Unable to fully compute the kernel matrix!')
             else:
@@ -876,6 +876,7 @@ class ConstantKernelMatrix(object):
         Data type for the constant value
     """
 
+
     def __init__(self,
                  num_samples,
                  value=0.0,
@@ -926,6 +927,7 @@ class ConstantKernelMatrix(object):
         """Shape of the kernel matrix"""
         return (self.num_samples, self.num_samples)
 
+
     @property
     def full(self):
         """Returns the full kernel matrix (in dense format)"""
@@ -961,7 +963,7 @@ class ConstantKernelMatrix(object):
 
         # all we need to know is the number of indices selected
         # (and they were indeed in admissible range)
-        return np.full((len(row_indices),len(col_indices)),
+        return np.full((len(row_indices), len(col_indices)),
                        fill_value=self.const_value,
                        dtype=self.dtype)
 
@@ -1012,6 +1014,7 @@ class ConstantKernelMatrix(object):
         indices = sorted(list(set(indices)))
 
         return indices
+
 
     def __str__(self):
         """human readable presentation"""
@@ -1562,4 +1565,3 @@ class WeightedAverageKernel(CompositeKernel):
             self.KM = self.KM + weight * km.full
 
         self._is_fitted = True
-

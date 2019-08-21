@@ -5,16 +5,16 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 """
 
-from kernelmethods.base import KernelMatrix
-from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from kernelmethods.ranking import find_optimal_kernel, get_estimator
-from kernelmethods import config as cfg
-from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
-from sklearn.utils.validation import check_X_y, check_array
-from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
-from sklearn.kernel_ridge import KernelRidge
-import warnings
 from copy import deepcopy
+
+from kernelmethods import config as cfg
+from kernelmethods.base import KernelMatrix
+from kernelmethods.ranking import find_optimal_kernel, get_estimator
+from kernelmethods.sampling import KernelBucket, make_kernel_bucket
+from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.svm import SVR
+from sklearn.utils.validation import check_X_y, check_array
+
 
 class KernelMachine(BaseEstimator):
     """Generic class to return a drop-in sklearn estimator.
@@ -30,6 +30,7 @@ class KernelMachine(BaseEstimator):
         Default: ``SVR``
 
     """
+
 
     def __init__(self,
                  k_func,
@@ -305,7 +306,7 @@ class OptimalKernelSVR(SVR, RegressorMixin):
         """returns all the relevant parameters for this estimator!"""
 
         return {'k_bucket': self.k_bucket,
-                'method': self.method}
+                'method'  : self.method}
 
 
     def set_params(self, **parameters):

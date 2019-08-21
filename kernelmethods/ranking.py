@@ -126,7 +126,8 @@ def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
         gs.fit(km.full, targets)
         cv_scores.append(gs.best_score_)
 
-    return 100 * min_max_scale(cv_scores) #scaling helps compare across multiple metrics
+    # scaling helps compare across multiple metrics
+    return 100 * min_max_scale(cv_scores)
 
 
 def alignment_ranking(kernel_bucket, targets, **method_params):
@@ -173,7 +174,7 @@ def get_estimator(learner_id='svm'):
         range_C = np.power(10.0, range(-6, 6))
         param_grid = dict(C=range_C)
         base_learner = SVC(kernel='precomputed', probability=True, C=10)
-    elif learner_id in ('svr', ):
+    elif learner_id in ('svr',):
         from sklearn.svm import SVR
         range_C = np.power(10.0, range(-6, 6))
         param_grid = dict(C=range_C)

@@ -19,11 +19,10 @@ import traceback
 import warnings
 
 import numpy as np
-from numpy import multiply as elem_wise_multiply
-from scipy.linalg import LinAlgError, eigh
-
 from kernelmethods.config import KMNormError, KernelMethodsException
 from kernelmethods.utils import contains_nan_inf, ensure_ndarray_1D
+from numpy import multiply as elem_wise_multiply
+from scipy.linalg import LinAlgError, eigh
 
 
 def is_positive_semidefinite(sym_matrix,
@@ -77,7 +76,8 @@ def is_positive_semidefinite(sym_matrix,
         if verbose:
             traceback.print_exc()
         # we are not actually raising LinAlgError, just using it to categorize as
-        # not PSD. So, can't use test cases to try raise LinAlgError, so not testable!
+        # not PSD. So, can't use test cases to try raise LinAlgError, so not
+        # testable!
         print('LinAlgError raised - eigen value computation failed --> not PSD')
         psd = False
     except:
@@ -88,8 +88,8 @@ def is_positive_semidefinite(sym_matrix,
     else:
         if verbose:
             print('Smallest eigen values are:\n'
-                  '{}'.format(eig_values[:min(10,len(eig_values))]))
-        if any(eig_values < -tolerance): # notice the negative sign before tolerance
+                  '{}'.format(eig_values[:min(10, len(eig_values))]))
+        if any(eig_values < -tolerance):  # notice the negative sign before tolerance
             psd = False
         else:
             psd = True
@@ -131,11 +131,12 @@ def center_km(KM):
         raise ValueError('Unknown format for input matrix -'
                          'must be a square numpy ndarray')
 
-    # directly initializing one_oneT without going through unnecessary matrix products
+    # directly initializing one_oneT without going through unnecessary matrix
+    # products
     #   vec_1s = np.ones((n_rows, 1)) # row vector of 1s
     #   one_oneT = vec_1s.dot(vec_1s.T) # 1 dot 1T
     one_oneT = np.ones((n_rows, n_rows))
-    Ic = np.eye(n_rows) - (one_oneT/n_rows)
+    Ic = np.eye(n_rows) - (one_oneT / n_rows)
 
     return Ic.dot(KM).dot(Ic)
 
@@ -166,8 +167,9 @@ def normalize_km(KM, method='cosine'):
     """
 
     if KM.shape[0] != KM.shape[1]:
-        raise ValueError('Input kernel matrix must be square! i.e. K(X,X) '
-                         'typically generated from inner products on a single sample X, '
+        raise ValueError('Input kernel matrix must be square! '
+                         'i.e. K(X,X) must be generated from '
+                         'inner products on a single sample X, '
                          'not an inner-product on two separate samples X and Y')
 
     try:
@@ -185,7 +187,7 @@ def normalize_km(KM, method='cosine'):
             # notice @ is matrix multiplication operator
             normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
             # in case of two samples K(X, Y), the left- and right-most factors
-            #  must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample
+            #  must come from K(X,X) & K(Y,Y) respectively: see normalize_km_2sample
         else:
             raise NotImplementedError('normalization method {} is not implemented'
                                       'yet!'.format(method))
@@ -217,11 +219,13 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
         Matrix of inner-products for samples from X onto Y i.e. K(X,Y)
 
     diag_K_XX : array
-        Diagonal from matrix of inner-products for samples from X onto itself i.e. K(X,X)
+        Diagonal from matrix of inner-products for samples from X onto itself i.e.
+        K(X,X)
         K(X,X) must NOT be normalized (otherwise they will all be 1s)
 
     diag_K_YY : array
-        Diagonal from matrix of inner-products for samples from Y onto itself i.e. K(Y,Y)
+        Diagonal from matrix of inner-products for samples from Y onto itself i.e.
+        K(Y,Y)
 
     Returns
     -------
@@ -372,10 +376,11 @@ def alignment_centered(km_one, km_two,
                              'Can not compute alignment!')
         else:
             warnings.warn('The Frobenius norm of KM1 or KM2 is 0. Setting value of '
-                          'alignment as {} as requested'.format(value_if_zero_division))
+                          'alignment as {} as requested'.format(
+                value_if_zero_division))
             return value_if_zero_division
 
-    return frobenius_product(kC_one, kC_two) / (fnorm_one*fnorm_two)
+    return frobenius_product(kC_one, kC_two) / (fnorm_one * fnorm_two)
 
 
 def eval_similarity(km_one, km_two):

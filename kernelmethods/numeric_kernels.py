@@ -1,4 +1,3 @@
-
 import numpy as np
 from kernelmethods.base import BaseKernelFunction
 from kernelmethods.config import Chi2NegativeValuesException
@@ -32,6 +31,7 @@ class PolyKernel(BaseKernelFunction):
         unless you know exactly what you are doing (expert users).
     """
 
+
     def __init__(self, degree=3, gamma=1.0, b=1.0, skip_input_checks=False):
         """
         Constructor
@@ -60,13 +60,15 @@ class PolyKernel(BaseKernelFunction):
 
         self.skip_input_checks = skip_input_checks
 
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
         if not self.skip_input_checks:
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
-        return (self.b + self.gamma*np.dot(x, y)) ** self.degree
+        return (self.b + self.gamma * np.dot(x, y)) ** self.degree
+
 
     def __str__(self):
         """human readable repr"""
@@ -90,6 +92,7 @@ class GaussianKernel(BaseKernelFunction):
 
     """
 
+
     def __init__(self, sigma=2.0, skip_input_checks=False):
         """
         Constructor
@@ -111,9 +114,10 @@ class GaussianKernel(BaseKernelFunction):
         # TODO implement param check
         # ensuring values of gamma/gamma is eps or larger to avoid zero division
         self.sigma = _ensure_min_eps(sigma)
-        self.gamma = _ensure_min_eps(1.0/(2*self.sigma**2))
+        self.gamma = _ensure_min_eps(1.0 / (2 * self.sigma ** 2))
 
         self.skip_input_checks = skip_input_checks
+
 
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
@@ -121,7 +125,8 @@ class GaussianKernel(BaseKernelFunction):
         if not self.skip_input_checks:
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
-        return np.exp(-self.gamma * np.linalg.norm(x - y, ord=2)**2)
+        return np.exp(-self.gamma * np.linalg.norm(x - y, ord=2) ** 2)
+
 
     def __str__(self):
         """human readable repr"""
@@ -143,6 +148,7 @@ class LaplacianKernel(BaseKernelFunction):
         unless you know exactly what you are doing (expert users).
 
     """
+
 
     def __init__(self, gamma=1.0, skip_input_checks=False):
         """
@@ -166,6 +172,7 @@ class LaplacianKernel(BaseKernelFunction):
 
         self.skip_input_checks = skip_input_checks
 
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
@@ -173,6 +180,7 @@ class LaplacianKernel(BaseKernelFunction):
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
         return np.exp(-self.gamma * np.sum(np.abs(x - y)))
+
 
     def __str__(self):
         """human readable repr"""
@@ -208,6 +216,7 @@ class Chi2Kernel(BaseKernelFunction):
 
     """
 
+
     def __init__(self, gamma=1.0, skip_input_checks=False):
         """
         Constructor
@@ -230,6 +239,7 @@ class Chi2Kernel(BaseKernelFunction):
 
         self.skip_input_checks = skip_input_checks
 
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
@@ -245,6 +255,7 @@ class Chi2Kernel(BaseKernelFunction):
         value = np.exp(-self.gamma * np.nansum(np.power(x - y, 2) / (x + y)))
 
         return value
+
 
     def __str__(self):
         """human readable repr"""
@@ -274,6 +285,7 @@ class SigmoidKernel(BaseKernelFunction):
 
     """
 
+
     def __init__(self, gamma=1.0, offset=1.0, skip_input_checks=False):
         """
         Constructor
@@ -300,6 +312,7 @@ class SigmoidKernel(BaseKernelFunction):
 
         self.skip_input_checks = skip_input_checks
 
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
@@ -307,6 +320,7 @@ class SigmoidKernel(BaseKernelFunction):
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
         return np.tanh(self.offset + (self.gamma * np.dot(x, y)))
+
 
     def __str__(self):
         """human readable repr"""
@@ -325,6 +339,7 @@ class LinearKernel(BaseKernelFunction):
         unless you know exactly what you are doing (expert users).
     """
 
+
     def __init__(self, skip_input_checks=False):
         """
         Constructor
@@ -341,6 +356,7 @@ class LinearKernel(BaseKernelFunction):
         super().__init__(name='linear')
         self.skip_input_checks = skip_input_checks
 
+
     def __call__(self, x, y):
         """Actual implementation of kernel func"""
 
@@ -348,6 +364,7 @@ class LinearKernel(BaseKernelFunction):
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
         return x.dot(y.T)
+
 
     def __str__(self):
         """human readable repr"""
