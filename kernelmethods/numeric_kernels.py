@@ -175,10 +175,18 @@ class LaplacianKernel(BaseKernelFunction):
 class Chi2Kernel(BaseKernelFunction):
     """Chi-squared kernel function
 
-    The chi-squared kernel is given by::
+    This kernel is implemented as::
 
         k(x, y) = exp(-gamma Sum [(x - y)^2 / (x + y)])
 
+    x and y must have non-negative values (>=0).
+
+    As a division is involved, when x+y is 0 or when x+y and x-y are both 0 for a
+    particular dimension, the division results in a NaN, which is currently
+    being ignored, by summing only non-NaN values. If your feature sets have many
+    zeros, you may want investigate the effect of this kernel on your dataset
+    carefully to ensure you understand this kernel meets your needs and
+    expectations.
 
     Parameters
     ----------
@@ -218,9 +226,17 @@ class Chi2Kernel(BaseKernelFunction):
         """Actual implementation of kernel func"""
 
         if not self.skip_input_checks:
-            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+            x, y = check_input_arrays(x, y, ensure_dtype=np.float64)
 
-        return np.exp(-self.gamma * np.sum(np.power(x - y, 2) / (x + y)))
+        if (x < 0).any() or (y < 0).any():
+            raise Chi2NegativeValuesException(
+                'Chi^2 kernel requires non-negative values!'
+                ' x or y contains non-negative values')
+
+        # Note: NaNs due to Zero division are being ignored via np.nansum!
+        value = np.exp(-self.gamma * np.nansum(np.power(x - y, 2) / (x + y)))
+
+        return value
 
     def __str__(self):
         """human readable repr"""
