@@ -1,7 +1,5 @@
 
 import numpy as np
-from scipy.sparse import issparse
-
 from kernelmethods.base import BaseKernelFunction
 from kernelmethods.config import Chi2NegativeValuesException
 from kernelmethods.utils import _ensure_min_eps, check_input_arrays
@@ -14,10 +12,16 @@ from kernelmethods.utils import _ensure_min_eps, check_input_arrays
 class PolyKernel(BaseKernelFunction):
     """Polynomial kernel function
 
+    Formula::
+        K(x, y) = ( b + gamma*<x, y> )^degree
+
     Parameters
     ----------
     degree : int
         degree to raise the inner product
+
+    gamma : float
+        scaling factor
 
     b : float
         intercept
@@ -28,7 +32,7 @@ class PolyKernel(BaseKernelFunction):
         unless you know exactly what you are doing (expert users).
     """
 
-    def __init__(self, degree=2, b=0, skip_input_checks=False):
+    def __init__(self, degree=3, gamma=1.0, b=1.0, skip_input_checks=False):
         """
         Constructor
 
@@ -51,6 +55,7 @@ class PolyKernel(BaseKernelFunction):
 
         # TODO implement param check
         self.degree = degree
+        self.gamma = gamma
         self.b = b
 
         self.skip_input_checks = skip_input_checks
@@ -61,12 +66,13 @@ class PolyKernel(BaseKernelFunction):
         if not self.skip_input_checks:
             x, y = check_input_arrays(x, y, ensure_dtype=np.number)
 
-        return (self.b + x.dot(y.T)) ** self.degree
+        return (self.b + self.gamma*np.dot(x, y)) ** self.degree
 
     def __str__(self):
         """human readable repr"""
 
-        return "{}(degree={},b={})".format(self.name, self.degree, self.b)
+        return "{}(degree={},gamma={},b={})".format(self.name, self.degree,
+                                                    self.gamma, self.b)
 
 
 class GaussianKernel(BaseKernelFunction):
@@ -354,4 +360,4 @@ DEFINED_KERNEL_FUNCS = (PolyKernel(),
                         LaplacianKernel(),
                         LinearKernel(),
                         SigmoidKernel(),
-                        Chi2Kernel())
+                        )
