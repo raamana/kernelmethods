@@ -14,7 +14,8 @@ from kernelmethods.sampling import KernelBucket
 from kernelmethods.utils import min_max_scale
 
 
-def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
+def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr',
+                        **method_params):
     """
     Finds the optimal kernel for the current sample given their labels.
 
@@ -48,7 +49,7 @@ def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
                                   ''.format(cfg.VALID_RANKING_METHODS))
 
     kernel_bucket.attach_to(sample=sample)
-    metric = rank_kernels(kernel_bucket, targets, method=method)
+    metric = rank_kernels(kernel_bucket, targets, method=method, **method_params)
 
     return kernel_bucket[np.argmax(metric)]
 
