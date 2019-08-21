@@ -405,6 +405,10 @@ class KernelMatrix(object):
     def full(self):
         """Fully populated kernel matrix in dense ndarray format."""
 
+        if self._sample is None:
+            raise ValueError('No sample is attached yet!\n Attach a sample first '
+                             'before trying to use the KernelMatrix')
+
         if not self._populated_fully:
             self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 
