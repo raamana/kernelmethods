@@ -3,7 +3,9 @@ import numpy as np
 from scipy.sparse import issparse
 
 from kernelmethods.base import BaseKernelFunction
-from kernelmethods.utils import check_input_arrays, _ensure_min_eps
+from kernelmethods.config import Chi2NegativeValuesException
+from kernelmethods.utils import _ensure_min_eps, check_input_arrays
+
 
 # TODO special handling for sparse arrays
 #   (e.g. custom dot product during kernel evaluation might be more efficient

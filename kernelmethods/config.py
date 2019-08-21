@@ -25,6 +25,16 @@ class KMSetAdditionError(KernelMethodsException):
     pass
 
 
+class KernelMethodsWarning(Warning):
+    """Custom warning to indicate kernelmethods-specific warning!"""
+    pass
+
+
+class Chi2NegativeValuesException(KernelMethodsException):
+    """Custom exception to indicate Chi^2 kernel requires non-negative values"""
+    pass
+
+
 VALID_KERNEL_MATRIX_OPS = ('sum', 'product', 'average')
 
 OPER_KM_OPS = {'sum'    : add,
