@@ -63,6 +63,10 @@ class MatchCountKernel(BaseKernelFunction):
 
         """
 
+        if not np.issubdtype(type(vec_c), cfg.dtype_categorical) or \
+            not np.issubdtype(type(vec_d), cfg.dtype_categorical):
+            raise TypeError('Categorical kernels require str or unicode dtype')
+
         vec_c, vec_d = check_input_arrays(vec_c, vec_d,
                                           ensure_dtype=cfg.dtype_categorical)
 

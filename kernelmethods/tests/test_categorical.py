@@ -83,7 +83,7 @@ def test_kernel_design():
         for non_catg in [(True, False, True),
                          [1.0, 2.4],
                          [object, object] ]:
-            with raises(ValueError):
+            with raises(TypeError):
                 _ = kernel(non_catg, non_catg)
 
 
