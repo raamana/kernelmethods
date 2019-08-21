@@ -83,7 +83,6 @@ def test_kernel_design():
 
         # only numeric data is accepted and other dtypes must raise an error
         for non_num in ['string',
-                        (True, False, True),
                         [object, object] ]:
             with raises(ValueError):
                 _ = kernel(non_num, non_num)
