@@ -261,6 +261,10 @@ class OptimalKernelSVR(SVR, RegressorMixin):
         super().fit(X=self.opt_kernel_.full, y=self._train_y,
                     sample_weight=sample_weight)
 
+        # temporary hack to pass sklearn estimator checks till a bug is fixed
+        # for more see: https://github.com/scikit-learn/scikit-learn/issues/14712
+        self.n_iter_ = 1
+
         return self
 
 
