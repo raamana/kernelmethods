@@ -282,8 +282,8 @@ class OptimalKernelSVR(SVR, RegressorMixin):
             Class labels for samples in X.
         """
 
-        # if not hasattr(self, 'opt_kernel_'):
-        #     raise ValueError("Can't predict - not fitted yet! Run .fit() first.")
+        if not hasattr(self, 'opt_kernel_'):
+            raise ValueError("Can't predict - not fitted yet! Run .fit() first.")
 
         X = check_array(X)
 
