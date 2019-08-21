@@ -10,12 +10,14 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from copy import copy
 from itertools import product as iter_product
+from warnings import warn
 
 import numpy as np
 from scipy.sparse import issparse, lil_matrix
 
 from kernelmethods import config as cfg
-from kernelmethods.config import (KMAccessError, KMSetAdditionError)
+from kernelmethods.config import (KMAccessError, KMSetAdditionError,
+                                  KernelMethodsWarning)
 from kernelmethods.operations import (center_km, frobenius_norm, is_PSD,
                                       normalize_km,
                                       normalize_km_2sample)
@@ -412,10 +414,6 @@ class KernelMatrix(object):
         if not self._populated_fully:
             self._populate_fully(fill_lower_tri=True, dense_fmt=True)
 
-        if contains_nan_inf(self._full_km):
-            raise Warning('Kernel matrix computation resulted in Inf or NaN '
-                          'values - check your parameters and data!')
-
         if self._keep_normed:
             if not self._is_normed:
                 self.normalize()
@@ -500,8 +498,9 @@ class KernelMatrix(object):
             self._is_normed = True
 
             if contains_nan_inf(self._normed_km):
-                raise Warning('normalization of kernel matrix resulted in Inf / NaN '
-                              'values - check your parameters and data!')
+                warn('Kernel matrix computation resulted in Inf or NaN values!'
+                     ' Check your parameters and data!\n Kernel function: {}'
+                     ''.format(self.kernel), KernelMethodsWarning)
 
 
     @property
@@ -744,8 +743,9 @@ class KernelMatrix(object):
             self._full_km = self._full_km.todense()
 
         if contains_nan_inf(self._full_km):
-            raise Warning('Kernel matrix computation resulted in Inf or NaN '
-                          'values - check your parameters and data!')
+            warn('Kernel matrix computation resulted in Inf or NaN values!'
+                 ' Check your parameters and data!\n Kernel function: {}'
+                 ''.format(self.kernel), KernelMethodsWarning)
 
         return self._full_km
 
