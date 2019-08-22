@@ -109,10 +109,25 @@ def test_normalize_two_sample():
                              np.random.randn(num_samples_one, 1),
                              np.random.randn(num_samples_two - 1, 1), )
 
-    with raises((KMNormError, RuntimeError)):
+    with raises((KMNormError, ValueError, RuntimeError)):
         normalize_km_2sample(np.zeros((5, 5)), np.zeros((5, 1)), np.zeros((5, 1)))
 
-    kmc = normalize_km(np.random.randn(10, 10))
+    with raises(NotImplementedError):
+        normalize_km_2sample(randn(num_samples_one, num_samples_two),
+                             randn(num_samples_one, 1),
+                             randn(num_samples_two, 1),
+                             method='notcosine')
+
+    with raises(NotImplementedError):
+        normalize_km(randn(10, 10), method='notcosine')
+
+    # the following should work
+    _ = normalize_km(randn(10, 10))
+    # adding 0.1 to diagonals to avoid norm errors with denom close to 0
+    diag_one = np.abs(randn(num_samples_one, 1))+0.1
+    diag_two = np.abs(randn(num_samples_two, 1))+0.1
+    _ = normalize_km_2sample(np.abs(randn(num_samples_one, num_samples_two)),
+                             diag_one, diag_two, method='cosine')
 
 
 def test_alignment_centered():
