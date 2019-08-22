@@ -124,13 +124,27 @@ class KernelBucket(KernelSet):
         # not attached to a sample yet
         self._num_samples = None
 
-        self._add_parametrized_kernels(poly_degree_values, PolyKernel, 'degree')
-        self._add_parametrized_kernels(rbf_sigma_values, GaussianKernel, 'sigma')
-        self._add_parametrized_kernels(laplacian_gamma_values, LaplacianKernel, 'gamma')
+        self.add_parametrized_kernels(PolyKernel, 'degree', poly_degree_values)
+        self.add_parametrized_kernels(GaussianKernel, 'sigma', rbf_sigma_values)
+        self.add_parametrized_kernels(LaplacianKernel, 'gamma', laplace_gamma_values)
 
 
-    def _add_parametrized_kernels(self, values, kernel_func, param_name):
-        """Adds a list of kernels corr. to various values for a given param"""
+    def add_parametrized_kernels(self, kernel_func, param, values):
+        """
+        Adds a list of kernels parametrized by various values for a given param
+
+        Parameters
+        ----------
+        kernel_func : BaseKernelFunction
+            Kernel function to be added (not an instance, but callable class)
+
+        param : str
+            Name of the parameter to the above kernel function
+
+        values : Iterable
+            List of parameter values. One kernel will be added for each value
+
+        """
 
         if values is not None:
             for val in values:
