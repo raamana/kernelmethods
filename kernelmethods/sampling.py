@@ -1,5 +1,3 @@
-import numpy as np
-from scipy.stats.stats import pearsonr
 from functools import partial
 from warnings import warn
 
@@ -74,13 +72,6 @@ class KernelBucket(KernelSet):
 
         Parameters
         ----------
-        name : str
-            String to identify the purpose or type of the bucket of kernels.
-            Also helps easily distinguishing it from other buckets.
-
-        normalize_kernels : bool
-            Flag to indicate whether the kernel matrices need to be normalized
-
         poly_degree_values : Iterable
             List of values for the degree parameter of the PolyKernel. One
             KernelMatrix will be added to the bucket for each value.
@@ -146,10 +137,24 @@ class KernelBucket(KernelSet):
 
         """
 
-        if values is not None:
-            for val in values:
-                self.append(KernelMatrix(kernel_func(**{param_name: val}),
+        if (not isinstance(kernel_func, type)) or \
+            (not issubclass(kernel_func, BaseKernelFunction)):
+            raise KernelMethodsException('Input {} is not a valid kernel func!'
+                                         ' Must be derived from BaseKernelFunction'
+                                         ''.format(kernel_func))
+
+        if not is_iterable_but_not_str(values, min_length=1):
+            raise ValueError('values must be an iterable set of param values (n>=1)')
+
+        for val in values:
+            try:
+                param_dict = {param              : val,
+                              'skip_input_checks': self._skip_input_checks}
+                self.append(KernelMatrix(kernel_func(**param_dict),
                                          normalized=self._norm_kernels))
+            except:
+                warn('Unable to add {} to the bucket for {}={}. Skipping it.'
+                     ''.format(kernel_func, param, val), KernelMethodsWarning)
 
 
 def make_kernel_bucket(strategy='exhaustive',
