@@ -1111,7 +1111,7 @@ class KernelSet(object):
 
         return len(self._km_set)
 
-
+    # TODO not a priority, but we might need methods to remove existing KMs
     def append(self, KM):
         """
         Method to add a new kernel to the set.
