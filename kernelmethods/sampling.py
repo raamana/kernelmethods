@@ -158,7 +158,8 @@ class KernelBucket(KernelSet):
 
 
 def make_kernel_bucket(strategy='exhaustive',
-                       normalize_kernels=True):
+                       normalize_kernels=True,
+                       skip_input_checks=False):
     """
     Generates a candidate kernels based on user preferences.
 
@@ -170,6 +171,12 @@ def make_kernel_bucket(strategy='exhaustive',
 
     normalize_kernels : bool
         Flag to indicate whether to normalize the kernel matrices
+
+    skip_input_checks : bool
+        Flag to indicate whether checks on input data (type, format etc) can
+        be skipped. This helps save a tiny bit of runtime for expert uses when
+        data types and formats are managed thoroughly in numpy. Default:
+        False. Disable this only when you know exactly what you're doing!
 
     Returns
     -------
@@ -187,12 +194,14 @@ def make_kernel_bucket(strategy='exhaustive',
     if strategy == 'exhaustive':
         return KernelBucket(name='KBucketExhaustive',
                             normalize_kernels=normalize_kernels,
+                            skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.default_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                             laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel)
     elif strategy == 'light':
         return KernelBucket(name='KBucketLight',
                             normalize_kernels=normalize_kernels,
+                            skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
                             laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel)
