@@ -67,9 +67,7 @@ class KernelBucket(KernelSet):
                  laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel,
                  name='KernelBucket',
                  normalize_kernels=True,
-                 poly_degree_values=cfg.default_degree_values_poly_kernel,
-                 rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
-                 laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel,
+                 skip_input_checks=False,
                  ):
         """
         Constructor.
@@ -94,9 +92,31 @@ class KernelBucket(KernelSet):
         laplace_gamma_values : Iterable
             List of values for the gamma parameter of the LaplacianKernel. One
             KernelMatrix will be added to the bucket for each value.
+
+        name : str
+            String to identify the purpose or type of the bucket of kernels.
+            Also helps easily distinguishing it from other buckets.
+
+        normalize_kernels : bool
+            Flag to indicate whether the kernel matrices need to be normalized
+
+        skip_input_checks : bool
+            Flag to indicate whether checks on input data (type, format etc) can
+            be skipped. This helps save a tiny bit of runtime for expert uses when
+            data types and formats are managed thoroughly in numpy. Default:
+            False. Disable this only when you know exactly what you're doing!
+
         """
 
-        self._norm_kernels = normalize_kernels
+        if isinstance(normalize_kernels, bool):
+            self._norm_kernels = normalize_kernels
+        else:
+            raise TypeError('normalize_kernels must be bool')
+
+        if isinstance(skip_input_checks, bool):
+            self._skip_input_checks = skip_input_checks
+        else:
+            raise TypeError('skip_input_checks must be bool')
 
         # start with the addition of kernel matrix for linear kernel
         init_kset = [KernelMatrix(LinearKernel(), normalized=self._norm_kernels), ]
