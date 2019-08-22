@@ -2,13 +2,15 @@
 from kernelmethods.operations import center_km, frobenius_product, frobenius_norm, \
     normalize_km, normalize_km_2sample, alignment_centered, linear_combination
 from kernelmethods.config import KMNormError
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
+from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, SigmoidKernel, \
     LaplacianKernel
 from kernelmethods.utils import check_callable
 from kernelmethods.base import KernelMatrix, KernelFromCallable, \
     BaseKernelFunction
-from kernelmethods.sampling import make_kernel_bucket, ideal_kernel, \
-    pairwise_similarity, correlation_km
+from kernelmethods.sampling import make_kernel_bucket, KernelBucket, \
+    ideal_kernel, pairwise_similarity, correlation_km
+from kernelmethods.config import KernelMethodsException, KernelMethodsWarning,\
+    kernel_bucket_strategies
 
 import numpy as np
 from scipy.sparse import issparse
@@ -48,6 +50,35 @@ def test_make_bucket():
 
     with raises(ValueError):
         _ = make_kernel_bucket('blah_invalid_strategy')
+
+    # ensure correct values work
+    for strategy in kernel_bucket_strategies:
+        _ = make_kernel_bucket(strategy=strategy)
+
+def test_KB_class():
+
+    for param in ['normalize_kernels', 'skip_input_checks']:
+        for invalid_value in (1, 'str', 34., 2+4j):
+            with raises(TypeError):
+                _ = KernelBucket(**{param: invalid_value})
+
+
+
+def test_add_parametrized_kernels():
+
+    kb = KernelBucket()
+    for invalid_kfunc in ('kfunc', gen_random_sample, KernelBucket, ):
+        with raises(KernelMethodsException):
+            kb.add_parametrized_kernels(invalid_kfunc, 'param', (1, ))
+
+    for invalid_values in ('string', gen_random_sample, [], KernelBucket):
+        with raises(ValueError):
+            kb.add_parametrized_kernels(PolyKernel, 'param', invalid_values)
+
+    for invalid_param in ('__param__', (), 'blahblah', 5):
+        for ker_func in (PolyKernel, LaplacianKernel, GaussianKernel, SigmoidKernel):
+            with raises(ValueError):
+                kb.add_parametrized_kernels(ker_func, invalid_param, 2)
 
 
 def test_ideal_kernel():
