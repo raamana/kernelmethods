@@ -16,7 +16,7 @@ API
 """
 
 import traceback
-import warnings
+from warnings import warn
 
 import numpy as np
 from kernelmethods.config import KMNormError, KernelMethodsException
@@ -63,11 +63,11 @@ def is_positive_semidefinite(sym_matrix,
         raise TypeError('Input matrix must be in numpy array format!')
 
     if sym_matrix.shape[0] != sym_matrix.shape[1]:
-        warnings.warn('Input matrix is not square, and hence not PSD')
+        warn('Input matrix is not square, and hence not PSD')
         return False
 
     if not np.isclose(sym_matrix, sym_matrix.T).all():
-        warnings.warn('Input matrix is not symmetric, and hence not PSD')
+        warn('Input matrix is not symmetric, and hence not PSD')
         return False
 
     try:
@@ -83,7 +83,7 @@ def is_positive_semidefinite(sym_matrix,
     except:
         if verbose:
             traceback.print_exc()
-        warnings.warn('Unknown exception during eigen value computation --> not PSD')
+        warn('Unknown exception during eigen value computation --> not PSD')
         psd = False
     else:
         if verbose:
@@ -198,8 +198,8 @@ def normalize_km(KM, method='cosine'):
         raise
     else:
         if contains_nan_inf(normed_km):
-            warnings.warn('normalization of kernel matrix resulted in Inf / NaN '
-                          'values - check your parameters and data!')
+            warn('normalization of kernel matrix resulted in Inf / NaN '
+                 'values - check your parameters and data!')
 
     return normed_km
 
@@ -372,8 +372,8 @@ def alignment_centered(km_one, km_two,
             raise ValueError('The Frobenius norm of KM1 or KM2 is 0. '
                              'Can not compute alignment!')
         else:
-            warnings.warn('The Frobenius norm of KM1 or KM2 is 0. Setting value of '
-                          'alignment as {} as requested'.format(
+            warn('The Frobenius norm of KM1 or KM2 is 0. Setting value of '
+                 'alignment as {} as requested'.format(
                 value_if_zero_division))
             return value_if_zero_division
 

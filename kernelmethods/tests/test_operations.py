@@ -6,6 +6,7 @@ from kernelmethods.operations import (alignment_centered, center_km, frobenius_n
                                       frobenius_product, is_PSD, linear_combination,
                                       normalize_km, normalize_km_2sample)
 from kernelmethods.sampling import make_kernel_bucket
+from numpy.random import randn
 from pytest import raises, warns
 
 num_samples = np.random.randint(20, 50)
@@ -94,20 +95,20 @@ def test_normalize():
     with raises(KMNormError):
         normalize_km(np.zeros((5, 5)))
 
-    kmc = normalize_km(np.random.randn(10, 10))
+    kmc = normalize_km(randn(10, 10))
 
 
 def test_normalize_two_sample():
     num_samples_one = 3
     num_samples_two = 4
     with raises(ValueError):
-        normalize_km_2sample(np.random.randn(num_samples_one, num_samples_two),
-                             np.random.randn(num_samples_two + 1, 1), [])
+        normalize_km_2sample(randn(num_samples_one, num_samples_two),
+                             randn(num_samples_two + 1, 1), [])
 
     with raises(ValueError):
-        normalize_km_2sample(np.random.randn(num_samples_one, num_samples_two),
-                             np.random.randn(num_samples_one, 1),
-                             np.random.randn(num_samples_two - 1, 1), )
+        normalize_km_2sample(randn(num_samples_one, num_samples_two),
+                             randn(num_samples_one, 1),
+                             randn(num_samples_two - 1, 1), )
 
     with raises((KMNormError, ValueError, RuntimeError)):
         normalize_km_2sample(np.zeros((5, 5)), np.zeros((5, 1)), np.zeros((5, 1)))
@@ -124,8 +125,8 @@ def test_normalize_two_sample():
     # the following should work
     _ = normalize_km(randn(10, 10))
     # adding 0.1 to diagonals to avoid norm errors with denom close to 0
-    diag_one = np.abs(randn(num_samples_one, 1))+0.1
-    diag_two = np.abs(randn(num_samples_two, 1))+0.1
+    diag_one = np.abs(randn(num_samples_one, 1)) + 0.1
+    diag_two = np.abs(randn(num_samples_two, 1)) + 0.1
     _ = normalize_km_2sample(np.abs(randn(num_samples_one, num_samples_two)),
                              diag_one, diag_two, method='cosine')
 
@@ -155,12 +156,12 @@ def test_alignment_centered():
         _ = alignment_centered(km1.full, km2.full, centered_already=flag)
 
     with raises(ValueError):
-        _ = alignment_centered(np.zeros((10, 10)), np.random.randn(10, 10),
+        _ = alignment_centered(np.zeros((10, 10)), randn(10, 10),
                                value_if_zero_division='raise')
 
     return_val_requested = 'random_set_value'
     with warns(UserWarning):
-        ret_value = alignment_centered(np.random.randn(10, 10),
+        ret_value = alignment_centered(randn(10, 10),
                                        np.zeros((10, 10)),
                                        value_if_zero_division=return_val_requested)
     if ret_value != return_val_requested:
@@ -169,12 +170,9 @@ def test_alignment_centered():
 
 def test_linear_comb():
     kset = make_kernel_bucket('light')
-    weights = np.random.randn(kset.size)
+    weights = randn(kset.size)
     kset.attach_to(sample_data)
     lc = linear_combination(kset, weights)
 
     with raises(ValueError):
-        lc = linear_combination(kset, np.random.randn(kset.size + 1))
-
-
-test_psd()
+        lc = linear_combination(kset, randn(kset.size + 1))
