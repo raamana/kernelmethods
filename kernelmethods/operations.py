@@ -194,8 +194,8 @@ def normalize_km(KM, method='cosine'):
     except (KMNormError, KernelMethodsException):
         raise
     except:
-        raise RuntimeError('Unable to normalize kernel matrix using method {}'
-                           ''.format(method))
+        warn('Unable to normalize kernel matrix using method {}'.format(method))
+        raise
     else:
         if contains_nan_inf(normed_km):
             warnings.warn('normalization of kernel matrix resulted in Inf / NaN '
@@ -242,15 +242,14 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
                          'number of rows in K_XY, and number of columns in K_XY '
                          'must match length of diag_K_XX.')
 
-    try:
-        method = method.lower()
-        if method == 'cosine':
-            if np.isclose(diag_K_XX, 0.0).any() or \
-                np.isclose(diag_K_YY, 0.0).any():
-                raise KMNormError(
-                    'Some diagnoal entries in one of the KMs are [close to] zero - '
-                    ' this results in infinite or Nan values '
-                    'during Cosine normalization of KM!')
+    method = method.lower()
+    if method == 'cosine':
+        if np.isclose(diag_K_XX, 0.0).any() or \
+            np.isclose(diag_K_YY, 0.0).any():
+            raise KMNormError(
+                'Some diagnoal entries in one of the KMs are [close to] zero - '
+                ' this results in infinite or Nan values '
+                'during Cosine normalization of KM!')
 
         # using diagflat to explicitly construct a matrix from diag values
         diag_factor_xx = np.diagflat(1 / np.sqrt(diag_K_XX))
