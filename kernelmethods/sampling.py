@@ -1,26 +1,70 @@
 import numpy as np
 from scipy.stats.stats import pearsonr
 from functools import partial
+from warnings import warn
+
+import numpy as np
 from kernelmethods import config as cfg
-from kernelmethods.base import KernelMatrix, KernelSet
-from kernelmethods.numeric_kernels import GaussianKernel, LaplacianKernel, LinearKernel, \
-    PolyKernel
+from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
+from kernelmethods.config import KernelMethodsException, KernelMethodsWarning
+from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
+                                           LinearKernel, PolyKernel)
 from kernelmethods.operations import alignment_centered
+from kernelmethods.utils import is_iterable_but_not_str
+from scipy.stats.stats import pearsonr
 
 
 class KernelBucket(KernelSet):
     """
     Class to generate and/or maintain a "bucket" of candidate kernels.
 
-    Applications
+    Applications:
 
         1. to rank/filter/select kernels based on a given sample via many metrics
         2. to be defined.
+
+    **Note**:
+    1. Linear kernel is always added during init without your choosing.
+    2. This is in contrast to Chi^2 kernel, which is not added to the bucket by
+    default, as it requires positive feature values and may break default use for
+    common applications. You can easily add Chi^2 or any other kernels via the
+    ``add_parametrized_kernels`` method.
+
+
+    Parameters
+    ----------
+    poly_degree_values : Iterable
+        List of values for the degree parameter of the PolyKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    rbf_sigma_values : Iterable
+        List of values for the sigma parameter of the GaussianKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    laplace_gamma_values : Iterable
+        List of values for the gamma parameter of the LaplacianKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    name : str
+        String to identify the purpose or type of the bucket of kernels.
+        Also helps easily distinguishing it from other buckets.
+
+    normalize_kernels : bool
+        Flag to indicate whether the kernel matrices need to be normalized
+
+    skip_input_checks : bool
+        Flag to indicate whether checks on input data (type, format etc) can
+        be skipped. This helps save a tiny bit of runtime for expert uses when
+        data types and formats are managed thoroughly in numpy. Default:
+        False. Disable this only when you know exactly what you're doing!
 
     """
 
 
     def __init__(self,
+                 poly_degree_values=cfg.default_degree_values_poly_kernel,
+                 rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
+                 laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel,
                  name='KernelBucket',
                  normalize_kernels=True,
                  poly_degree_values=cfg.default_degree_values_poly_kernel,
@@ -47,7 +91,7 @@ class KernelBucket(KernelSet):
             List of values for the sigma parameter of the GaussianKernel. One
             KernelMatrix will be added to the bucket for each value.
 
-        laplacian_gamma_values : Iterable
+        laplace_gamma_values : Iterable
             List of values for the gamma parameter of the LaplacianKernel. One
             KernelMatrix will be added to the bucket for each value.
         """
@@ -106,13 +150,13 @@ def make_kernel_bucket(strategy='exhaustive',
                             normalize_kernels=normalize_kernels,
                             poly_degree_values=cfg.default_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
-                            laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel)
     elif strategy == 'light':
         return KernelBucket(name='KBucketLight',
                             normalize_kernels=normalize_kernels,
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
-                            laplacian_gamma_values=cfg.light_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel)
     else:
         raise ValueError('Invalid choice of strategy '
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))
