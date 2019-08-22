@@ -2,6 +2,7 @@
 import numpy as np
 from scipy.sparse import issparse
 from kernelmethods import config
+from collections.abc import Iterable
 
 def check_input_arrays(x, y, ensure_dtype=np.number):
     """
@@ -153,3 +154,15 @@ def contains_nan_inf(matrix):
         return True
     else:
         return False
+
+
+def is_iterable_but_not_str(input_obj, min_length=1):
+    """Boolean check for iterables that are not strings and of a minimum length"""
+
+    if not (not isinstance(input_obj, str) and isinstance(input_obj, Iterable)):
+        return False
+
+    if len(input_obj) < min_length:
+        return False
+    else:
+        return True
