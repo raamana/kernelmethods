@@ -63,12 +63,11 @@ class MatchCountKernel(BaseKernelFunction):
 
         """
 
-        if not np.issubdtype(type(vec_c), cfg.dtype_categorical) or \
-            not np.issubdtype(type(vec_d), cfg.dtype_categorical):
-            raise TypeError('Categorical kernels require str or unicode dtype')
+        vec_c, vec_d = _check_categorical_arrays(vec_c, vec_d)
 
-        vec_c, vec_d = check_input_arrays(vec_c, vec_d,
-                                          ensure_dtype=cfg.dtype_categorical)
+        if not np.issubdtype(vec_c.dtype, cfg.dtype_categorical) or \
+            not np.issubdtype(vec_d.dtype, cfg.dtype_categorical):
+            raise TypeError('Categorical kernels require str or unicode dtype')
 
         match_count = np.sum(vec_c==vec_d)
 
@@ -82,3 +81,51 @@ class MatchCountKernel(BaseKernelFunction):
         """human readable repr"""
 
         return self.name
+
+
+def _check_categorical_arrays(x, y):
+    """
+    Ensures the inputs are
+    1) 1D arrays (not matrices)
+    2) with compatible size
+    3) of categorical data type
+    and hence are safe to operate on.
+
+    This is a variation of utils.check_input_arrays() to accommodate the special
+    needs for categorical dtype, where we do not have lists of
+    originally numbers/bool data to be converted to strings, and assume they are
+    categorical.
+
+    Parameters
+    ----------
+    x : iterable
+    y : iterable
+
+    Returns
+    -------
+    x : ndarray
+    y : ndarray
+    """
+
+    x = _ensure_type_size(x, ensure_num_dim=1)
+    y = _ensure_type_size(y, ensure_num_dim=1)
+
+    if x.size != y.size:
+        raise ValueError('x (n={}) and y (n={}) differ in size! '
+                         'They must be of same length'.format(x.size, y.size))
+
+    return x, y
+
+
+def _ensure_type_size(array, ensure_num_dim=1):
+    """Checking type and size of arrays"""
+
+    if not isinstance(array, np.ndarray):
+        array = np.squeeze(np.asarray(array))
+
+    if array.ndim != ensure_num_dim:
+        raise ValueError('array must be {}-dimensional! '
+                         'It has {} dims with shape {} '
+                         ''.format(ensure_num_dim, array.ndim, array.shape))
+
+    return array
