@@ -143,6 +143,10 @@ class KernelBucket(KernelSet):
                                          ' Must be derived from BaseKernelFunction'
                                          ''.format(kernel_func))
 
+        if values is None:
+            # warn('No values provided for {}. Doing nothing!'.format(param))
+            return
+
         if not is_iterable_but_not_str(values, min_length=1):
             raise ValueError('values must be an iterable set of param values (n>=1)')
 
