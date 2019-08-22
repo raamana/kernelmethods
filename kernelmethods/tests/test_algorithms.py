@@ -6,7 +6,7 @@ from kernelmethods.algorithms import KernelMachine, OptimalKernelSVR
 from kernelmethods.config import KMNormError, KernelMethodsException, \
     KernelMethodsWarning, Chi2NegativeValuesException
 from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
-from kernelmethods.sampling import make_kernel_bucket
+from kernelmethods.sampling import make_kernel_bucket, KernelBucket
 from pytest import raises
 from sklearn.datasets import make_classification
 from sklearn.utils.estimator_checks import check_estimator
@@ -70,9 +70,12 @@ def test_optimal_kernel_svr():
                                              n_samples=n_training)
     test_data = gen_random_sample(n_testing, sample_dim)
 
-    strategy = 'light'
+    # creating the smallest bucket, just with linear kernel, to speed up tests
+    kb = KernelBucket(poly_degree_values=None,
+                      rbf_sigma_values=None,
+                      laplace_gamma_values=None)
     try:
-        OKSVR = OptimalKernelSVR(k_bucket=strategy)
+        OKSVR = OptimalKernelSVR(k_bucket=kb)
     except:
         raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
@@ -83,8 +86,8 @@ def test_optimal_kernel_svr():
             OKSVR = OptimalKernelSVR(k_bucket=invalid_value)
             OKSVR.fit(train_data, labels)
 
-    OKSVR = OptimalKernelSVR(k_bucket=strategy)
-    OKSVR.set_params(k_bucket=strategy)
+    OKSVR = OptimalKernelSVR(k_bucket=kb)
+    OKSVR.set_params(k_bucket=kb)
 
 
 def test_kernel_machine():
