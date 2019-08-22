@@ -183,7 +183,7 @@ def normalize_km(KM, method='cosine'):
                     'during Cosine normalization of KM!')
             # D = diag(1./sqrt(diag(K)))
             # normed_K = D * K * D;
-            _1bySqrtDiag = np.diag(1 / np.sqrt(km_diag))
+            _1bySqrtDiag = np.diagflat(1 / np.sqrt(km_diag))
             # notice @ is matrix multiplication operator
             normed_km = _1bySqrtDiag @ KM @ _1bySqrtDiag
             # in case of two samples K(X, Y), the left- and right-most factors
@@ -252,16 +252,14 @@ def normalize_km_2sample(cross_K_XY, diag_K_XX, diag_K_YY, method='cosine'):
                     ' this results in infinite or Nan values '
                     'during Cosine normalization of KM!')
 
-            diag_factor_xx = np.diag(1 / np.sqrt(diag_K_XX))
-            diag_factor_yy = np.diag(1 / np.sqrt(diag_K_YY))
-            # notice @ is matrix multiplication operator
-            normed_km = diag_factor_xx @ cross_K_XY @ diag_factor_yy
-        else:
-            raise NotImplementedError('Two-sample normalization method {} is not'
-                                      'implemented yet!'.format(method))
-    except:
-        raise RuntimeError('Unable to normalize two-sample kernel matrix '
-                           'using method {}'.format(method))
+        # using diagflat to explicitly construct a matrix from diag values
+        diag_factor_xx = np.diagflat(1 / np.sqrt(diag_K_XX))
+        diag_factor_yy = np.diagflat(1 / np.sqrt(diag_K_YY))
+        # notice @ is matrix multiplication operator
+        normed_km = diag_factor_xx @ cross_K_XY @ diag_factor_yy
+    else:
+        raise NotImplementedError('Two-sample normalization method {} is not'
+                                  'implemented yet!'.format(method))
 
     return normed_km
 
