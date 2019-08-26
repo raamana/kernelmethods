@@ -1,44 +1,77 @@
-import numpy as np
-from scipy.stats.stats import pearsonr
 from functools import partial
+from warnings import warn
+
+import numpy as np
 from kernelmethods import config as cfg
-from kernelmethods.base import KernelMatrix, KernelSet
-from kernelmethods.numeric_kernels import GaussianKernel, LaplacianKernel, LinearKernel, \
-    PolyKernel
+from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
+from kernelmethods.config import KernelMethodsException, KernelMethodsWarning
+from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
+                                           LinearKernel, PolyKernel)
 from kernelmethods.operations import alignment_centered
+from kernelmethods.utils import is_iterable_but_not_str
+from scipy.stats.stats import pearsonr
 
 
 class KernelBucket(KernelSet):
     """
     Class to generate and/or maintain a "bucket" of candidate kernels.
 
-    Applications
+    Applications:
 
         1. to rank/filter/select kernels based on a given sample via many metrics
         2. to be defined.
+
+    **Note**:
+    1. Linear kernel is always added during init without your choosing.
+    2. This is in contrast to Chi^2 kernel, which is not added to the bucket by
+    default, as it requires positive feature values and may break default use for
+    common applications. You can easily add Chi^2 or any other kernels via the
+    ``add_parametrized_kernels`` method.
+
+
+    Parameters
+    ----------
+    poly_degree_values : Iterable
+        List of values for the degree parameter of the PolyKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    rbf_sigma_values : Iterable
+        List of values for the sigma parameter of the GaussianKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    laplace_gamma_values : Iterable
+        List of values for the gamma parameter of the LaplacianKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    name : str
+        String to identify the purpose or type of the bucket of kernels.
+        Also helps easily distinguishing it from other buckets.
+
+    normalize_kernels : bool
+        Flag to indicate whether the kernel matrices need to be normalized
+
+    skip_input_checks : bool
+        Flag to indicate whether checks on input data (type, format etc) can
+        be skipped. This helps save a tiny bit of runtime for expert uses when
+        data types and formats are managed thoroughly in numpy. Default:
+        False. Disable this only when you know exactly what you're doing!
 
     """
 
 
     def __init__(self,
-                 name='KernelBucket',
-                 normalize_kernels=True,
                  poly_degree_values=cfg.default_degree_values_poly_kernel,
                  rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
-                 laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel,
+                 laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel,
+                 name='KernelBucket',
+                 normalize_kernels=True,
+                 skip_input_checks=False,
                  ):
         """
         Constructor.
 
         Parameters
         ----------
-        name : str
-            String to identify the purpose or type of the bucket of kernels.
-            Also helps easily distinguishing it from other buckets.
-
-        normalize_kernels : bool
-            Flag to indicate whether the kernel matrices need to be normalized
-
         poly_degree_values : Iterable
             List of values for the degree parameter of the PolyKernel. One
             KernelMatrix will be added to the bucket for each value.
@@ -47,12 +80,34 @@ class KernelBucket(KernelSet):
             List of values for the sigma parameter of the GaussianKernel. One
             KernelMatrix will be added to the bucket for each value.
 
-        laplacian_gamma_values : Iterable
+        laplace_gamma_values : Iterable
             List of values for the gamma parameter of the LaplacianKernel. One
             KernelMatrix will be added to the bucket for each value.
+
+        name : str
+            String to identify the purpose or type of the bucket of kernels.
+            Also helps easily distinguishing it from other buckets.
+
+        normalize_kernels : bool
+            Flag to indicate whether the kernel matrices need to be normalized
+
+        skip_input_checks : bool
+            Flag to indicate whether checks on input data (type, format etc) can
+            be skipped. This helps save a tiny bit of runtime for expert uses when
+            data types and formats are managed thoroughly in numpy. Default:
+            False. Disable this only when you know exactly what you're doing!
+
         """
 
-        self._norm_kernels = normalize_kernels
+        if isinstance(normalize_kernels, bool):
+            self._norm_kernels = normalize_kernels
+        else:
+            raise TypeError('normalize_kernels must be bool')
+
+        if isinstance(skip_input_checks, bool):
+            self._skip_input_checks = skip_input_checks
+        else:
+            raise TypeError('skip_input_checks must be bool')
 
         # start with the addition of kernel matrix for linear kernel
         init_kset = [KernelMatrix(LinearKernel(), normalized=self._norm_kernels), ]
@@ -60,22 +115,55 @@ class KernelBucket(KernelSet):
         # not attached to a sample yet
         self._num_samples = None
 
-        self._add_parametrized_kernels(poly_degree_values, PolyKernel, 'degree')
-        self._add_parametrized_kernels(rbf_sigma_values, GaussianKernel, 'sigma')
-        self._add_parametrized_kernels(laplacian_gamma_values, LaplacianKernel, 'gamma')
+        self.add_parametrized_kernels(PolyKernel, 'degree', poly_degree_values)
+        self.add_parametrized_kernels(GaussianKernel, 'sigma', rbf_sigma_values)
+        self.add_parametrized_kernels(LaplacianKernel, 'gamma', laplace_gamma_values)
 
 
-    def _add_parametrized_kernels(self, values, kernel_func, param_name):
-        """Adds a list of kernels corr. to various values for a given param"""
+    def add_parametrized_kernels(self, kernel_func, param, values):
+        """
+        Adds a list of kernels parametrized by various values for a given param
 
-        if values is not None:
-            for val in values:
-                self.append(KernelMatrix(kernel_func(**{param_name: val}),
+        Parameters
+        ----------
+        kernel_func : BaseKernelFunction
+            Kernel function to be added (not an instance, but callable class)
+
+        param : str
+            Name of the parameter to the above kernel function
+
+        values : Iterable
+            List of parameter values. One kernel will be added for each value
+
+        """
+
+        if (not isinstance(kernel_func, type)) or \
+            (not issubclass(kernel_func, BaseKernelFunction)):
+            raise KernelMethodsException('Input {} is not a valid kernel func!'
+                                         ' Must be derived from BaseKernelFunction'
+                                         ''.format(kernel_func))
+
+        if values is None:
+            # warn('No values provided for {}. Doing nothing!'.format(param))
+            return
+
+        if not is_iterable_but_not_str(values, min_length=1):
+            raise ValueError('values must be an iterable set of param values (n>=1)')
+
+        for val in values:
+            try:
+                param_dict = {param              : val,
+                              'skip_input_checks': self._skip_input_checks}
+                self.append(KernelMatrix(kernel_func(**param_dict),
                                          normalized=self._norm_kernels))
+            except:
+                warn('Unable to add {} to the bucket for {}={}. Skipping it.'
+                     ''.format(kernel_func, param, val), KernelMethodsWarning)
 
 
 def make_kernel_bucket(strategy='exhaustive',
-                       normalize_kernels=True):
+                       normalize_kernels=True,
+                       skip_input_checks=False):
     """
     Generates a candidate kernels based on user preferences.
 
@@ -87,6 +175,12 @@ def make_kernel_bucket(strategy='exhaustive',
 
     normalize_kernels : bool
         Flag to indicate whether to normalize the kernel matrices
+
+    skip_input_checks : bool
+        Flag to indicate whether checks on input data (type, format etc) can
+        be skipped. This helps save a tiny bit of runtime for expert uses when
+        data types and formats are managed thoroughly in numpy. Default:
+        False. Disable this only when you know exactly what you're doing!
 
     Returns
     -------
@@ -104,15 +198,17 @@ def make_kernel_bucket(strategy='exhaustive',
     if strategy == 'exhaustive':
         return KernelBucket(name='KBucketExhaustive',
                             normalize_kernels=normalize_kernels,
+                            skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.default_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
-                            laplacian_gamma_values=cfg.default_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel)
     elif strategy == 'light':
         return KernelBucket(name='KBucketLight',
                             normalize_kernels=normalize_kernels,
+                            skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
-                            laplacian_gamma_values=cfg.light_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel)
     else:
         raise ValueError('Invalid choice of strategy '
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))

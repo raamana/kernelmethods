@@ -25,6 +25,16 @@ class KMSetAdditionError(KernelMethodsException):
     pass
 
 
+class KernelMethodsWarning(Warning):
+    """Custom warning to indicate kernelmethods-specific warning!"""
+    pass
+
+
+class Chi2NegativeValuesException(KernelMethodsException):
+    """Custom exception to indicate Chi^2 kernel requires non-negative values"""
+    pass
+
+
 VALID_KERNEL_MATRIX_OPS = ('sum', 'product', 'average')
 
 OPER_KM_OPS = {'sum'    : add,
@@ -43,6 +53,10 @@ default_gamma_values_laplacian_kernel = tuple([2**exp for exp in range(1, 7, 2)]
 light_degree_values_poly_kernel = (2, 3, )
 light_sigma_values_gaussian_kernel = tuple([2**exp for exp in range(-3, 3, 2)])
 light_gamma_values_laplacian_kernel = tuple([2**exp for exp in range(1, 3, 2)])
+
+# ranking
+
+VALID_RANKING_METHODS = ("align/corr", "cv_risk")
 
 # controls the precision for kernel_matrix elements
 km_dtype = np.dtype('f8')

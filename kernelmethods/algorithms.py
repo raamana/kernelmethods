@@ -5,15 +5,15 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 """
 
-from kernelmethods.base import KernelMatrix
-from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from kernelmethods.ranking import find_optimal_kernel, get_estimator
+from copy import deepcopy
+
 from kernelmethods import config as cfg
-from sklearn.base import BaseEstimator
+from kernelmethods.base import KernelMatrix
+from kernelmethods.ranking import find_optimal_kernel, get_estimator
+from kernelmethods.sampling import KernelBucket, make_kernel_bucket
+from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.svm import SVR
 from sklearn.utils.validation import check_X_y, check_array
-from sklearn.svm import SVC, SVR, NuSVC, NuSVR, OneClassSVM
-from sklearn.kernel_ridge import KernelRidge
-import warnings
 
 
 class KernelMachine(BaseEstimator):
@@ -54,25 +54,6 @@ class KernelMachine(BaseEstimator):
         self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
-    def set_learner_params(self, **learner_params):
-        """Separate method to set underlying estimator parameters"""
-
-        self.learner_params = learner_params
-        if len(self.learner_params) > 0:
-            if 'kernel' in self.learner_params:
-                warnings.warn('kernel is not allowed as parameter to estimator!'
-                              'As we set it via k_func. Ignoring it!')
-                self.learner_params.pop('kernel')
-
-            # to prevent recursive parameter setting
-            self.learner_params.pop('learner_params')
-
-            valid_keys = self._estimator.get_params().keys()
-            new_param_dict = {key: val for key, val in self.learner_params.items()
-                              if key in valid_keys}
-            self._estimator.set_params(**new_param_dict)
-
-
     def fit(self, X, y, sample_weight=None):
         """Fit the chosen Estimator based on the user-defined kernel.
 
@@ -106,7 +87,7 @@ class KernelMachine(BaseEstimator):
 
         """
 
-        self._train_X, self._train_y = check_X_y(X, y)
+        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
         self._km = KernelMatrix(self.k_func, name='train_km')
         self._km.attach_to(self._train_X)
@@ -173,7 +154,7 @@ class KernelMachine(BaseEstimator):
         return self
 
 
-class OptimalKernelSVR(SVR):
+class OptimalKernelSVR(SVR, RegressorMixin):
     """
     An estimator to learn the optimal kernel for a given sample and
     build a support vector regressor based on this custom kernel.
@@ -213,11 +194,12 @@ class OptimalKernelSVR(SVR):
     """
 
 
-    def __init__(self, k_bucket):
+    def __init__(self, k_bucket='exhaustive', method='cv_risk'):
 
         super().__init__(kernel='precomputed')
 
         self.k_bucket = k_bucket
+        self.method = method
 
 
     def fit(self, X, y, sample_weight=None):
@@ -255,27 +237,34 @@ class OptimalKernelSVR(SVR):
 
         if isinstance(self.k_bucket, str):
             try:
-                self.k_bucket = make_kernel_bucket(self.k_bucket)
+                # using a new internal variable to retain user supplied param
+                self._k_bucket = make_kernel_bucket(self.k_bucket)
             except:
                 raise ValueError('Input for k_func can only an instance of '
                                  'KernelBucket or a sampling strategy to generate '
                                  'one with make_kernel_bucket.'
                                  'sampling strategy must be one of {}'
                                  ''.format(cfg.kernel_bucket_strategies))
-        elif not isinstance(self.k_bucket, KernelBucket):
+        elif isinstance(self.k_bucket, KernelBucket):
+            self._k_bucket = deepcopy(self.k_bucket)
+        else:
             raise ValueError('Input for k_func can only an instance of '
                              'KernelBucket or a sampling strategy to generate '
                              'one with make_kernel_bucket')
 
+        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
-        self._train_X, self._train_y = check_X_y(X, y)
+        self.opt_kernel_ = find_optimal_kernel(self._k_bucket,
+                                               self._train_X, self._train_y,
+                                               method=self.method,
+                                               estimator_name='SVR')
 
-        self.opt_kernel = find_optimal_kernel(self.k_bucket,
-                                              self._train_X, self._train_y,
-                                              method='cv_risk')
-
-        super().fit(X=self.opt_kernel.full, y=self._train_y,
+        super().fit(X=self.opt_kernel_.full, y=self._train_y,
                     sample_weight=sample_weight)
+
+        # temporary hack to pass sklearn estimator checks till a bug is fixed
+        # for more see: https://github.com/scikit-learn/scikit-learn/issues/14712
+        self.n_iter_ = 1
 
         return self
 
@@ -298,9 +287,14 @@ class OptimalKernelSVR(SVR):
             Class labels for samples in X.
         """
 
+        if not hasattr(self, 'opt_kernel_'):
+            raise ValueError("Can't predict - not fitted yet! Run .fit() first.")
+
+        X = check_array(X)
+
         # sample_one must be test data to get the right shape for sklearn X
-        self.opt_kernel.attach_to(sample_one=X, sample_two=self._train_X)
-        test_train_KM = self.opt_kernel.full
+        self.opt_kernel_.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self.opt_kernel_.full
         predicted_y = super().predict(test_train_KM)
 
         return predicted_y
@@ -311,16 +305,15 @@ class OptimalKernelSVR(SVR):
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
-        return {'k_bucket': self.k_bucket, }
+        return {'k_bucket': self.k_bucket,
+                'method'  : self.method}
 
 
     def set_params(self, **parameters):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_bucket',):
+            if parameter in ('k_bucket', 'method'):
                 setattr(self, parameter, value)
-            # else:
-            #     setattr(self._estimator, parameter, value)
 
         return self

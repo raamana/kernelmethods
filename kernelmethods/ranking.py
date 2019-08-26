@@ -9,11 +9,13 @@ metrics, such as
 """
 
 import numpy as np
-from kernelmethods.sampling import make_kernel_bucket, KernelBucket
+from kernelmethods import config as cfg
+from kernelmethods.sampling import KernelBucket
 from kernelmethods.utils import min_max_scale
 
 
-def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
+def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr',
+                        **method_params):
     """
     Finds the optimal kernel for the current sample given their labels.
 
@@ -41,8 +43,13 @@ def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr'):
     if not isinstance(kernel_bucket, KernelBucket):
         raise TypeError('Input is not of required type: KernelBucket')
 
+    method = method.lower()
+    if method not in cfg.VALID_RANKING_METHODS:
+        raise NotImplementedError('Ranking method not recognized. Choose one of {}'
+                                  ''.format(cfg.VALID_RANKING_METHODS))
+
     kernel_bucket.attach_to(sample=sample)
-    metric = rank_kernels(kernel_bucket, targets, method=method)
+    metric = rank_kernels(kernel_bucket, targets, method=method, **method_params)
 
     return kernel_bucket[np.argmax(metric)]
 
@@ -73,15 +80,15 @@ def rank_kernels(kernel_bucket, targets, method='align/corr', **method_params):
 
     """
 
-    ranking_methods = ("align/corr", "cv_risk")
     method = method.lower()
+    if method not in cfg.VALID_RANKING_METHODS:
+        raise NotImplementedError('Ranking method not recognized. Choose one of {}'
+                                  ''.format(cfg.VALID_RANKING_METHODS))
 
     if method in ("align/corr",):
         return alignment_ranking(kernel_bucket, targets, **method_params)
     elif method in ('cv_risk', 'cv'):
         return CV_ranking(kernel_bucket, targets, **method_params)
-    else:
-        raise NotImplementedError('Choose one of {}'.format(ranking_methods))
 
 
 def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
@@ -119,7 +126,8 @@ def CV_ranking(kernel_bucket, targets, num_folds=3, estimator_name='SVM'):
         gs.fit(km.full, targets)
         cv_scores.append(gs.best_score_)
 
-    return 100 * min_max_scale(cv_scores) #scaling helps compare across multiple metrics
+    # scaling helps compare across multiple metrics
+    return 100 * min_max_scale(cv_scores)
 
 
 def alignment_ranking(kernel_bucket, targets, **method_params):
@@ -166,7 +174,7 @@ def get_estimator(learner_id='svm'):
         range_C = np.power(10.0, range(-6, 6))
         param_grid = dict(C=range_C)
         base_learner = SVC(kernel='precomputed', probability=True, C=10)
-    elif learner_id in ('svr', ):
+    elif learner_id in ('svr',):
         from sklearn.svm import SVR
         range_C = np.power(10.0, range(-6, 6))
         param_grid = dict(C=range_C)

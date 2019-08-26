@@ -2,6 +2,7 @@
 import numpy as np
 from scipy.sparse import issparse
 from kernelmethods import config
+from collections.abc import Iterable
 
 def check_input_arrays(x, y, ensure_dtype=np.number):
     """
@@ -33,13 +34,6 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
     if x.size != y.size:
         raise ValueError('x (n={}) and y (n={}) differ in size! '
                          'They must be of same length'.format(x.size, y.size))
-
-    # sparse to dense
-    if issparse(x):
-        x = np.array(x.todense())
-
-    if issparse(y):
-        y = np.array(y.todense())
 
     return x, y
 
@@ -73,9 +67,13 @@ def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
                          'It has {} dims with shape {} '
                          ''.format(ensure_num_dim, array.ndim, array.shape))
 
-    if not np.issubdtype(array.dtype, ensure_dtype):
-        raise ValueError('input data type {} is not compatible with the required {}'
-                         ''.format(array.dtype, ensure_dtype))
+    if not np.issubdtype(ensure_dtype, array.dtype):
+        prev_dtype = array.dtype
+        try:
+            array = array.astype(ensure_dtype)
+        except:
+            raise ValueError('Unable to recast input dtype from {} to required {}!'
+                             ''.format(prev_dtype, ensure_dtype))
 
     return array
 
@@ -156,3 +154,15 @@ def contains_nan_inf(matrix):
         return True
     else:
         return False
+
+
+def is_iterable_but_not_str(input_obj, min_length=1):
+    """Boolean check for iterables that are not strings and of a minimum length"""
+
+    if not (not isinstance(input_obj, str) and isinstance(input_obj, Iterable)):
+        return False
+
+    if len(input_obj) < min_length:
+        return False
+    else:
+        return True
