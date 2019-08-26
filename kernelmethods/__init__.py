@@ -9,17 +9,20 @@ __all__ = ['KernelMatrix',
            'PolyKernel', 'GaussianKernel', 'LaplacianKernel', 'LinearKernel',
            'Chi2Kernel', 'SigmoidKernel',
            'KernelBucket', 'KernelSet',
-           'OptimalKernelSVR', 'KernelMachine']
+           'KernelMachine', 'OptimalKernelSVC', 'OptimalKernelSVR', ]
 
-from kernelmethods.config import KernelMethodsException, \
-    KMAccessError, KMNormError, KMSetAdditionError
+from kernelmethods.config import (KernelMethodsException,
+                                  KMAccessError, KMNormError, KMSetAdditionError)
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LaplacianKernel, \
-    LinearKernel, Chi2Kernel, SigmoidKernel
+from kernelmethods.numeric_kernels import (PolyKernel, GaussianKernel,
+                                           LaplacianKernel,
+                                           LinearKernel, Chi2Kernel, SigmoidKernel)
 from kernelmethods.sampling import KernelBucket
-from kernelmethods.algorithms import KernelMachine, OptimalKernelSVR
+from kernelmethods.algorithms import (KernelMachine, OptimalKernelSVR,
+                                      OptimalKernelSVC)
 
 from ._version import get_versions
+
 __version__ = get_versions()['version']
 del get_versions
 
