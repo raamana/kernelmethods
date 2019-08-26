@@ -25,9 +25,7 @@ And if you're not sure which kernel function is optimal for your dataset, you ca
 
 |
 
-See below for their API.
-
-**Stay tuned** for more tutorials, examples and comprehensive docs.
+See below for their API. **Stay tuned** for more tutorials, examples and comprehensive docs.
 
 
 Kernel Machine (API)
