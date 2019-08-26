@@ -7,13 +7,14 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 from copy import deepcopy
 
+from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.svm import SVR
+from sklearn.utils.validation import check_X_y, check_array
+
 from kernelmethods import config as cfg
 from kernelmethods.base import KernelMatrix
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
-from sklearn.base import BaseEstimator, RegressorMixin
-from sklearn.svm import SVR
-from sklearn.utils.validation import check_X_y, check_array
 
 
 class KernelMachine(BaseEstimator):
@@ -169,6 +170,24 @@ class OptimalKernelSVR(SVR, RegressorMixin):
         An instance of KernelBucket that contains all the kernels to be compared,
         or a string identifying the sampling_strategy which populates a KernelBucket.
 
+    method : str
+        Scoring method to rank different kernels
+
+    C : float, optional (default=1.0)
+        Penalty parameter C of the error term.
+
+    epsilon : float, optional (default=0.1)
+         Epsilon in the epsilon-SVR model. It specifies the epsilon-tube
+         within which no penalty is associated in the training loss function
+         with points predicted within a distance epsilon from the actual
+         value.
+
+    tol : float, optional (default=1e-3)
+        Tolerance for stopping criterion.
+
+    shrinking : boolean, optional (default=True)
+        Whether to use the shrinking heuristic.
+
 
     Attributes
     ----------
@@ -194,12 +213,49 @@ class OptimalKernelSVR(SVR, RegressorMixin):
     """
 
 
-    def __init__(self, k_bucket='exhaustive', method='cv_risk'):
+    def __init__(self, k_bucket='exhaustive',
+                 method='cv_risk',
+                 C=1.0,
+                 epsilon=0.1,
+                 shrinking=True,
+                 tol=1e-3):
+        """
 
-        super().__init__(kernel='precomputed')
+        Parameters
+        ----------
+        k_bucket : KernelBucket or str
+            An instance of KernelBucket that contains all the kernels to be compared,
+            or a string identifying sampling strategy to populate a KernelBucket.
+
+        method : str
+            Scoring method to rank different kernels
+
+        C : float, optional (default=1.0)
+            Penalty parameter C of the error term.
+
+        epsilon : float, optional (default=0.1)
+             Epsilon in the epsilon-SVR model. It specifies the epsilon-tube
+             within which no penalty is associated in the training loss function
+             with points predicted within a distance epsilon from the actual
+             value.
+
+        shrinking : boolean, optional (default=True)
+            Whether to use the shrinking heuristic.
+
+        tol : float, optional (default=1e-3)
+            Tolerance for stopping criterion.
+
+        """
+
+        super().__init__(kernel='precomputed', C=C, epsilon=epsilon,
+                         shrinking=shrinking, tol=tol)
 
         self.k_bucket = k_bucket
         self.method = method
+        self.C = C
+        self.epsilon = epsilon
+        self.shrinking = shrinking
+        self.tol = tol
 
 
     def fit(self, X, y, sample_weight=None):
@@ -305,15 +361,20 @@ class OptimalKernelSVR(SVR, RegressorMixin):
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
-        return {'k_bucket': self.k_bucket,
-                'method'  : self.method}
+        return {'k_bucket' : self.k_bucket,
+                'method'   : self.method,
+                'C'        : self.C,
+                'epsilon'  : self.epsilon,
+                'shrinking': self.shrinking,
+                'tol'      : self.tol}
 
 
     def set_params(self, **parameters):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_bucket', 'method'):
+            if parameter in ('k_bucket', 'method',
+                             'C', 'epsilon', 'shrinking', 'tol'):
                 setattr(self, parameter, value)
 
         return self
