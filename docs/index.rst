@@ -1,5 +1,27 @@
-Welcome to kernelmethods's documentation!
-=========================================
+==========================
+Kernel methods and classes
+==========================
+
+.. image:: https://img.shields.io/pypi/v/kernelmethods.svg
+        :target: https://pypi.python.org/pypi/kernelmethods
+
+.. image:: https://img.shields.io/travis/raamana/kernelmethods.svg
+        :target: https://travis-ci.org/raamana/kernelmethods
+
+.. image:: https://coveralls.io/repos/github/raamana/kernelmethods/badge.svg?branch=master
+    :target: https://coveralls.io/github/raamana/kernelmethods?branch=master
+
+
+|
+|
+
+.. image:: flyer.png
+    :width: 800
+
+|
+
+Table of Contents
+-------------------
 
 .. toctree::
    :maxdepth: 3

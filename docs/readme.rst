@@ -1,22 +1,6 @@
 ==========================
-Kernel methods and classes
+Introduction
 ==========================
-
-.. image:: https://img.shields.io/pypi/v/kernelmethods.svg
-        :target: https://pypi.python.org/pypi/kernelmethods
-
-.. image:: https://img.shields.io/travis/raamana/kernelmethods.svg
-        :target: https://travis-ci.org/raamana/kernelmethods
-
-.. image:: https://coveralls.io/repos/github/raamana/kernelmethods/badge.svg?branch=master
-    :target: https://coveralls.io/github/raamana/kernelmethods?branch=master
-
-
-
------------
-
-.. image:: flyer.png
-    :width: 800
 
 
 ``kernelmethods`` is a pure python library defining modular classes that provides basic kernel methods, such as computing various kernel functions on a given sample (N points of dimension p) as well as provides an intuitive interface for advanced functionality such as composite and hyper kernels. This library fills an important void in the ever-growing python-based machine learning ecosystem, where users can only use predefined kernels and are not able to customize or extend them for their own applications, that demand great flexibility owing to their diversity and need for better performing kernel. This library defines the ``KernelMatrix`` class that is central to all the kernel methods and machines. As the ``KernelMatrix`` class is a key bridge between input data and the various kernel learning algorithms, it is designed to be highly usable and extensible to different applications and data types. Besides being able to apply basic kernels on a given sample (to produce a ``KernelMatrix``), this library provides various kernel operations, such as normalization, centering, product, alignment evaluation, linear combination and ranking (by various performance metrics) of kernel matrices.
@@ -28,19 +12,23 @@ In addition to the common numerical kernels such as the Gaussian and Polynomial 
 Moreover, drop-in ``Estimator`` classes are provided for kernel machines such as the ``SVM`` for seamless usage in the ``scikit-learn`` ecosystem.
 
 
-Docs
-----
 
-Demo notebooks:
+Demo notebooks
+----------------
+
+A notebook that could be explored right away without any installation is available on mybinder here (click on the launch button):
 
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
 
+|
+
 For download:
 
-https://github.com/raamana/kernelmethods/tree/master/demo_tutorials
+`Click on this link <https://github.com/raamana/kernelmethods/tree/master/demo_tutorials>`_
 
-Note
-----
 
-The software is beta. All types of contributions are greatly welcome.
+Contributors welcome
+----------------------
+
+The software is open source and in the beta stage. All types of contributions are **greatly welcome**.
