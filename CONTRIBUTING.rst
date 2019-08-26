@@ -4,13 +4,14 @@
 Contributing
 ============
 
-Contributions are welcome, and they are greatly appreciated! Every little bit
+Contributions are most welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
-
-You can contribute in many ways:
 
 Types of Contributions
 ----------------------
+
+You can contribute in many ways:
+
 
 Report Bugs
 ~~~~~~~~~~~
@@ -57,7 +58,7 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `kernelmethods` for local development.
+Ready to contribute? Here's how to set up ``kernelmethods`` for local development.
 
 1. Fork the `kernelmethods` repo on GitHub.
 2. Clone your fork locally::
