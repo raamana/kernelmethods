@@ -65,6 +65,16 @@
     <span class="k">pass</span></div>
 
 
+<span class="k">class</span> <span class="nc">KernelMethodsWarning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom warning to indicate kernelmethods-specific warning!&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Chi2NegativeValuesException</span><span class="p">(</span><span class="n">KernelMethodsException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom exception to indicate Chi^2 kernel requires non-negative values&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
 <span class="n">VALID_KERNEL_MATRIX_OPS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">,</span> <span class="s1">&#39;average&#39;</span><span class="p">)</span>
 
 <span class="n">OPER_KM_OPS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sum&#39;</span>    <span class="p">:</span> <span class="n">add</span><span class="p">,</span>
@@ -83,6 +93,10 @@
 <span class="n">light_degree_values_poly_kernel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">)</span>
 <span class="n">light_sigma_values_gaussian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
 <span class="n">light_gamma_values_laplacian_kernel</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">exp</span> <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="c1"># ranking</span>
+
+<span class="n">VALID_RANKING_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;align/corr&quot;</span><span class="p">,</span> <span class="s2">&quot;cv_risk&quot;</span><span class="p">)</span>
 
 <span class="c1"># controls the precision for kernel_matrix elements</span>
 <span class="n">km_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f8&#39;</span><span class="p">)</span>

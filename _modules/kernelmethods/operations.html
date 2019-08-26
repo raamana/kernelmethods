@@ -56,14 +56,13 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">eigh</span>
-
 <span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">contains_nan_inf</span><span class="p">,</span> <span class="n">ensure_ndarray_1D</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">multiply</span> <span class="k">as</span> <span class="n">elem_wise_multiply</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span><span class="p">,</span> <span class="n">eigh</span>
 
 
 <div class="viewcode-block" id="is_positive_semidefinite"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.is_positive_semidefinite">[docs]</a><span class="k">def</span> <span class="nf">is_positive_semidefinite</span><span class="p">(</span><span class="n">sym_matrix</span><span class="p">,</span>
@@ -104,11 +103,11 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input matrix must be in numpy array format!&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">sym_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sym_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Input matrix is not square, and hence not PSD&#39;</span><span class="p">)</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Input matrix is not square, and hence not PSD&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sym_matrix</span><span class="p">,</span> <span class="n">sym_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Input matrix is not symmetric, and hence not PSD&#39;</span><span class="p">)</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Input matrix is not symmetric, and hence not PSD&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -116,18 +115,21 @@
     <span class="k">except</span> <span class="n">LinAlgError</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="c1"># we are not actually raising LinAlgError, just using it to categorize as</span>
+        <span class="c1"># not PSD. So, can&#39;t use test cases to try raise LinAlgError, so not</span>
+        <span class="c1"># testable!</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LinAlgError raised - eigen value computation failed --&gt; not PSD&#39;</span><span class="p">)</span>
         <span class="n">psd</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unknown exception during eigen value computation --&gt; not PSD&#39;</span><span class="p">)</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unknown exception during eigen value computation --&gt; not PSD&#39;</span><span class="p">)</span>
         <span class="n">psd</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Smallest eigen values are:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eig_values</span><span class="p">[:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">eig_values</span><span class="p">))]))</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">eig_values</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">tolerance</span><span class="p">):</span> <span class="c1"># notice the negative sign before tolerance</span>
+                  <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eig_values</span><span class="p">[:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">eig_values</span><span class="p">))]))</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">eig_values</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">tolerance</span><span class="p">):</span>  <span class="c1"># notice the negative sign before tolerance</span>
             <span class="n">psd</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">psd</span> <span class="o">=</span> <span class="kc">True</span>
@@ -169,11 +171,12 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown format for input matrix -&#39;</span>
                          <span class="s1">&#39;must be a square numpy ndarray&#39;</span><span class="p">)</span>
 
-    <span class="c1"># directly initializing one_oneT without going through unnecessary matrix products</span>
+    <span class="c1"># directly initializing one_oneT without going through unnecessary matrix</span>
+    <span class="c1"># products</span>
     <span class="c1">#   vec_1s = np.ones((n_rows, 1)) # row vector of 1s</span>
     <span class="c1">#   one_oneT = vec_1s.dot(vec_1s.T) # 1 dot 1T</span>
     <span class="n">one_oneT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">))</span>
-    <span class="n">Ic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_rows</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">one_oneT</span><span class="o">/</span><span class="n">n_rows</span><span class="p">)</span>
+    <span class="n">Ic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_rows</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">one_oneT</span> <span class="o">/</span> <span class="n">n_rows</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Ic</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">KM</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ic</span><span class="p">)</span></div>
 
@@ -204,8 +207,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">KM</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">KM</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input kernel matrix must be square! i.e. K(X,X) &#39;</span>
-                         <span class="s1">&#39;typically generated from inner products on a single sample X, &#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input kernel matrix must be square! &#39;</span>
+                         <span class="s1">&#39;i.e. K(X,X) must be generated from &#39;</span>
+                         <span class="s1">&#39;inner products on a single sample X, &#39;</span>
                          <span class="s1">&#39;not an inner-product on two separate samples X and Y&#39;</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -219,23 +223,23 @@
                     <span class="s1">&#39;during Cosine normalization of KM!&#39;</span><span class="p">)</span>
             <span class="c1"># D = diag(1./sqrt(diag(K)))</span>
             <span class="c1"># normed_K = D * K * D;</span>
-            <span class="n">_1bySqrtDiag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">km_diag</span><span class="p">))</span>
+            <span class="n">_1bySqrtDiag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">km_diag</span><span class="p">))</span>
             <span class="c1"># notice @ is matrix multiplication operator</span>
             <span class="n">normed_km</span> <span class="o">=</span> <span class="n">_1bySqrtDiag</span> <span class="o">@</span> <span class="n">KM</span> <span class="o">@</span> <span class="n">_1bySqrtDiag</span>
             <span class="c1"># in case of two samples K(X, Y), the left- and right-most factors</span>
-            <span class="c1">#  must come from K(X,X) and K(Y,Y) respectively: see normalize_km_2sample</span>
+            <span class="c1">#  must come from K(X,X) &amp; K(Y,Y) respectively: see normalize_km_2sample</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;normalization method </span><span class="si">{}</span><span class="s1"> is not implemented&#39;</span>
                                       <span class="s1">&#39;yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="n">KMNormError</span><span class="p">,</span> <span class="n">KernelMethodsException</span><span class="p">):</span>
         <span class="k">raise</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to normalize kernel matrix using method </span><span class="si">{}</span><span class="s1">&#39;</span>
-                           <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unable to normalize kernel matrix using method </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+        <span class="k">raise</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">contains_nan_inf</span><span class="p">(</span><span class="n">normed_km</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;normalization of kernel matrix resulted in Inf / NaN &#39;</span>
-                          <span class="s1">&#39;values - check your parameters and data!&#39;</span><span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;normalization of kernel matrix resulted in Inf / NaN &#39;</span>
+                 <span class="s1">&#39;values - check your parameters and data!&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">normed_km</span></div>
 
@@ -255,11 +259,13 @@
 <span class="sd">        Matrix of inner-products for samples from X onto Y i.e. K(X,Y)</span>
 
 <span class="sd">    diag_K_XX : array</span>
-<span class="sd">        Diagonal from matrix of inner-products for samples from X onto itself i.e. K(X,X)</span>
+<span class="sd">        Diagonal from matrix of inner-products for samples from X onto itself i.e.</span>
+<span class="sd">        K(X,X)</span>
 <span class="sd">        K(X,X) must NOT be normalized (otherwise they will all be 1s)</span>
 
 <span class="sd">    diag_K_YY : array</span>
-<span class="sd">        Diagonal from matrix of inner-products for samples from Y onto itself i.e. K(Y,Y)</span>
+<span class="sd">        Diagonal from matrix of inner-products for samples from Y onto itself i.e.</span>
+<span class="sd">        K(Y,Y)</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -276,26 +282,23 @@
                          <span class="s1">&#39;number of rows in K_XY, and number of columns in K_XY &#39;</span>
                          <span class="s1">&#39;must match length of diag_K_XX.&#39;</span><span class="p">)</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> \
-                <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="n">KMNormError</span><span class="p">(</span>
-                    <span class="s1">&#39;Some diagnoal entries in one of the KMs are [close to] zero - &#39;</span>
-                    <span class="s1">&#39; this results in infinite or Nan values &#39;</span>
-                    <span class="s1">&#39;during Cosine normalization of KM!&#39;</span><span class="p">)</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">KMNormError</span><span class="p">(</span>
+                <span class="s1">&#39;Some diagnoal entries in one of the KMs are [close to] zero - &#39;</span>
+                <span class="s1">&#39; this results in infinite or Nan values &#39;</span>
+                <span class="s1">&#39;during Cosine normalization of KM!&#39;</span><span class="p">)</span>
 
-            <span class="n">diag_factor_xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">))</span>
-            <span class="n">diag_factor_yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">))</span>
-            <span class="c1"># notice @ is matrix multiplication operator</span>
-            <span class="n">normed_km</span> <span class="o">=</span> <span class="n">diag_factor_xx</span> <span class="o">@</span> <span class="n">cross_K_XY</span> <span class="o">@</span> <span class="n">diag_factor_yy</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Two-sample normalization method </span><span class="si">{}</span><span class="s1"> is not&#39;</span>
-                                      <span class="s1">&#39;implemented yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to normalize two-sample kernel matrix &#39;</span>
-                           <span class="s1">&#39;using method </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+        <span class="c1"># using diagflat to explicitly construct a matrix from diag values</span>
+        <span class="n">diag_factor_xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_XX</span><span class="p">))</span>
+        <span class="n">diag_factor_yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diag_K_YY</span><span class="p">))</span>
+        <span class="c1"># notice @ is matrix multiplication operator</span>
+        <span class="n">normed_km</span> <span class="o">=</span> <span class="n">diag_factor_xx</span> <span class="o">@</span> <span class="n">cross_K_XY</span> <span class="o">@</span> <span class="n">diag_factor_yy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Two-sample normalization method </span><span class="si">{}</span><span class="s1"> is not&#39;</span>
+                                  <span class="s1">&#39;implemented yet!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">normed_km</span></div>
 
@@ -391,6 +394,9 @@
                          <span class="s1">&#39;to compute their alignment! They differ: </span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">&#39;</span>
                          <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">km_one</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">km_two</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">km_one</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">km_two</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input KMs must be numpy arrays&#39;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">centered_already</span><span class="p">:</span>
         <span class="n">kC_one</span> <span class="o">=</span> <span class="n">center_km</span><span class="p">(</span><span class="n">km_one</span><span class="p">)</span>
         <span class="n">kC_two</span> <span class="o">=</span> <span class="n">center_km</span><span class="p">(</span><span class="n">km_two</span><span class="p">)</span>
@@ -406,11 +412,12 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The Frobenius norm of KM1 or KM2 is 0. &#39;</span>
                              <span class="s1">&#39;Can not compute alignment!&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The Frobenius norm of KM1 or KM2 is 0. Setting value of &#39;</span>
-                          <span class="s1">&#39;alignment as </span><span class="si">{}</span><span class="s1"> as requested&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value_if_zero_division</span><span class="p">))</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The Frobenius norm of KM1 or KM2 is 0. Setting value of &#39;</span>
+                 <span class="s1">&#39;alignment as </span><span class="si">{}</span><span class="s1"> as requested&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">value_if_zero_division</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">value_if_zero_division</span>
 
-    <span class="k">return</span> <span class="n">frobenius_product</span><span class="p">(</span><span class="n">kC_one</span><span class="p">,</span> <span class="n">kC_two</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">fnorm_one</span><span class="o">*</span><span class="n">fnorm_two</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">frobenius_product</span><span class="p">(</span><span class="n">kC_one</span><span class="p">,</span> <span class="n">kC_two</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">fnorm_one</span> <span class="o">*</span> <span class="n">fnorm_two</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="eval_similarity"><a class="viewcode-back" href="../../operations.html#kernelmethods.operations.eval_similarity">[docs]</a><span class="k">def</span> <span class="nf">eval_similarity</span><span class="p">(</span><span class="n">km_one</span><span class="p">,</span> <span class="n">km_two</span><span class="p">):</span>

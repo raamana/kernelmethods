@@ -1,7 +1,7 @@
 Utilities
 =============
 
-Here, we document several important utilities related to this library.
+Here, we document several important utilities related to this library, including sampling and ranking.
 
 
 Sampling

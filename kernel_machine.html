@@ -39,22 +39,24 @@
             
 <div class="section" id="drop-in-estimator-classes">
 <h1>Drop-in Estimator classes<a class="headerlink" href="#drop-in-estimator-classes" title="Permalink to this headline">¶</a></h1>
-<p>Besides being able to use the aforementioned <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> in SVM or another kernel machine, this library makes life even easier by providing drop-in Estimator classes directly. It’s called <code class="docutils literal notranslate"><span class="pre">KernelMachine</span></code> and they can be dropped in place of <code class="docutils literal notranslate"><span class="pre">sklearn.svm.SVC</span></code> anywhere. For example:</p>
+<p>Besides being able to use the aforementioned <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> in SVM or another kernel machine, this library makes life even easier by providing drop-in Estimator classes directly for use in scikit-learn. This interface is called <code class="docutils literal notranslate"><span class="pre">KernelMachine</span></code> and it can be dropped in place of <code class="docutils literal notranslate"><span class="pre">sklearn.svm.SVC</span></code> or another kernel machine of user choice anywhere an sklearn Estimator can be used. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="kn">import</span> <span class="n">KernelMachine</span>
 <span class="n">km</span> <span class="o">=</span> <span class="n">KernelMachine</span><span class="p">(</span><span class="n">k_func</span><span class="o">=</span><span class="n">rbf</span><span class="p">)</span>
 <span class="n">km</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">sample_data</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">km</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And if you’re not sure which kernel function is optimal for your dataset, you can employ <code class="docutils literal notranslate"><span class="pre">OptimalKernelSVR</span></code></p>
+<p>And if you’re not sure which kernel function is optimal for your dataset, you can simply employ the <code class="docutils literal notranslate"><span class="pre">OptimalKernelSVR</span></code> which evaluates a large <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> and trains the <code class="docutils literal notranslate"><span class="pre">SVR</span></code> estimator with the most optimal kernel for your sample. Using it is as easy as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="kn">import</span> <span class="n">OptimalKernelSVR</span>
 <span class="n">opt_km</span> <span class="o">=</span> <span class="n">OptimalKernelSVR</span><span class="p">(</span><span class="n">k_bucket</span><span class="o">=</span><span class="s1">&#39;exhaustive&#39;</span><span class="p">)</span>
 <span class="n">opt_km</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">sample_data</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 <span class="n">predicted_y</span> <span class="o">=</span> <span class="n">opt_km</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>See below for the API.</p>
-<p><strong>Stay tuned</strong> for more tutorials, examples and comprehensive docs.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>See below for their API. <strong>Stay tuned</strong> for more tutorials, examples and comprehensive docs.</p>
 <div class="section" id="kernel-machine-api">
 <h2>Kernel Machine (API)<a class="headerlink" href="#kernel-machine-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -129,12 +131,6 @@ matrices as input.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="kernelmethods.KernelMachine.set_learner_params">
-<code class="sig-name descname">set_learner_params</code><span class="sig-paren">(</span><em class="sig-param">**learner_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_learner_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_learner_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Separate method to set underlying estimator parameters</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="kernelmethods.KernelMachine.set_params">
 <code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param">**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#KernelMachine.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMachine.set_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Param setter</p>
@@ -147,8 +143,8 @@ matrices as input.</p>
 <h2>OptimalKernelSVR (API)<a class="headerlink" href="#optimalkernelsvr-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.OptimalKernelSVR">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">OptimalKernelSVR</code><span class="sig-paren">(</span><em class="sig-param">k_bucket</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.svm.classes.SVR</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">OptimalKernelSVR</code><span class="sig-paren">(</span><em class="sig-param">k_bucket='exhaustive'</em>, <em class="sig-param">method='cv_risk'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/algorithms.html#OptimalKernelSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.OptimalKernelSVR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.svm.classes.SVR</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.RegressorMixin</span></code></p>
 <p>An estimator to learn the optimal kernel for a given sample and
 build a support vector regressor based on this custom kernel.</p>
 <p>This class is wrapped around the sklearn SVR estimator to function as its

@@ -40,6 +40,34 @@
 <div class="section" id="module-kernelmethods.numeric_kernels">
 <span id="numeric-kernels"></span><h1>Numeric kernels<a class="headerlink" href="#module-kernelmethods.numeric_kernels" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
+<dt id="kernelmethods.numeric_kernels.Chi2Kernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">Chi2Kernel</code><span class="sig-paren">(</span><em class="sig-param">gamma=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#Chi2Kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.Chi2Kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
+<p>Chi-squared kernel function</p>
+<p>This kernel is implemented as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">k</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="n">Sum</span> <span class="p">[(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>x and y must have non-negative values (&gt;=0).</p>
+<p>As a division is involved, when x+y is 0 or when x+y and x-y are both 0 for a
+particular dimension, the division results in a NaN, which is currently
+being ignored, by summing only non-NaN values. If your feature sets have many
+zeros, you may want investigate the effect of this kernel on your dataset
+carefully to ensure you understand this kernel meets your needs and
+expectations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gamma</strong> (<em>float</em>) – scale factor</p></li>
+<li><p><strong>skip_input_checks</strong> (<em>bool</em>) – Flag to skip input validation to save time.
+Skipping validation is strongly discouraged for normal use,
+unless you know exactly what you are doing (expert users).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
 <dt id="kernelmethods.numeric_kernels.GaussianKernel">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">GaussianKernel</code><span class="sig-paren">(</span><em class="sig-param">sigma=2.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#GaussianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.GaussianKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
@@ -89,14 +117,39 @@ unless you know exactly what you are doing (expert users).</p>
 
 <dl class="class">
 <dt id="kernelmethods.numeric_kernels.PolyKernel">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">PolyKernel</code><span class="sig-paren">(</span><em class="sig-param">degree=2</em>, <em class="sig-param">b=0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.PolyKernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">PolyKernel</code><span class="sig-paren">(</span><em class="sig-param">degree=3</em>, <em class="sig-param">gamma=1.0</em>, <em class="sig-param">b=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#PolyKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.PolyKernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
 <p>Polynomial kernel function</p>
+<dl class="simple">
+<dt>Formula::</dt><dd><p>K(x, y) = ( b + gamma*&lt;x, y&gt; )^degree</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>degree</strong> (<em>int</em>) – degree to raise the inner product</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – scaling factor</p></li>
 <li><p><strong>b</strong> (<em>float</em>) – intercept</p></li>
+<li><p><strong>skip_input_checks</strong> (<em>bool</em>) – Flag to skip input validation to save time.
+Skipping validation is strongly discouraged for normal use,
+unless you know exactly what you are doing (expert users).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="kernelmethods.numeric_kernels.SigmoidKernel">
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.numeric_kernels.</code><code class="sig-name descname">SigmoidKernel</code><span class="sig-paren">(</span><em class="sig-param">gamma=1.0</em>, <em class="sig-param">offset=1.0</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/numeric_kernels.html#SigmoidKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.numeric_kernels.SigmoidKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.BaseKernelFunction</span></code></p>
+<p>Sigmoid kernel function (also known as hyperbolic tangent kernel)</p>
+<p>NOTE: This kernel is not always PSD, and normalizing its kernel matrix can
+result in numerical issues or errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gamma</strong> (<em>float</em>) – scale factor</p></li>
+<li><p><strong>offset</strong> (<em>float</em>) – value of offset/bias</p></li>
 <li><p><strong>skip_input_checks</strong> (<em>bool</em>) – Flag to skip input validation to save time.
 Skipping validation is strongly discouraged for normal use,
 unless you know exactly what you are doing (expert users).</p></li>

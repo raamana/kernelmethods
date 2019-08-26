@@ -103,8 +103,11 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">vec_c</span><span class="p">,</span> <span class="n">vec_d</span> <span class="o">=</span> <span class="n">check_input_arrays</span><span class="p">(</span><span class="n">vec_c</span><span class="p">,</span> <span class="n">vec_d</span><span class="p">,</span>
-                                          <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">dtype_categorical</span><span class="p">)</span>
+        <span class="n">vec_c</span><span class="p">,</span> <span class="n">vec_d</span> <span class="o">=</span> <span class="n">_check_categorical_arrays</span><span class="p">(</span><span class="n">vec_c</span><span class="p">,</span> <span class="n">vec_d</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">vec_c</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dtype_categorical</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">vec_d</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">dtype_categorical</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Categorical kernels require str or unicode dtype&#39;</span><span class="p">)</span>
 
         <span class="n">match_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vec_c</span><span class="o">==</span><span class="n">vec_d</span><span class="p">)</span>
 
@@ -118,6 +121,54 @@
         <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_categorical_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures the inputs are</span>
+<span class="sd">    1) 1D arrays (not matrices)</span>
+<span class="sd">    2) with compatible size</span>
+<span class="sd">    3) of categorical data type</span>
+<span class="sd">    and hence are safe to operate on.</span>
+
+<span class="sd">    This is a variation of utils.check_input_arrays() to accommodate the special</span>
+<span class="sd">    needs for categorical dtype, where we do not have lists of</span>
+<span class="sd">    originally numbers/bool data to be converted to strings, and assume they are</span>
+<span class="sd">    categorical.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : iterable</span>
+<span class="sd">    y : iterable</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : ndarray</span>
+<span class="sd">    y : ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">_ensure_type_size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ensure_num_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">_ensure_type_size</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ensure_num_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;x (n=</span><span class="si">{}</span><span class="s1">) and y (n=</span><span class="si">{}</span><span class="s1">) differ in size! &#39;</span>
+                         <span class="s1">&#39;They must be of same length&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<span class="k">def</span> <span class="nf">_ensure_type_size</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">ensure_num_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checking type and size of arrays&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">ensure_num_dim</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;array must be </span><span class="si">{}</span><span class="s1">-dimensional! &#39;</span>
+                         <span class="s1">&#39;It has </span><span class="si">{}</span><span class="s1"> dims with shape </span><span class="si">{}</span><span class="s1"> &#39;</span>
+                         <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ensure_num_dim</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">array</span>
 </pre></div>
 
           </div>

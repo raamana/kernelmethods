@@ -39,27 +39,31 @@
             
 <div class="section" id="kernelmatrix-class">
 <h1>KernelMatrix class<a class="headerlink" href="#kernelmatrix-class" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> is a self-contained class for the Gram matrix induced by a kernel function on a given sample. This class defines the central data structure for all kernel methods, as it acts a key bridge between input data space and the learning algorithms.</p>
+<p><code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> is a self-contained class for the Gram matrix induced by a kernel function on a given sample. This class defines the central data structure for all kernel methods, as it acts a <em>key bridge</em> between input data space and the learning algorithms.</p>
 <p>The class is designed in such a way that</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>it only computes elements of the kernel matrix (KM) as neeeded, and nothing more, which can save a lot computation and storage</p></li>
-<li><p>it supports both callable as well as attribute access, allowing easy access to partial or random portions of the KM. Indexing is aimed to be compliant with numpy as much as possible.</p></li>
-<li><p>allows parallel computation of different part of the KM to speed up computation when <code class="docutils literal notranslate"><span class="pre">N</span></code> is large</p></li>
-<li><p>allows setting of user-defined attributes to allow easy identification and differentiation among a collection of KMs when working in applications such as Multiple Kernel Learning (MKL)</p></li>
+<li><p>computation is <strong>on-demand</strong>, meaning it only computes elements of the kernel matrix (KM) as needed, and nothing more. This can save a lot computation and storage, for large samples.</p></li>
+<li><p>supports both callable as well as attribute access. This allows easy access to <em>partial</em> or <em>random</em> portions of the KM. Indexing the KM is aimed to be compliant that of numpy arrays as much as possible.</p></li>
+<li><p>allows <strong>parallel</strong> computation of different part of the KM to speed up computation when <code class="docutils literal notranslate"><span class="pre">N</span></code> is large</p></li>
+<li><p>allows setting of <em>user-defined</em> <strong>attributes</strong> to allow easy identification and differentiation among a collection of KMs when working in applications such as Multiple Kernel Learning (MKL)</p></li>
 <li><p>implements basic operations such as centering and normalization (whose implementation differs from that of manipulating regular matrices)</p></li>
 <li><p>exposes several convenience attributes to make advanced development a breeze</p></li>
 </ul>
 </div></blockquote>
-<p>This library also provides convenience wrappers:</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>This library also provides the following convenience wrappers (see below for the API):</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">KernelMatrixPrecomputed</span></code> turns a precomputed kernel matrix into a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> class with all its attractive properties</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ConstantKernelMatrix</span></code> that defines a <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code> with a constant everywhere</p></li>
+<li><p>custom exception <code class="docutils literal notranslate"><span class="pre">KMAccessError</span></code> to identify invalid access of the KM</p></li>
 </ul>
 </div></blockquote>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api-for-kernelmatrix">
+<h2>API for <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code><a class="headerlink" href="#api-for-kernelmatrix" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelMatrix">
 <em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelMatrix</code><span class="sig-paren">(</span><em class="sig-param">kernel</em>, <em class="sig-param">normalized=True</em>, <em class="sig-param">name='KernelMatrix'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix" title="Permalink to this definition">¶</a></dt>
@@ -195,7 +199,7 @@ Or value_if_not_found if attribute is not found.</p>
 <dt id="kernelmethods.KernelMatrix.normalize">
 <code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">method='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/base.html#KernelMatrix.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelMatrix.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize the kernel matrix to have unit diagonal.</p>
-<p>Cosine normalization mplements definition according to Section 5.1 in
+<p>Cosine normalization implements definition according to Section 5.1 in
 Shawe-Taylor and Cristianini, “Kernels Methods for Pattern Analysis”, 2004</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -360,7 +364,7 @@ set self.__traceback__ to tb and return self.</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">KernelMatrix class</a><ul>
-<li><a class="reference internal" href="#api">API</a></li>
+<li><a class="reference internal" href="#api-for-kernelmatrix">API for <code class="docutils literal notranslate"><span class="pre">KernelMatrix</span></code></a></li>
 <li><a class="reference internal" href="#special-kernel-matrices">Special Kernel Matrices</a></li>
 <li><a class="reference internal" href="#exceptions">Exceptions</a></li>
 </ul>

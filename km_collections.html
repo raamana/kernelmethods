@@ -39,7 +39,7 @@
             
 <div class="section" id="collections-of-kernel-matrices">
 <h1>Collections of kernel matrices<a class="headerlink" href="#collections-of-kernel-matrices" title="Permalink to this headline">¶</a></h1>
-<p>When dealing multiple kernel matrices e.g. as part of multiple kernel learning (MKL), a number of validation and sanity checks need to be performed. Some of these checks include ensuring compatible size of the kernel matrices (KMs), as well as knowing these matrices are generated from the same sample. We refer to such collection of KMs a <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code>. Moreover, accessing a subset of these KMs e.g. filtered by some metric is often necessary while trying to optimize algorithms like MKL. To serve as candidates for optimization, it is often necessary to <em>sample</em> and generate a large number of KMs, here referred to as a <em>bucket</em>. The <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> make these tasks easy and extensible while keeping their rich annotations and structure (meta-data etc).</p>
+<p>When dealing multiple kernel matrices e.g. as part of multiple kernel learning (MKL), a number of validation and sanity checks need to be performed. Some of these checks include ensuring compatible size of the kernel matrices (KMs), as well as knowing these matrices are generated from the same sample. We refer to such collection of KMs a <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code>. Moreover, accessing a subset of these KMs e.g. filtered by some metric is often necessary while trying to optimize algorithms like MKL. To serve as candidates for optimization, it is often necessary to <em>sample</em> and generate a large number of KMs, here referred to as a <em>bucket</em>. The <code class="docutils literal notranslate"><span class="pre">KernelSet</span></code> and <code class="docutils literal notranslate"><span class="pre">KernelBucket</span></code> make these tasks easy and extensible while keeping their rich annotations and structure (meta-data etc). Their API along with a custom exception are shown below.</p>
 <div class="section" id="kernel-set">
 <h2>Kernel Set<a class="headerlink" href="#kernel-set" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -186,16 +186,56 @@ their indices.</p>
 <h2>Kernel Bucket<a class="headerlink" href="#kernel-bucket" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="kernelmethods.KernelBucket">
-<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelBucket</code><span class="sig-paren">(</span><em class="sig-param">name='KernelBucket'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">poly_degree_values=(2</em>, <em class="sig-param">3</em>, <em class="sig-param">4)</em>, <em class="sig-param">rbf_sigma_values=(0.03125</em>, <em class="sig-param">0.125</em>, <em class="sig-param">0.5</em>, <em class="sig-param">2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">laplacian_gamma_values=(2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelBucket" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">kernelmethods.</code><code class="sig-name descname">KernelBucket</code><span class="sig-paren">(</span><em class="sig-param">poly_degree_values=(2</em>, <em class="sig-param">3</em>, <em class="sig-param">4)</em>, <em class="sig-param">rbf_sigma_values=(0.03125</em>, <em class="sig-param">0.125</em>, <em class="sig-param">0.5</em>, <em class="sig-param">2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">laplace_gamma_values=(2</em>, <em class="sig-param">8</em>, <em class="sig-param">32)</em>, <em class="sig-param">name='KernelBucket'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelBucket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">kernelmethods.base.KernelSet</span></code></p>
 <p>Class to generate and/or maintain a “bucket” of candidate kernels.</p>
-<p>Applications</p>
+<p>Applications:</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>to rank/filter/select kernels based on a given sample via many metrics</p></li>
 <li><p>to be defined.</p></li>
 </ol>
 </div></blockquote>
+<p><strong>Note</strong>:
+1. Linear kernel is always added during init without your choosing.
+2. This is in contrast to Chi^2 kernel, which is not added to the bucket by
+default, as it requires positive feature values and may break default use for
+common applications. You can easily add Chi^2 or any other kernels via the
+<code class="docutils literal notranslate"><span class="pre">add_parametrized_kernels</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>poly_degree_values</strong> (<em>Iterable</em>) – List of values for the degree parameter of the PolyKernel. One
+KernelMatrix will be added to the bucket for each value.</p></li>
+<li><p><strong>rbf_sigma_values</strong> (<em>Iterable</em>) – List of values for the sigma parameter of the GaussianKernel. One
+KernelMatrix will be added to the bucket for each value.</p></li>
+<li><p><strong>laplace_gamma_values</strong> (<em>Iterable</em>) – List of values for the gamma parameter of the LaplacianKernel. One
+KernelMatrix will be added to the bucket for each value.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – String to identify the purpose or type of the bucket of kernels.
+Also helps easily distinguishing it from other buckets.</p></li>
+<li><p><strong>normalize_kernels</strong> (<em>bool</em>) – Flag to indicate whether the kernel matrices need to be normalized</p></li>
+<li><p><strong>skip_input_checks</strong> (<em>bool</em>) – Flag to indicate whether checks on input data (type, format etc) can
+be skipped. This helps save a tiny bit of runtime for expert uses when
+data types and formats are managed thoroughly in numpy. Default:
+False. Disable this only when you know exactly what you’re doing!</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="kernelmethods.KernelBucket.add_parametrized_kernels">
+<code class="sig-name descname">add_parametrized_kernels</code><span class="sig-paren">(</span><em class="sig-param">kernel_func</em>, <em class="sig-param">param</em>, <em class="sig-param">values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#KernelBucket.add_parametrized_kernels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.KernelBucket.add_parametrized_kernels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a list of kernels parametrized by various values for a given param</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernel_func</strong> (<a class="reference internal" href="kernel_functions.html#kernelmethods.BaseKernelFunction" title="kernelmethods.BaseKernelFunction"><em>BaseKernelFunction</em></a>) – Kernel function to be added (not an instance, but callable class)</p></li>
+<li><p><strong>param</strong> (<em>str</em>) – Name of the parameter to the above kernel function</p></li>
+<li><p><strong>values</strong> (<em>Iterable</em>) – List of parameter values. One kernel will be added for each value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="method">
 <dt id="kernelmethods.KernelBucket.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">KM</em><span class="sig-paren">)</span><a class="headerlink" href="#kernelmethods.KernelBucket.append" title="Permalink to this definition">¶</a></dt>

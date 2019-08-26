@@ -38,47 +38,80 @@
           <div class="body" role="main">
             
 <h1>Source code for kernelmethods.sampling</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.stats.stats</span> <span class="k">import</span> <span class="n">pearsonr</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">kernelmethods</span> <span class="k">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">cfg</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">KernelMatrix</span><span class="p">,</span> <span class="n">KernelSet</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.numeric_kernels</span> <span class="k">import</span> <span class="n">GaussianKernel</span><span class="p">,</span> <span class="n">LaplacianKernel</span><span class="p">,</span> <span class="n">LinearKernel</span><span class="p">,</span> \
-    <span class="n">PolyKernel</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">BaseKernelFunction</span><span class="p">,</span> <span class="n">KernelMatrix</span><span class="p">,</span> <span class="n">KernelSet</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">KernelMethodsException</span><span class="p">,</span> <span class="n">KernelMethodsWarning</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.numeric_kernels</span> <span class="k">import</span> <span class="p">(</span><span class="n">GaussianKernel</span><span class="p">,</span> <span class="n">LaplacianKernel</span><span class="p">,</span>
+                                           <span class="n">LinearKernel</span><span class="p">,</span> <span class="n">PolyKernel</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.operations</span> <span class="k">import</span> <span class="n">alignment_centered</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">is_iterable_but_not_str</span>
+<span class="kn">from</span> <span class="nn">scipy.stats.stats</span> <span class="k">import</span> <span class="n">pearsonr</span>
 
 
 <div class="viewcode-block" id="KernelBucket"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelBucket">[docs]</a><span class="k">class</span> <span class="nc">KernelBucket</span><span class="p">(</span><span class="n">KernelSet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to generate and/or maintain a &quot;bucket&quot; of candidate kernels.</span>
 
-<span class="sd">    Applications</span>
+<span class="sd">    Applications:</span>
 
 <span class="sd">        1. to rank/filter/select kernels based on a given sample via many metrics</span>
 <span class="sd">        2. to be defined.</span>
+
+<span class="sd">    **Note**:</span>
+<span class="sd">    1. Linear kernel is always added during init without your choosing.</span>
+<span class="sd">    2. This is in contrast to Chi^2 kernel, which is not added to the bucket by</span>
+<span class="sd">    default, as it requires positive feature values and may break default use for</span>
+<span class="sd">    common applications. You can easily add Chi^2 or any other kernels via the</span>
+<span class="sd">    ``add_parametrized_kernels`` method.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    poly_degree_values : Iterable</span>
+<span class="sd">        List of values for the degree parameter of the PolyKernel. One</span>
+<span class="sd">        KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">    rbf_sigma_values : Iterable</span>
+<span class="sd">        List of values for the sigma parameter of the GaussianKernel. One</span>
+<span class="sd">        KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">    laplace_gamma_values : Iterable</span>
+<span class="sd">        List of values for the gamma parameter of the LaplacianKernel. One</span>
+<span class="sd">        KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">    name : str</span>
+<span class="sd">        String to identify the purpose or type of the bucket of kernels.</span>
+<span class="sd">        Also helps easily distinguishing it from other buckets.</span>
+
+<span class="sd">    normalize_kernels : bool</span>
+<span class="sd">        Flag to indicate whether the kernel matrices need to be normalized</span>
+
+<span class="sd">    skip_input_checks : bool</span>
+<span class="sd">        Flag to indicate whether checks on input data (type, format etc) can</span>
+<span class="sd">        be skipped. This helps save a tiny bit of runtime for expert uses when</span>
+<span class="sd">        data types and formats are managed thoroughly in numpy. Default:</span>
+<span class="sd">        False. Disable this only when you know exactly what you&#39;re doing!</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;KernelBucket&#39;</span><span class="p">,</span>
-                 <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_degree_values_poly_kernel</span><span class="p">,</span>
                  <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_sigma_values_gaussian_kernel</span><span class="p">,</span>
-                 <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">,</span>
+                 <span class="n">laplace_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;KernelBucket&#39;</span><span class="p">,</span>
+                 <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            String to identify the purpose or type of the bucket of kernels.</span>
-<span class="sd">            Also helps easily distinguishing it from other buckets.</span>
-
-<span class="sd">        normalize_kernels : bool</span>
-<span class="sd">            Flag to indicate whether the kernel matrices need to be normalized</span>
-
 <span class="sd">        poly_degree_values : Iterable</span>
 <span class="sd">            List of values for the degree parameter of the PolyKernel. One</span>
 <span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
@@ -87,12 +120,34 @@
 <span class="sd">            List of values for the sigma parameter of the GaussianKernel. One</span>
 <span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
 
-<span class="sd">        laplacian_gamma_values : Iterable</span>
+<span class="sd">        laplace_gamma_values : Iterable</span>
 <span class="sd">            List of values for the gamma parameter of the LaplacianKernel. One</span>
 <span class="sd">            KernelMatrix will be added to the bucket for each value.</span>
+
+<span class="sd">        name : str</span>
+<span class="sd">            String to identify the purpose or type of the bucket of kernels.</span>
+<span class="sd">            Also helps easily distinguishing it from other buckets.</span>
+
+<span class="sd">        normalize_kernels : bool</span>
+<span class="sd">            Flag to indicate whether the kernel matrices need to be normalized</span>
+
+<span class="sd">        skip_input_checks : bool</span>
+<span class="sd">            Flag to indicate whether checks on input data (type, format etc) can</span>
+<span class="sd">            be skipped. This helps save a tiny bit of runtime for expert uses when</span>
+<span class="sd">            data types and formats are managed thoroughly in numpy. Default:</span>
+<span class="sd">            False. Disable this only when you know exactly what you&#39;re doing!</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span> <span class="o">=</span> <span class="n">normalize_kernels</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">normalize_kernels</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span> <span class="o">=</span> <span class="n">normalize_kernels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;normalize_kernels must be bool&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skip_input_checks</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;skip_input_checks must be bool&#39;</span><span class="p">)</span>
 
         <span class="c1"># start with the addition of kernel matrix for linear kernel</span>
         <span class="n">init_kset</span> <span class="o">=</span> <span class="p">[</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">LinearKernel</span><span class="p">(),</span> <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">),</span> <span class="p">]</span>
@@ -100,22 +155,55 @@
         <span class="c1"># not attached to a sample yet</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">poly_degree_values</span><span class="p">,</span> <span class="n">PolyKernel</span><span class="p">,</span> <span class="s1">&#39;degree&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">rbf_sigma_values</span><span class="p">,</span> <span class="n">GaussianKernel</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_parametrized_kernels</span><span class="p">(</span><span class="n">laplacian_gamma_values</span><span class="p">,</span> <span class="n">LaplacianKernel</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_parametrized_kernels</span><span class="p">(</span><span class="n">PolyKernel</span><span class="p">,</span> <span class="s1">&#39;degree&#39;</span><span class="p">,</span> <span class="n">poly_degree_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_parametrized_kernels</span><span class="p">(</span><span class="n">GaussianKernel</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">,</span> <span class="n">rbf_sigma_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_parametrized_kernels</span><span class="p">(</span><span class="n">LaplacianKernel</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="n">laplace_gamma_values</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">_add_parametrized_kernels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">kernel_func</span><span class="p">,</span> <span class="n">param_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a list of kernels corr. to various values for a given param&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="KernelBucket.add_parametrized_kernels"><a class="viewcode-back" href="../../km_collections.html#kernelmethods.KernelBucket.add_parametrized_kernels">[docs]</a>    <span class="k">def</span> <span class="nf">add_parametrized_kernels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_func</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a list of kernels parametrized by various values for a given param</span>
 
-        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">param_name</span><span class="p">:</span> <span class="n">val</span><span class="p">}),</span>
-                                         <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">))</span></div>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kernel_func : BaseKernelFunction</span>
+<span class="sd">            Kernel function to be added (not an instance, but callable class)</span>
+
+<span class="sd">        param : str</span>
+<span class="sd">            Name of the parameter to the above kernel function</span>
+
+<span class="sd">        values : Iterable</span>
+<span class="sd">            List of parameter values. One kernel will be added for each value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span> <span class="ow">or</span> \
+            <span class="p">(</span><span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">,</span> <span class="n">BaseKernelFunction</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">KernelMethodsException</span><span class="p">(</span><span class="s1">&#39;Input </span><span class="si">{}</span><span class="s1"> is not a valid kernel func!&#39;</span>
+                                         <span class="s1">&#39; Must be derived from BaseKernelFunction&#39;</span>
+                                         <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No values provided for {}. Doing nothing!&#39;.format(param))</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_iterable_but_not_str</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;values must be an iterable set of param values (n&gt;=1)&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span>              <span class="p">:</span> <span class="n">val</span><span class="p">,</span>
+                              <span class="s1">&#39;skip_input_checks&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_input_checks</span><span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">KernelMatrix</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">(</span><span class="o">**</span><span class="n">param_dict</span><span class="p">),</span>
+                                         <span class="n">normalized</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_kernels</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Unable to add </span><span class="si">{}</span><span class="s1"> to the bucket for </span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">. Skipping it.&#39;</span>
+                     <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kernel_func</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">val</span><span class="p">),</span> <span class="n">KernelMethodsWarning</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="make_kernel_bucket"><a class="viewcode-back" href="../../utilities.html#kernelmethods.make_kernel_bucket">[docs]</a><span class="k">def</span> <span class="nf">make_kernel_bucket</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;exhaustive&#39;</span><span class="p">,</span>
-                       <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                       <span class="n">normalize_kernels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a candidate kernels based on user preferences.</span>
 
@@ -127,6 +215,12 @@
 
 <span class="sd">    normalize_kernels : bool</span>
 <span class="sd">        Flag to indicate whether to normalize the kernel matrices</span>
+
+<span class="sd">    skip_input_checks : bool</span>
+<span class="sd">        Flag to indicate whether checks on input data (type, format etc) can</span>
+<span class="sd">        be skipped. This helps save a tiny bit of runtime for expert uses when</span>
+<span class="sd">        data types and formats are managed thoroughly in numpy. Default:</span>
+<span class="sd">        False. Disable this only when you know exactly what you&#39;re doing!</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -144,15 +238,17 @@
     <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;exhaustive&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">KernelBucket</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;KBucketExhaustive&#39;</span><span class="p">,</span>
                             <span class="n">normalize_kernels</span><span class="o">=</span><span class="n">normalize_kernels</span><span class="p">,</span>
+                            <span class="n">skip_input_checks</span><span class="o">=</span><span class="n">skip_input_checks</span><span class="p">,</span>
                             <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_degree_values_poly_kernel</span><span class="p">,</span>
                             <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_sigma_values_gaussian_kernel</span><span class="p">,</span>
-                            <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">)</span>
+                            <span class="n">laplace_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">default_gamma_values_laplacian_kernel</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;light&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">KernelBucket</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;KBucketLight&#39;</span><span class="p">,</span>
                             <span class="n">normalize_kernels</span><span class="o">=</span><span class="n">normalize_kernels</span><span class="p">,</span>
+                            <span class="n">skip_input_checks</span><span class="o">=</span><span class="n">skip_input_checks</span><span class="p">,</span>
                             <span class="n">poly_degree_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_degree_values_poly_kernel</span><span class="p">,</span>
                             <span class="n">rbf_sigma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_sigma_values_gaussian_kernel</span><span class="p">,</span>
-                            <span class="n">laplacian_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_gamma_values_laplacian_kernel</span><span class="p">)</span>
+                            <span class="n">laplace_gamma_values</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">light_gamma_values_laplacian_kernel</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid choice of strategy &#39;</span>
                          <span class="s1">&#39;- must be one of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">kernel_bucket_strategies</span><span class="p">))</span></div>

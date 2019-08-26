@@ -8,19 +8,25 @@ Installation
 Stable release
 --------------
 
-To install kernelmethods, run this command in your terminal:
+To install ``kernelmethods``, run this command in your terminal:
 
 .. code-block:: console
 
     $ pip install kernelmethods
 
-This is the preferred method to install kernelmethods, as it will always install the most recent stable release.
+This is the preferred method to install ``kernelmethods``, as it will always install the most recent stable release.
 
-If you don't have `pip`_ installed, this `Python installation guide`_ can guide
-you through the process.
 
-.. _pip: https://pip.pypa.io
-.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
+Non-Linux and Non-Python users
+-------------------------------
+
+If you do not yet have python or pip (system for distribution and installation), please follow the links below for instructions on installing them:
+ - Python: https://www.python.org/downloads/ (pip comes packaged with Python).
+ - Windows users:
+
+   - can follow this guide https://www.ics.uci.edu/~pattis/common/handouts/pythoneclipsejava/python.html
+   - or https://www.python.org/downloads/windows/
+   - and read these FAQ to familiarize themselves with typical questions using these FAQ: https://docs.python.org/3/faq/windows.html
 
 
 From sources

@@ -38,12 +38,11 @@
           <div class="body" role="main">
             
 <h1>Source code for kernelmethods.numeric_kernels</h1><div class="highlight"><pre>
-<span></span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">issparse</span>
-
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">kernelmethods.base</span> <span class="k">import</span> <span class="n">BaseKernelFunction</span>
-<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">check_input_arrays</span><span class="p">,</span> <span class="n">_ensure_min_eps</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.config</span> <span class="k">import</span> <span class="n">Chi2NegativeValuesException</span>
+<span class="kn">from</span> <span class="nn">kernelmethods.utils</span> <span class="k">import</span> <span class="n">_ensure_min_eps</span><span class="p">,</span> <span class="n">check_input_arrays</span>
+
 
 <span class="c1"># TODO special handling for sparse arrays</span>
 <span class="c1">#   (e.g. custom dot product during kernel evaluation might be more efficient</span>
@@ -52,10 +51,16 @@
 <div class="viewcode-block" id="PolyKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.PolyKernel">[docs]</a><span class="k">class</span> <span class="nc">PolyKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Polynomial kernel function</span>
 
+<span class="sd">    Formula::</span>
+<span class="sd">        K(x, y) = ( b + gamma*&lt;x, y&gt; )^degree</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    degree : int</span>
 <span class="sd">        degree to raise the inner product</span>
+
+<span class="sd">    gamma : float</span>
+<span class="sd">        scaling factor</span>
 
 <span class="sd">    b : float</span>
 <span class="sd">        intercept</span>
@@ -66,7 +71,8 @@
 <span class="sd">        unless you know exactly what you are doing (expert users).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -89,9 +95,11 @@
 
         <span class="c1"># TODO implement param check</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
+
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
@@ -99,12 +107,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span><span class="p">:</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_input_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">))</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span>
+
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(degree=</span><span class="si">{}</span><span class="s2">,b=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(degree=</span><span class="si">{}</span><span class="s2">,gamma=</span><span class="si">{}</span><span class="s2">,b=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GaussianKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.GaussianKernel">[docs]</a><span class="k">class</span> <span class="nc">GaussianKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
@@ -121,6 +131,7 @@
 <span class="sd">        unless you know exactly what you are doing (expert users).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -143,9 +154,10 @@
         <span class="c1"># TODO implement param check</span>
         <span class="c1"># ensuring values of gamma/gamma is eps or larger to avoid zero division</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">_ensure_min_eps</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">_ensure_min_eps</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">_ensure_min_eps</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
+
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
@@ -153,7 +165,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span><span class="p">:</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_input_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
@@ -175,6 +188,7 @@
 <span class="sd">        unless you know exactly what you are doing (expert users).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -198,6 +212,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
 
+
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
 
@@ -206,10 +221,151 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)))</span>
 
+
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(gamma=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Chi2Kernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.Chi2Kernel">[docs]</a><span class="k">class</span> <span class="nc">Chi2Kernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Chi-squared kernel function</span>
+
+<span class="sd">    This kernel is implemented as::</span>
+
+<span class="sd">        k(x, y) = exp(-gamma Sum [(x - y)^2 / (x + y)])</span>
+
+<span class="sd">    x and y must have non-negative values (&gt;=0).</span>
+
+<span class="sd">    As a division is involved, when x+y is 0 or when x+y and x-y are both 0 for a</span>
+<span class="sd">    particular dimension, the division results in a NaN, which is currently</span>
+<span class="sd">    being ignored, by summing only non-NaN values. If your feature sets have many</span>
+<span class="sd">    zeros, you may want investigate the effect of this kernel on your dataset</span>
+<span class="sd">    carefully to ensure you understand this kernel meets your needs and</span>
+<span class="sd">    expectations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        scale factor</span>
+
+<span class="sd">    skip_input_checks : bool</span>
+<span class="sd">        Flag to skip input validation to save time.</span>
+<span class="sd">        Skipping validation is strongly discouraged for normal use,</span>
+<span class="sd">        unless you know exactly what you are doing (expert users).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gamma : float</span>
+<span class="sd">            scale factor</span>
+
+<span class="sd">        skip_input_checks : bool</span>
+<span class="sd">            Flag to skip input validation to save time.</span>
+<span class="sd">            Skipping validation is strongly discouraged for normal use,</span>
+<span class="sd">            unless you know exactly what you are doing (expert users).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;chi2&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_input_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">Chi2NegativeValuesException</span><span class="p">(</span>
+                <span class="s1">&#39;Chi^2 kernel requires non-negative values!&#39;</span>
+                <span class="s1">&#39; x or y contains non-negative values&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Note: NaNs due to Zero division are being ignored via np.nansum!</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">value</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(gamma=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SigmoidKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.SigmoidKernel">[docs]</a><span class="k">class</span> <span class="nc">SigmoidKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sigmoid kernel function (also known as hyperbolic tangent kernel)</span>
+
+<span class="sd">    NOTE: This kernel is not always PSD, and normalizing its kernel matrix can</span>
+<span class="sd">    result in numerical issues or errors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        scale factor</span>
+
+<span class="sd">    offset : float</span>
+<span class="sd">        value of offset/bias</span>
+
+<span class="sd">    skip_input_checks : bool</span>
+<span class="sd">        Flag to skip input validation to save time.</span>
+<span class="sd">        Skipping validation is strongly discouraged for normal use,</span>
+<span class="sd">        unless you know exactly what you are doing (expert users).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gamma : float</span>
+<span class="sd">            scale factor</span>
+
+<span class="sd">        offset : float</span>
+<span class="sd">            value of offset/bias</span>
+
+<span class="sd">        skip_input_checks : bool</span>
+<span class="sd">            Flag to skip input validation to save time.</span>
+<span class="sd">            Skipping validation is strongly discouraged for normal use,</span>
+<span class="sd">            unless you know exactly what you are doing (expert users).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_input_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ensure_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(gamma=</span><span class="si">{}</span><span class="s2">,offset=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LinearKernel"><a class="viewcode-back" href="../../numeric_kernels.html#kernelmethods.numeric_kernels.LinearKernel">[docs]</a><span class="k">class</span> <span class="nc">LinearKernel</span><span class="p">(</span><span class="n">BaseKernelFunction</span><span class="p">):</span>
@@ -222,6 +378,7 @@
 <span class="sd">        Skipping validation is strongly discouraged for normal use,</span>
 <span class="sd">        unless you know exactly what you are doing (expert users).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_input_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -239,6 +396,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skip_input_checks</span> <span class="o">=</span> <span class="n">skip_input_checks</span>
 
+
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actual implementation of kernel func&quot;&quot;&quot;</span>
 
@@ -247,14 +405,20 @@
 
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
+
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;human readable repr&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
 
 
-<span class="n">DEFINED_KERNEL_FUNCS</span> <span class="o">=</span> <span class="p">(</span><span class="n">PolyKernel</span><span class="p">(),</span> <span class="n">GaussianKernel</span><span class="p">(),</span> <span class="n">LaplacianKernel</span><span class="p">(),</span>
-                        <span class="n">LinearKernel</span><span class="p">())</span>
+<span class="n">DEFINED_KERNEL_FUNCS</span> <span class="o">=</span> <span class="p">(</span><span class="n">Chi2Kernel</span><span class="p">(),</span>
+                        <span class="n">PolyKernel</span><span class="p">(),</span>
+                        <span class="n">GaussianKernel</span><span class="p">(),</span>
+                        <span class="n">LaplacianKernel</span><span class="p">(),</span>
+                        <span class="n">LinearKernel</span><span class="p">(),</span>
+                        <span class="n">SigmoidKernel</span><span class="p">(),</span>
+                        <span class="p">)</span>
 </pre></div>
 
           </div>

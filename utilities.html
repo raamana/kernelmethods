@@ -39,7 +39,7 @@
             
 <div class="section" id="utilities">
 <h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
-<p>Here, we document several important utilities related to this library.</p>
+<p>Here, we document several important utilities related to this library, including sampling and ranking.</p>
 <div class="section" id="module-kernelmethods.sampling">
 <span id="sampling"></span><h2>Sampling<a class="headerlink" href="#module-kernelmethods.sampling" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -78,7 +78,7 @@
 
 <dl class="function">
 <dt id="kernelmethods.sampling.make_kernel_bucket">
-<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">make_kernel_bucket</code><span class="sig-paren">(</span><em class="sig-param">strategy='exhaustive'</em>, <em class="sig-param">normalize_kernels=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#make_kernel_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.make_kernel_bucket" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">kernelmethods.sampling.</code><code class="sig-name descname">make_kernel_bucket</code><span class="sig-paren">(</span><em class="sig-param">strategy='exhaustive'</em>, <em class="sig-param">normalize_kernels=True</em>, <em class="sig-param">skip_input_checks=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/sampling.html#make_kernel_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.sampling.make_kernel_bucket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a candidate kernels based on user preferences.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -86,6 +86,10 @@
 <li><p><strong>strategy</strong> (<em>str</em>) – Name of the strategy for populating the kernel bucket.
 Options: ‘exhaustive’ and ‘light’. Default: ‘exhaustive’</p></li>
 <li><p><strong>normalize_kernels</strong> (<em>bool</em>) – Flag to indicate whether to normalize the kernel matrices</p></li>
+<li><p><strong>skip_input_checks</strong> (<em>bool</em>) – Flag to indicate whether checks on input data (type, format etc) can
+be skipped. This helps save a tiny bit of runtime for expert uses when
+data types and formats are managed thoroughly in numpy. Default:
+False. Disable this only when you know exactly what you’re doing!</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -160,7 +164,7 @@ metrics, such as</p>
 
 <dl class="function">
 <dt id="kernelmethods.ranking.find_optimal_kernel">
-<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">find_optimal_kernel</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">sample</em>, <em class="sig-param">targets</em>, <em class="sig-param">method='align/corr'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#find_optimal_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.find_optimal_kernel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">kernelmethods.ranking.</code><code class="sig-name descname">find_optimal_kernel</code><span class="sig-paren">(</span><em class="sig-param">kernel_bucket</em>, <em class="sig-param">sample</em>, <em class="sig-param">targets</em>, <em class="sig-param">method='align/corr'</em>, <em class="sig-param">**method_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kernelmethods/ranking.html#find_optimal_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#kernelmethods.ranking.find_optimal_kernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the optimal kernel for the current sample given their labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
