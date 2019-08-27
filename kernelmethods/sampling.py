@@ -6,7 +6,7 @@ from kernelmethods import config as cfg
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
 from kernelmethods.config import KernelMethodsException, KernelMethodsWarning
 from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
-                                           LinearKernel, PolyKernel)
+                                           LinearKernel, PolyKernel, SigmoidKernel)
 from kernelmethods.operations import alignment_centered
 from kernelmethods.utils import is_iterable_but_not_str
 from scipy.stats.stats import pearsonr
@@ -43,6 +43,14 @@ class KernelBucket(KernelSet):
         List of values for the gamma parameter of the LaplacianKernel. One
         KernelMatrix will be added to the bucket for each value.
 
+    sigmoid_gamma_values : Iterable
+        List of values for the gamma parameter of the SigmoidKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
+    sigmoid_offset_values : Iterable
+        List of values for the offset parameter of the SigmoidKernel. One
+        KernelMatrix will be added to the bucket for each value.
+
     name : str
         String to identify the purpose or type of the bucket of kernels.
         Also helps easily distinguishing it from other buckets.
@@ -63,6 +71,8 @@ class KernelBucket(KernelSet):
                  poly_degree_values=cfg.default_degree_values_poly_kernel,
                  rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
                  laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel,
+                 sigmoid_gamma_values=cfg.default_gamma_values_sigmoid_kernel,
+                 sigmoid_offset_values=cfg.default_offset_values_sigmoid_kernel,
                  name='KernelBucket',
                  normalize_kernels=True,
                  skip_input_checks=False,
@@ -82,6 +92,14 @@ class KernelBucket(KernelSet):
 
         laplace_gamma_values : Iterable
             List of values for the gamma parameter of the LaplacianKernel. One
+            KernelMatrix will be added to the bucket for each value.
+
+        sigmoid_gamma_values : Iterable
+            List of values for the gamma parameter of the SigmoidKernel. One
+            KernelMatrix will be added to the bucket for each value.
+
+        sigmoid_offset_values : Iterable
+            List of values for the offset parameter of the SigmoidKernel. One
             KernelMatrix will be added to the bucket for each value.
 
         name : str
@@ -118,6 +136,8 @@ class KernelBucket(KernelSet):
         self.add_parametrized_kernels(PolyKernel, 'degree', poly_degree_values)
         self.add_parametrized_kernels(GaussianKernel, 'sigma', rbf_sigma_values)
         self.add_parametrized_kernels(LaplacianKernel, 'gamma', laplace_gamma_values)
+        self.add_parametrized_kernels(SigmoidKernel, 'gamma', sigmoid_gamma_values)
+        self.add_parametrized_kernels(SigmoidKernel, 'offset', sigmoid_offset_values)
 
 
     def add_parametrized_kernels(self, kernel_func, param, values):
@@ -201,14 +221,18 @@ def make_kernel_bucket(strategy='exhaustive',
                             skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.default_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.default_sigma_values_gaussian_kernel,
-                            laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.default_gamma_values_laplacian_kernel,
+                            sigmoid_gamma_values=cfg.default_gamma_values_sigmoid_kernel,
+                            sigmoid_offset_values=cfg.default_offset_values_sigmoid_kernel)
     elif strategy == 'light':
         return KernelBucket(name='KBucketLight',
                             normalize_kernels=normalize_kernels,
                             skip_input_checks=skip_input_checks,
                             poly_degree_values=cfg.light_degree_values_poly_kernel,
                             rbf_sigma_values=cfg.light_sigma_values_gaussian_kernel,
-                            laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel)
+                            laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel,
+                            sigmoid_gamma_values=cfg.light_gamma_values_sigmoid_kernel,
+                            sigmoid_offset_values=cfg.light_offset_values_sigmoid_kernel)
     else:
         raise ValueError('Invalid choice of strategy '
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))
