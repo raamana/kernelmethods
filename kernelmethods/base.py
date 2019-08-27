@@ -356,16 +356,15 @@ class KernelMatrix(object):
     def _reset(self):
         """Convenience routine to reset internal state"""
 
-        self._populated_fully = False
-        self._lower_tri_km_filled = False
-        if hasattr(self, '_full_km'):
-            delattr(self, '_full_km')
-        self._is_centered = False
-        self._is_normed = False
+        # deleting all imp attributes
+        for attr in ('_full_km', '_normed_km', '_frob_norm'):
+            if hasattr(self, attr):
+                delattr(self, attr)
 
-        # As K(i,j) is the same as K(j,i), only one of them needs to be computed!
-        #  so internally we could store both K(i,j) and K(j,i) as K(min(i,j),
-        #  max(i,j))
+        for flag in ('_populated_fully', '_lower_tri_km_filled',
+                     '_is_centered', '_is_normed'):
+            setattr(self, flag, False)
+
         self._KM = dict()
 
         # restricting attributes to the latest sample only, to avoid leakage!!
