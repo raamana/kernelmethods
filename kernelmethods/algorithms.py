@@ -6,18 +6,18 @@ Module to gather various high-level algorithms based on the kernel methods,
 """
 
 from copy import deepcopy
-
+from abc import ABC
+import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
 from sklearn.svm import SVR, SVC
 from sklearn.utils.validation import check_X_y, check_array
 
-from kernelmethods import config as cfg
+from kernelmethods import config as cfg, GaussianKernel
 from kernelmethods.base import KernelMatrix
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 
-
-class KernelMachine(BaseEstimator):
+class BaseKernelMachine(ABC, BaseEstimator):
     """Generic class to return a drop-in sklearn estimator.
 
     Parameters
@@ -27,15 +27,20 @@ class KernelMachine(BaseEstimator):
 
     learner_id : str
         Identifier for the estimator to be built based on the kernel function.
-        Options: ``SVM`` and ``SVR``.
-        Default: ``SVR``
+        Options: ``SVC`` and ``SVR``.
+        Default: ``SVC`` (classifier version of SVM)
+
+    normalized : flag
+        Flag to indicate whether to keep the kernel matrix normalized
+        Default: False
 
     """
 
 
     def __init__(self,
-                 k_func,
-                 learner_id='SVR'):
+                 k_func=GaussianKernel(),
+                 learner_id='SVC',
+                 normalized=False):
         """
         Constructor for the KernelMachine class.
 
@@ -46,12 +51,17 @@ class KernelMachine(BaseEstimator):
 
         learner_id : str
             Identifier for the estimator to be built based on the kernel function.
-            Options: ``SVM`` and ``SVR``.
-            Default: ``SVR``
+            Options: ``SVC`` and ``SVR``.
+            Default: ``SVC`` (classifier version of SVM)
+
+        normalized : flag
+            Flag to indicate whether to keep the kernel matrix normalized.
+            Default: False
         """
 
         self.k_func = k_func
         self.learner_id = learner_id
+        self.normalized = normalized
         self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
@@ -90,7 +100,8 @@ class KernelMachine(BaseEstimator):
 
         self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
-        self._km = KernelMatrix(self.k_func, name='train_km')
+        self._km = KernelMatrix(self.k_func, name='train_km',
+                                normalized=self.normalized)
         self._km.attach_to(self._train_X)
 
         self._estimator.fit(X=self._km.full, y=self._train_y,
@@ -133,13 +144,8 @@ class KernelMachine(BaseEstimator):
     def get_params(self, deep=True):
         """returns all the relevant parameters for this estimator!"""
 
-        # est_param_dict = self._estimator.get_params(deep=deep)
-        # est_param_dict['k_func'] = self.k_func
-        # est_param_dict['learner_id'] = self.learner_id
-        # est_param_dict['learner_params'] = self.learner_params
-        # return est_param_dict
-
         return {'k_func'    : self.k_func,
+                'normalized': self.normalized,
                 'learner_id': self.learner_id}
 
 
@@ -147,10 +153,8 @@ class KernelMachine(BaseEstimator):
         """Param setter"""
 
         for parameter, value in parameters.items():
-            if parameter in ('k_func', 'learner_id'):  # 'learner_params'
+            if parameter in ('k_func', 'learner_id', 'normalized'):
                 setattr(self, parameter, value)
-            # else:
-            #     setattr(self._estimator, parameter, value)
 
         return self
 
