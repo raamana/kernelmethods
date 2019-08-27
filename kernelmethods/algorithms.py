@@ -186,6 +186,54 @@ class KernelMachine(BaseKernelMachine, ClassifierMixin):
         return np.asarray(predicted_y, dtype=np.intp)
 
 
+class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
+    """Regressor version of the KernelMachine
+
+    Parameters
+    ----------
+    k_func : KernelFunction
+        The kernel function the kernel machine bases itself on
+
+    learner_id : str
+        Identifier for the estimator to be built based on the kernel function.
+        Options: ``SVR``.
+        Default: ``SVR`` (regressor version of SVM)
+
+    normalized : flag
+        Flag to indicate whether to keep the kernel matrix normalized
+        Default: False
+
+    """
+
+
+    def __init__(self,
+                 k_func=GaussianKernel(),
+                 learner_id='SVR',
+                 normalized=False):
+        """
+        Constructor for the regressor version of the KernelMachine
+
+        Parameters
+        ----------
+        k_func : KernelFunction
+            The kernel function the kernel machine bases itself on
+
+        learner_id : str
+            Identifier for the estimator to be built based on the kernel function.
+            Options: ``SVR``
+            Default: ``SVR`` (regressor version of SVM)
+
+        normalized : flag
+            Flag to indicate whether to keep the kernel matrix normalized.
+            Default: False
+        """
+
+        self.k_func = k_func
+        self.learner_id = learner_id
+        self.normalized = normalized
+        self._estimator, self.param_grid = get_estimator(self.learner_id)
+
+
     """
     An estimator to learn the optimal kernel for a given sample and
     build a support vector regressor based on this custom kernel.
