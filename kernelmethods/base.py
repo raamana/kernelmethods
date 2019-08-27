@@ -424,7 +424,13 @@ class KernelMatrix(object):
     def full_sparse(self):
         """Kernel matrix populated in upper tri in sparse array format."""
 
-        return self._populate_fully(dense_fmt=False, fill_lower_tri=False)
+        if self._keep_normed:
+            if not self._is_normed:
+                self.normalize()
+            # normalization requires a full matrix
+            return self._normed_km
+        else:
+            return self._populate_fully(dense_fmt=False, fill_lower_tri=False)
 
 
     def center(self):
