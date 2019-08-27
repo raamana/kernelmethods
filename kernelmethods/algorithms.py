@@ -160,6 +160,32 @@ class BaseKernelMachine(ABC, BaseEstimator):
 
 
 class OptimalKernelSVR(SVR, RegressorMixin):
+class KernelMachine(BaseKernelMachine, ClassifierMixin):
+    """Classifier version of the KernelMachine"""
+
+    def predict(self, X):
+        """
+        Make predictions on the new samplets in X.
+
+        For an one-class model, +1 or -1 is returned.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+            For kernel="precomputed", the expected shape of X is
+            [n_samples_test, n_samples_train]
+
+        Returns
+        -------
+        y_pred : array, shape (n_samples,)
+            Class labels for samples in X.
+        """
+
+        predicted_y = super().predict(X)
+        # casting output type to integers
+        return np.asarray(predicted_y, dtype=np.intp)
+
+
     """
     An estimator to learn the optimal kernel for a given sample and
     build a support vector regressor based on this custom kernel.
