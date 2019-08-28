@@ -313,7 +313,13 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
 
         tol : float, optional (default=1e-3)
             Tolerance for stopping criterion.
+    @abstractmethod
+    def _find_optimal_kernel(self):
+        """Method to find the optimal kernel
 
+        Given a kernel bucket, a training sample and a ranking method. To be
+        defined by the child class, appropriate for their task i.e. classification
+        or regression
         """
 
         super().__init__(kernel='precomputed', C=C, epsilon=epsilon,
@@ -379,10 +385,7 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
 
         self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
 
-        self.opt_kernel_ = find_optimal_kernel(self._k_bucket,
-                                               self._train_X, self._train_y,
-                                               method=self.method,
-                                               estimator_name='SVR')
+        self.opt_kernel_ = self._find_optimal_kernel()
 
         super().fit(X=self.opt_kernel_.full, y=self._train_y,
                     sample_weight=sample_weight)
@@ -548,6 +551,15 @@ class OptimalKernelSVC(SVC, ClassifierMixin):
 
     def fit(self, X, y, sample_weight=None):
         """Estimate the optimal kernel, and fit a SVM based on the custom kernel.
+    def _find_optimal_kernel(self):
+        """Method to find the optimal kernel"""
+
+        self._opt_ker_search_est_name = 'SVR'
+
+        return find_optimal_kernel(self._k_bucket,
+                                   self._train_X, self._train_y,
+                                   method=self.method,
+                                   estimator_name=self._opt_ker_search_est_name)
 
         Parameters
         ----------
@@ -609,8 +621,15 @@ class OptimalKernelSVC(SVC, ClassifierMixin):
         # temporary hack to pass sklearn estimator checks till a bug is fixed
         # for more see: https://github.com/scikit-learn/scikit-learn/issues/14712
         self.n_iter_ = 1
+    def _find_optimal_kernel(self):
+        """Method to find the optimal kernel"""
 
-        return self
+        self._opt_ker_search_est_name = 'SVC'
+
+        return find_optimal_kernel(self._k_bucket,
+                                   self._train_X, self._train_y,
+                                   method=self.method,
+                                   estimator_name=self._opt_ker_search_est_name)
 
 
     def predict(self, X):
