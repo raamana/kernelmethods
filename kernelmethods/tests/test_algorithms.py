@@ -6,7 +6,7 @@ from kernelmethods.algorithms import KernelMachine, KernelMachineRegressor, \
     OptimalKernelSVC, OptimalKernelSVR
 from kernelmethods.config import KMNormError, KernelMethodsException, \
     KernelMethodsWarning, Chi2NegativeValuesException
-from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
+from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS, LinearKernel
 from kernelmethods.sampling import make_kernel_bucket, KernelBucket
 from pytest import raises
 from sklearn.datasets import make_classification
@@ -81,7 +81,7 @@ def _test_estimator_can_fit_predict(estimator, est_name=None):
         raise RuntimeError('{} is unable to make predictions'.format(est_name))
 
 
-def test_optimal_kernel_svr():
+def test_optimal_kernel_estimators():
 
     train_data, labels = make_classification(n_features=sample_dim, n_classes=2,
                                              n_samples=n_training)
@@ -97,15 +97,16 @@ def test_optimal_kernel_svr():
         except:
             raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
-    _test_estimator_can_fit_predict(OKSVR, 'OptimalKernelSVR')
+        # disabling sklearn checks to avoid headaches with their internal checks
+        _test_estimator_can_fit_predict(ok_est)
 
-    for invalid_value in (np.random.randint(10), 10.1, ('tuple')):
-        with raises(ValueError):
-            OKSVR = OptimalKernelSVR(k_bucket=invalid_value)
-            OKSVR.fit(train_data, labels)
+        for invalid_value in (np.random.randint(10), 10.1, ('tuple')):
+            with raises(ValueError):
+                ok_est = OKEstimator(k_bucket=invalid_value)
+                ok_est.fit(train_data, labels)
 
-    OKSVR = OptimalKernelSVR(k_bucket=kb)
-    OKSVR.set_params(k_bucket=kb)
+        ok_est = OKEstimator(k_bucket=kb)
+        ok_est.set_params(k_bucket=kb)
 
 
 def test_kernel_machine():
