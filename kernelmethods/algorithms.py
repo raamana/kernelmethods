@@ -78,8 +78,6 @@ class BaseKernelMachine(BaseEstimator):
         X : {array-like, sparse matrix}, shape (n_samples, n_features)
             Training vectors, where n_samples is the number of samples
             and n_features is the number of features.
-            For kernel="precomputed", the expected shape of X is
-            (n_samples, n_samples).
 
         y : array-like, shape (n_samples,)
             Target values (class labels in classification, real numbers in
@@ -131,8 +129,6 @@ class BaseKernelMachine(BaseEstimator):
         Parameters
         ----------
         X : {array-like, sparse matrix}, shape (n_samples, n_features)
-            For kernel="precomputed", the expected shape of X is
-            [n_samples_test, n_samples_train]
 
         Returns
         -------
@@ -303,8 +299,6 @@ class BaseOptimalKernelMachine(BaseEstimator):
         X : {array-like, sparse matrix}, shape (n_samples, n_features)
             Training vectors, where n_samples is the number of samples
             and n_features is the number of features.
-            For kernel="precomputed", the expected shape of X is
-            (n_samples, n_samples).
 
         y : array-like, shape (n_samples,)
             Target values (class labels in classification, real numbers in
@@ -368,8 +362,6 @@ class BaseOptimalKernelMachine(BaseEstimator):
         Parameters
         ----------
         X : {array-like, sparse matrix}, shape (n_samples, n_features)
-            For kernel="precomputed", the expected shape of X is
-            [n_samples_test, n_samples_train]
 
         Returns
         -------
@@ -667,8 +659,6 @@ class OptimalKernelSVC(BaseOptimalKernelMachine, SVC):
         Parameters
         ----------
         X : {array-like, sparse matrix}, shape (n_samples, n_features)
-            For kernel="precomputed", the expected shape of X is
-            [n_samples_test, n_samples_train]
 
         Returns
         -------
