@@ -43,7 +43,7 @@ OPER_KM_OPS = {'sum'    : add,
 
 # default values and ranges
 
-kernel_bucket_strategies = ('exhaustive', 'light')
+kernel_bucket_strategies = ('exhaustive', 'light', 'linear_only')
 # strategy: exhaustive
 default_degree_values_poly_kernel = (2, 3, 4)
 default_sigma_values_gaussian_kernel = tuple([2**exp for exp in range(-5, 6, 2)])

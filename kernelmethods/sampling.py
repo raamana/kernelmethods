@@ -233,6 +233,15 @@ def make_kernel_bucket(strategy='exhaustive',
                             laplace_gamma_values=cfg.light_gamma_values_laplacian_kernel,
                             sigmoid_gamma_values=cfg.light_gamma_values_sigmoid_kernel,
                             sigmoid_offset_values=cfg.light_offset_values_sigmoid_kernel)
+    elif strategy == 'linear_only':
+        return KernelBucket(name='KBucketLight',
+                            normalize_kernels=normalize_kernels,
+                            skip_input_checks=skip_input_checks,
+                            poly_degree_values=None,
+                            rbf_sigma_values=None,
+                            laplace_gamma_values=None,
+                            sigmoid_gamma_values=None,
+                            sigmoid_offset_values=None)
     else:
         raise ValueError('Invalid choice of strategy '
                          '- must be one of {}'.format(cfg.kernel_bucket_strategies))
