@@ -1,21 +1,22 @@
-import traceback
 import warnings
 
 import numpy as np
-from kernelmethods.algorithms import KernelMachine, KernelMachineRegressor, \
-    OptimalKernelSVC, OptimalKernelSVR
-from kernelmethods.config import KMNormError, KernelMethodsException, \
-    KernelMethodsWarning, Chi2NegativeValuesException
-from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS, LinearKernel
-from kernelmethods.sampling import make_kernel_bucket, KernelBucket
 from pytest import raises
 from sklearn.datasets import make_classification
 from sklearn.utils.estimator_checks import check_estimator
+
+from kernelmethods.algorithms import (KernelMachine, KernelMachineRegressor,
+                                      OptimalKernelSVC, OptimalKernelSVR)
+from kernelmethods.config import (Chi2NegativeValuesException, KMNormError,
+                                  KernelMethodsException, KernelMethodsWarning)
+from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
+from kernelmethods.sampling import make_kernel_bucket
 
 warnings.simplefilter('ignore')
 
 rnd = np.random.RandomState(0)
 np.set_printoptions(precision=3, linewidth=120)
+
 
 def gen_random_sample(num_samples, sample_dim):
     """To better control precision and type of floats"""
@@ -30,7 +31,6 @@ n_testing = 30
 
 
 def _test_estimator_can_fit_predict(estimator, est_name=None):
-
     # fresh data for each call
     train_data, labels = make_classification(n_features=sample_dim,
                                              n_samples=n_training)
@@ -82,7 +82,6 @@ def _test_estimator_can_fit_predict(estimator, est_name=None):
 
 
 def test_optimal_kernel_estimators():
-
     train_data, labels = make_classification(n_features=sample_dim, n_classes=2,
                                              n_samples=n_training)
     test_data = gen_random_sample(n_testing, sample_dim)
@@ -110,17 +109,15 @@ def test_optimal_kernel_estimators():
 
 
 def test_kernel_machine():
-    for kernel in DEFINED_KERNEL_FUNCS:
-        # print('\n\nTesting {}'.format(kernel))
-        try:
-            k_machine = KernelMachine(kernel)
-        except:
-            raise RuntimeError('Unable to instantiate KernelMachine with this func '
-                               '{}!'.format(kernel))
+    for ker_func in DEFINED_KERNEL_FUNCS:
+        for ker_machine in (KernelMachine, KernelMachineRegressor):
+            # print('\n\nTesting {}'.format(kernel))
+            try:
+                k_machine = ker_machine(ker_func)
+            except:
+                raise RuntimeError('Unable to instantiate KernelMachine '
+                                   'with this this ker func {}!'.format(ker_func))
 
-        print('\n{}'.format(k_machine))
-        _test_estimator_can_fit_predict(k_machine,
-                                        'kernel machine with ' + str(kernel))
-
-
-test_optimal_kernel_svr()
+            print('\n{}'.format(k_machine))
+            _test_estimator_can_fit_predict(k_machine,
+                                            'kernel machine with ' + str(ker_func))
