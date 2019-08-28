@@ -140,9 +140,10 @@ def test_size_properties():
 
 def test_sparsity():
 
-    # reset!
-    km1.attach_to(sample_data)
-    if not issparse(km1.full_sparse):
+    km = KernelMatrix(poly, normalized=False)
+    km.attach_to(sample_data)
+    # when normalized=True, full KM won't be sparse!
+    if not km._keep_normed and not issparse(km.full_sparse):
         raise TypeError('error in sparse format access of KM : it is not sparse')
 
     if issparse(km1.full):
