@@ -225,6 +225,198 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
         self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
+class BaseOptimalKernelMachine(BaseEstimator):
+    """
+    An estimator to learn the optimal kernel for a given sample and
+    build a support vector regressor based on this custom kernel.
+
+    This class is wrapped around the sklearn SVR estimator to function as its
+    drop-in replacement, whose implementation is in turn based on LIBSVM.
+
+    Parameters
+    ----------
+
+    k_bucket : KernelBucket or str
+        An instance of KernelBucket that contains all the kernels to be compared,
+        or a string identifying the sampling_strategy which populates a KernelBucket.
+
+    method : str
+        Scoring method to rank different kernels
+
+    C : float, optional (default=1.0)
+        Penalty parameter C of the error term.
+
+    epsilon : float, optional (default=0.1)
+         Epsilon in the epsilon-SVR model. It specifies the epsilon-tube
+         within which no penalty is associated in the training loss function
+         with points predicted within a distance epsilon from the actual
+         value.
+
+    tol : float, optional (default=1e-3)
+        Tolerance for stopping criterion.
+
+    shrinking : boolean, optional (default=True)
+        Whether to use the shrinking heuristic.
+
+
+    Attributes
+    ----------
+    support_ : array-like, shape = [n_SV]
+        Indices of support vectors.
+
+    support_vectors_ : array-like, shape = [nSV, n_features]
+        Support vectors.
+
+    dual_coef_ : array, shape = [1, n_SV]
+        Coefficients of the support vector in the decision function.
+
+    coef_ : array, shape = [1, n_features]
+        Weights assigned to the features (coefficients in the primal
+        problem). This is only available in the case of a linear kernel.
+
+        `coef_` is readonly property derived from `dual_coef_` and
+        `support_vectors_`.
+
+    intercept_ : array, shape = [1]
+        Constants in decision function.
+
+    """
+
+
+    @abstractmethod
+    def _find_optimal_kernel(self):
+        """Method to find the optimal kernel
+
+        Given a kernel bucket, a training sample and a ranking method. To be
+        defined by the child class, appropriate for their task i.e. classification
+        or regression
+        """
+
+
+    def fit(self, X, y, sample_weight=None):
+        """Estimate the optimal kernel, and fit a SVM based on the custom kernel.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+            Training vectors, where n_samples is the number of samples
+            and n_features is the number of features.
+            For kernel="precomputed", the expected shape of X is
+            (n_samples, n_samples).
+
+        y : array-like, shape (n_samples,)
+            Target values (class labels in classification, real numbers in
+            regression)
+
+        sample_weight : array-like, shape (n_samples,)
+            Per-sample weights. Rescale C per sample. Higher weights
+            force the classifier to put more emphasis on these points.
+
+        Returns
+        -------
+        self : object
+
+        Notes
+        ------
+        If X and y are not C-ordered and contiguous arrays of np.float64 and
+        X is not a scipy.sparse.csr_matrix, X and/or y may be copied.
+
+        If X is a dense array, then the other methods will not support sparse
+        matrices as input.
+
+        """
+
+        if isinstance(self.k_bucket, str):
+            try:
+                # using a new internal variable to retain user supplied param
+                self._k_bucket = make_kernel_bucket(self.k_bucket)
+            except:
+                raise ValueError('Input for k_func can only an instance of '
+                                 'KernelBucket or a sampling strategy to generate '
+                                 'one with make_kernel_bucket.'
+                                 'sampling strategy must be one of {}'
+                                 ''.format(cfg.kernel_bucket_strategies))
+        elif isinstance(self.k_bucket, KernelBucket):
+            self._k_bucket = deepcopy(self.k_bucket)
+        else:
+            raise ValueError('Input for k_func can only an instance of '
+                             'KernelBucket or a sampling strategy to generate '
+                             'one with make_kernel_bucket')
+
+        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
+
+        self.opt_kernel_ = self._find_optimal_kernel()
+
+        super().fit(X=self.opt_kernel_.full, y=self._train_y,
+                    sample_weight=sample_weight)
+
+        # temporary hack to pass sklearn estimator checks till a bug is fixed
+        # for more see: https://github.com/scikit-learn/scikit-learn/issues/14712
+        self.n_iter_ = 1
+
+        return self
+
+
+    def predict(self, X):
+        """
+        Perform classification on samples in X.
+
+        For an one-class model, +1 or -1 is returned.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+            For kernel="precomputed", the expected shape of X is
+            [n_samples_test, n_samples_train]
+
+        Returns
+        -------
+        y_pred : array, shape (n_samples,)
+            Class labels for samples in X.
+        """
+
+        if not hasattr(self, 'opt_kernel_'):
+            raise NotFittedError("Can't predict. Not fitted yet. Run .fit() first!")
+
+        X = check_array(X)
+
+        # sample_one must be test data to get the right shape for sklearn X
+        self.opt_kernel_.attach_to(sample_one=X, sample_two=self._train_X)
+        test_train_KM = self.opt_kernel_.full
+        predicted_y = super().predict(test_train_KM)
+
+        # data type coversion is done in child class, esp. for classification
+        # return np.asarray(predicted_y, dtype=np.intp)
+        return predicted_y
+
+
+    @abstractmethod
+    def get_params(self, deep=True):
+        """returns all the relevant parameters for this estimator!"""
+
+        # example code, for future reference
+        return {'k_bucket' : self.k_bucket,
+                'method'   : self.method,
+                'C'        : self.C,
+                'epsilon'  : self.epsilon,
+                'shrinking': self.shrinking,
+                'tol'      : self.tol}
+
+
+    @abstractmethod
+    def set_params(self, **parameters):
+        """Param setter"""
+
+        # example code, for future reference
+        for parameter, value in parameters.items():
+            if parameter in ('k_bucket', 'method',
+                             'C', 'epsilon', 'shrinking', 'tol'):
+                setattr(self, parameter, value)
+
+        return self
+
+
+class OptimalKernelSVR(BaseOptimalKernelMachine, SVR):
     """
     An estimator to learn the optimal kernel for a given sample and
     build a support vector regressor based on this custom kernel.
