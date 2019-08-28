@@ -5,19 +5,23 @@ Module to gather various high-level algorithms based on the kernel methods,
 
 """
 
+from abc import abstractmethod
 from copy import deepcopy
-from abc import ABC
+
 import numpy as np
-from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
-from sklearn.svm import SVR, SVC
+from sklearn.base import (BaseEstimator, ClassifierMixin, RegressorMixin,
+                          is_classifier, is_regressor)
+from sklearn.exceptions import NotFittedError
+from sklearn.svm import SVC, SVR
 from sklearn.utils.validation import check_X_y, check_array
 
-from kernelmethods import config as cfg, GaussianKernel
+from kernelmethods import GaussianKernel, config as cfg
 from kernelmethods.base import KernelMatrix
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 
-class BaseKernelMachine(ABC, BaseEstimator):
+
+class BaseKernelMachine(BaseEstimator):
     """Generic class to return a drop-in sklearn estimator.
 
     Parameters
@@ -98,7 +102,10 @@ class BaseKernelMachine(ABC, BaseEstimator):
 
         """
 
-        self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
+        if is_regressor(self):
+            self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
+        else:
+            self._train_X, self._train_y = check_X_y(X, y)
 
         self._km = KernelMatrix(self.k_func, name='train_km',
                                 normalized=self.normalized)
@@ -106,6 +113,9 @@ class BaseKernelMachine(ABC, BaseEstimator):
 
         self._estimator.fit(X=self._km.full, y=self._train_y,
                             sample_weight=sample_weight)
+
+        if is_classifier(self):
+            self.classes_ = self._estimator.classes_
 
         return self
 
@@ -128,17 +138,21 @@ class BaseKernelMachine(ABC, BaseEstimator):
             Class labels for samples in X.
         """
 
-        X = check_array(X)
+        if not hasattr(self, '_km'):
+            raise NotFittedError("Can't predict. Not fitted yet. Run .fit() first!")
+
+        test_X = check_array(X)
+
+        # this is a fresh new KM
+        self._km = KernelMatrix(self.k_func, name='test_km',
+                                normalized=self.normalized)
 
         # sample_one must be test data to get the right shape for sklearn X
-        self._km.attach_to(sample_one=X, sample_two=self._train_X)
-        test_train_KM = self._km.full
-        predicted_y = self._estimator.predict(test_train_KM)
+        self._km.attach_to(sample_one=test_X, sample_two=self._train_X)
 
-        return predicted_y
-        # TODO we don't need data type conversion, as things can be
-        #  different in classifiers and regressors?
-        # return np.asarray(predicted_y, dtype=np.intp)
+        predicted_y = self._estimator.predict(self._km.full)
+
+        return np.asarray(predicted_y, dtype=self._train_y.dtype)
 
 
     def get_params(self, deep=True):
