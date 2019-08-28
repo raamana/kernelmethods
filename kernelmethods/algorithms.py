@@ -15,8 +15,9 @@ from sklearn.exceptions import NotFittedError
 from sklearn.svm import SVC, SVR
 from sklearn.utils.validation import check_X_y, check_array
 
-from kernelmethods import GaussianKernel, config as cfg
+from kernelmethods import config as cfg
 from kernelmethods.base import KernelMatrix
+from kernelmethods.numeric_kernels import GaussianKernel
 from kernelmethods.ranking import find_optimal_kernel, get_estimator
 from kernelmethods.sampling import KernelBucket, make_kernel_bucket
 
