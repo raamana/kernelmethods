@@ -105,6 +105,7 @@ class BaseKernelMachine(BaseEstimator):
 
         if is_regressor(self):
             self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
+            self._train_y = self._train_y.astype(np.float_)
         else:
             self._train_X, self._train_y = check_X_y(X, y)
 
