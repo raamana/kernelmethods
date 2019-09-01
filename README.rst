@@ -51,7 +51,10 @@ Note
 The software is beta. All types of contributions are greatly welcome.
 
 
+Dedication
+-----------
 
+This library is dedicated to `The Concert for Bangladesh <https://en.wikipedia.org/wiki/The_Concert_for_Bangladesh>`_, George Harrison and Pandit Ravi Shankar, who moved me immensely with their empathy and kindness, by organizing the first benefit concert ever to raise international awareness and funds for Bangladesh's liberation war in 1971.
 
 
 
