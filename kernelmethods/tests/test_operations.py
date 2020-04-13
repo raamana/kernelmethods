@@ -176,3 +176,11 @@ def test_linear_comb():
 
     with raises(ValueError):
         lc = linear_combination(kset, randn(kset.size + 1))
+
+    zero_weights = np.zeros((kset.size,1))
+    lc0 = linear_combination(kset, zero_weights)
+    if not np.isclose(lc0.max(), 0.0):
+        raise ValueError('zero weights do not lead to zero KM!')
+
+    with raises(RuntimeError):
+        lc0 = linear_combination(kset, zero_weights, norm_weights=True)
