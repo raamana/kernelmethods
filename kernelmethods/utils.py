@@ -60,7 +60,9 @@ def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
     """Converts the input to a numpy array and ensure it is of specified dim."""
 
     if not isinstance(array, np.ndarray):
-        array = np.squeeze(np.asarray(array))
+        array = np.asarray(array)
+
+    array = np.squeeze(array)
 
     if array.ndim != ensure_num_dim:
         raise ValueError('array must be {}-dimensional! '
