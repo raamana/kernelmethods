@@ -386,7 +386,7 @@ def eval_similarity(km_one, km_two):
     raise NotImplementedError()
 
 
-def linear_combination(km_set, weights):
+def linear_combination(km_set, weights, norm_weights=False):
     """
     Weighted linear combinations of a set of given kernel matrices
 
@@ -396,7 +396,11 @@ def linear_combination(km_set, weights):
         Collection of compatible kernel matrices
 
     weights : Iterable
-        Set of weights for the kernel matrices in km_set
+        Set of weights for the kernel matrices in km_set.
+        Weights are not checked to sum to 1.0. Use norm_weights=True if needed.
+
+    norm_weights : bool
+        Flag to request normalizing weights to ensure they sum to 1.0
 
     Returns
     -------
@@ -412,7 +416,11 @@ def linear_combination(km_set, weights):
                          'from the kernel set size ({})'
                          ''.format(km_set.size, len(weights)))
 
-    # TODO should we not ensure weights sum to 1.0?
+    if norm_weights:
+        denom = weights.sum()
+        if np.isclose(denom, 0.0):
+            raise RuntimeError('sum of weights == 0.0, unable to normalize!')
+        weights = weights / denom
 
     # Computes the weighted average kernel
     # km_set.num_samples is a tuple (N, M) when operating on two samples
