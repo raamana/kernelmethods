@@ -67,7 +67,6 @@ class BaseKernelMachine(BaseEstimator):
         self.k_func = k_func
         self.learner_id = learner_id
         self.normalized = normalized
-        self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
     def fit(self, X, y, sample_weight=None):
@@ -111,6 +110,7 @@ class BaseKernelMachine(BaseEstimator):
                                 normalized=self.normalized)
         self._km.attach_to(self._train_X)
 
+        self._estimator, self.param_grid = get_estimator(self.learner_id)
         self._estimator.fit(X=self._km.full, y=self._train_y,
                             sample_weight=sample_weight)
 
@@ -220,7 +220,6 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
         self.k_func = k_func
         self.learner_id = learner_id
         self.normalized = normalized
-        self._estimator, self.param_grid = get_estimator(self.learner_id)
 
 
 class BaseOptimalKernelMachine(BaseEstimator):
