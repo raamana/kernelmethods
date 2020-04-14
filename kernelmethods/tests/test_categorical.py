@@ -109,7 +109,7 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples, string_length):
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              timeout=unlimited, suppress_health_check=HealthCheck.all())
+              suppress_health_check=HealthCheck.all())
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.integers(range_string_length[0], range_string_length[1]),
