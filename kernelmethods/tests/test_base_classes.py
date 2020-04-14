@@ -1,19 +1,15 @@
 
 import numpy as np
-from numbers import Number
-from pytest import raises, warns
-from hypothesis import given, strategies, unlimited
-from hypothesis import settings as hyp_settings
-from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
-    LaplacianKernel
-from kernelmethods.base import KernelMatrix, KernelFromCallable, \
-    BaseKernelFunction, KernelMatrixPrecomputed, ConstantKernelMatrix, \
-    CompositeKernel, AverageKernel, SumKernel, WeightedAverageKernel, ProductKernel
-from kernelmethods.sampling import make_kernel_bucket
-from kernelmethods.operations import is_positive_semidefinite
-from kernelmethods.config import KMAccessError, KMNormError
+from pytest import raises
 
+from kernelmethods.base import (AverageKernel, BaseKernelFunction, CompositeKernel,
+                                KernelFromCallable, KernelMatrix,
+                                KernelMatrixPrecomputed, ProductKernel,
+                                SumKernel, WeightedAverageKernel)
+from kernelmethods.config import KMAccessError
+from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
+                                           LinearKernel, PolyKernel)
+from kernelmethods.sampling import make_kernel_bucket
 from kernelmethods.tests.test_numeric_kernels import _test_for_all_kernels
 
 default_feature_dim = 10

@@ -1,19 +1,13 @@
 
 import numpy as np
-from numbers import Number
-from pytest import raises, warns
-from hypothesis import given, strategies, unlimited
-from hypothesis import settings as hyp_settings
-from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKernel, \
-    LaplacianKernel
-from kernelmethods.utils import check_callable, check_input_arrays, \
-    check_operation_kernel_matrix, ensure_ndarray_1D, ensure_ndarray_2D, \
-    get_callable_name, min_max_scale, not_symmetric
-from kernelmethods.base import KernelMatrix, KernelFromCallable, \
-    BaseKernelFunction, KernelMatrixPrecomputed, ConstantKernelMatrix
-from kernelmethods.operations import is_positive_semidefinite
-from kernelmethods.config import KMAccessError, KMNormError
+from pytest import raises
+
+from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
+                                           LinearKernel, PolyKernel)
+from kernelmethods.utils import (check_callable, check_input_arrays,
+                                 check_operation_kernel_matrix, ensure_ndarray_1D,
+                                 ensure_ndarray_2D,
+                                 get_callable_name, not_symmetric)
 
 default_feature_dim = 10
 range_feature_dim = [10, 500]

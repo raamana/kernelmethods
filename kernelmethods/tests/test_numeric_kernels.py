@@ -1,15 +1,16 @@
 
-import numpy as np
 from numbers import Number
-from pytest import raises, warns
-from hypothesis import given, strategies, unlimited
-from hypothesis import settings as hyp_settings
-from hypothesis import HealthCheck
-from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS, PolyKernel, \
-    GaussianKernel, LinearKernel, LaplacianKernel, SigmoidKernel, Chi2Kernel
-from kernelmethods.utils import check_callable
-from kernelmethods.base import KernelMatrix, KernelFromCallable, BaseKernelFunction
+
+import numpy as np
+from hypothesis import (HealthCheck, given, settings as hyp_settings, strategies)
+from pytest import raises
+
+from kernelmethods.base import KernelMatrix
+from kernelmethods.numeric_kernels import (Chi2Kernel, DEFINED_KERNEL_FUNCS,
+                                           GaussianKernel, LaplacianKernel,
+                                           LinearKernel, PolyKernel, SigmoidKernel)
 from kernelmethods.operations import is_positive_semidefinite
+from kernelmethods.utils import check_callable
 
 default_feature_dim = 10
 range_feature_dim = [10, 50]
