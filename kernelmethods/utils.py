@@ -41,6 +41,13 @@ def check_input_arrays(x, y, ensure_dtype=np.number):
 def ensure_ndarray_2D(array, ensure_dtype=np.number, ensure_num_cols=None):
     """Converts the input to a numpy array and ensure it is 1D."""
 
+    if not isinstance(array, np.ndarray):
+        array = np.asarray(array)
+
+    # squeezing only 3rd dim if they are singleton, leaving 1st & 2nd dim alone
+    axes_to_sqz = tuple(ax for ax, sz in enumerate(array.shape) if sz==1 and ax>1)
+    array = np.squeeze(array, axis=axes_to_sqz)
+
     array = ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=2)
 
     if ensure_num_cols is not None and array.shape[1] != ensure_num_cols:
@@ -53,16 +60,18 @@ def ensure_ndarray_2D(array, ensure_dtype=np.number, ensure_num_cols=None):
 def ensure_ndarray_1D(array, ensure_dtype=np.number):
     """Converts the input to a numpy array and ensure it is 1D."""
 
+    if not isinstance(array, np.ndarray):
+        array = np.asarray(array)
+
+    # squeezing only 2nd, 3rd dim if they are singleton, leaving 1st dim alone
+    axes_to_sqz = tuple(ax for ax, sz in enumerate(array.shape) if sz==1 and ax>0)
+    array = np.squeeze(array, axis=axes_to_sqz)
+
     return ensure_ndarray_size(array, ensure_dtype=ensure_dtype, ensure_num_dim=1)
 
 
 def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
     """Converts the input to a numpy array and ensure it is of specified dim."""
-
-    if not isinstance(array, np.ndarray):
-        array = np.asarray(array)
-
-    array = np.squeeze(array)
 
     if array.ndim != ensure_num_dim:
         raise ValueError('array must be {}-dimensional! '
