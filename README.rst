@@ -3,6 +3,19 @@ Kernel methods and classes
 ==========================
 
 
+.. image:: docs/logo_kernelmethods.png
+    :height: 300
+
+
+Docs: https://raamana.github.io/kernelmethods/
+
+Demo notebooks (no setup required) :
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
+
+----
+
 .. image:: https://img.shields.io/pypi/v/kernelmethods.svg
         :target: https://pypi.python.org/pypi/kernelmethods
 
@@ -12,13 +25,6 @@ Kernel methods and classes
 .. image:: https://coveralls.io/repos/github/raamana/kernelmethods/badge.svg?branch=master
     :target: https://coveralls.io/github/raamana/kernelmethods?branch=master
 
-
-Docs: https://raamana.github.io/kernelmethods/
-
-Demo notebooks:
-
-.. image:: https://mybinder.org/badge_logo.svg
- :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
 
 kernelmethods
 -------------
