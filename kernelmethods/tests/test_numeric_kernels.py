@@ -8,7 +8,8 @@ from pytest import raises
 from kernelmethods.base import KernelMatrix
 from kernelmethods.numeric_kernels import (Chi2Kernel, DEFINED_KERNEL_FUNCS,
                                            GaussianKernel, LaplacianKernel,
-                                           LinearKernel, PolyKernel, SigmoidKernel)
+                                           LinearKernel, PolyKernel, SigmoidKernel,
+                                           HadamardKernel)
 from kernelmethods.operations import is_positive_semidefinite
 from kernelmethods.utils import check_callable
 
@@ -187,3 +188,23 @@ def test_chi2_kernel(sample_dim, num_samples, gamma):
     chi2 = Chi2Kernel(gamma=gamma, skip_input_checks=False)
     _test_for_all_kernels(chi2, sample_dim)
     _test_func_is_valid_kernel(chi2, sample_dim, num_samples)
+
+
+@hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
+              suppress_health_check=HealthCheck.all())
+@given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
+       strategies.floats(min_value=1, max_value=1e6,
+                         allow_nan=False, allow_infinity=False))
+def test_Hadamard_kernel(sample_dim, alpha):
+    """Tests specific for Hadamard kernel."""
+
+    had = HadamardKernel(alpha=alpha, skip_input_checks=False)
+    _test_for_all_kernels(had, sample_dim, check_PSDness=False)
+
+
+def test_Hadamard_kernel_misc():
+    """Tests specific for Hadamard kernel."""
+
+    with raises(ValueError):
+        had = HadamardKernel(alpha=0)
+
