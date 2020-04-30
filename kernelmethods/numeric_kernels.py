@@ -444,6 +444,7 @@ class LinearKernel(BaseKernelFunction):
 
 
 DEFINED_KERNEL_FUNCS = (Chi2Kernel(),
+                        HadamardKernel(),
                         PolyKernel(),
                         GaussianKernel(),
                         LaplacianKernel(),

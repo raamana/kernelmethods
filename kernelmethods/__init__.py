@@ -7,7 +7,7 @@ __all__ = ['KernelMatrix',
            'KernelMethodsException', 'KMAccessError', 'KMNormError',
            'KMSetAdditionError',
            'PolyKernel', 'GaussianKernel', 'LaplacianKernel', 'LinearKernel',
-           'Chi2Kernel', 'SigmoidKernel',
+           'Chi2Kernel', 'SigmoidKernel', 'HadamardKernel',
            'KernelBucket', 'KernelSet',
            'KernelMachine', 'OptimalKernelSVC', 'OptimalKernelSVR', ]
 
@@ -18,7 +18,7 @@ from kernelmethods.config import (KMAccessError, KMNormError, KMSetAdditionError
                                   KernelMethodsException)
 from kernelmethods.numeric_kernels import (Chi2Kernel, GaussianKernel,
                                            LaplacianKernel, LinearKernel, PolyKernel,
-                                           SigmoidKernel)
+                                           SigmoidKernel, HadamardKernel)
 from kernelmethods.sampling import KernelBucket
 from ._version import get_versions
 
