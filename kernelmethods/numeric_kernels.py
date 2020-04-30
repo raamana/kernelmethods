@@ -8,6 +8,77 @@ from kernelmethods.utils import _ensure_min_eps, check_input_arrays
 #   (e.g. custom dot product during kernel evaluation might be more efficient
 
 
+class HadamardKernel(BaseKernelFunction):
+    """Hadamard kernel function
+
+    Formula::
+        K_a(x, y) = \Sum_k {|x_k|^a * |y_k|^a} / {2*(|x_k|^a + |y_k|^a)}
+
+    Alpha (a) must be non-zero.
+    Hadamard kernel is not always PSD.
+
+    Parameters
+    ----------
+    alpha : int
+        degree to raise the inner product
+
+    skip_input_checks : bool
+        Flag to skip input validation to save time.
+        Skipping validation is strongly discouraged for normal use,
+        unless you know exactly what you are doing (expert users).
+
+    Raises
+    ------
+    ValueError
+        If Alpha is zero.
+
+    """
+
+
+    def __init__(self, alpha=3, skip_input_checks=False):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        alpha : int
+            degree to raise the inner product
+
+        skip_input_checks : bool
+            Flag to skip input validation to save time.
+            Skipping validation is strongly discouraged for normal use,
+            unless you know exactly what you are doing (expert users).
+
+        """
+
+        super().__init__(name='Hadamard')
+
+        if not np.isclose(alpha, 0.0):
+            self.alpha = alpha
+        else:
+            raise ValueError('Alpha for Hadamard kernel must be non-zero')
+
+        self.skip_input_checks = skip_input_checks
+
+
+    def __call__(self, x, y):
+        """Actual implementation of kernel func"""
+
+        if not self.skip_input_checks:
+            x, y = check_input_arrays(x, y, ensure_dtype=np.number)
+
+        abs_x_a = np.power(np.abs(x), self.alpha)
+        abs_y_a = np.power(np.abs(y), self.alpha)
+
+        return np.dot((abs_x_a * abs_y_a), 2 * (abs_x_a + abs_y_a))
+
+
+    def __str__(self):
+        """human readable repr"""
+
+        return "{}(alpha={})".format(self.name, self.alpha)
+
+
 class PolyKernel(BaseKernelFunction):
     """Polynomial kernel function
 
