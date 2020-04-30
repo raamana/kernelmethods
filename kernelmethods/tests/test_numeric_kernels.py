@@ -190,6 +190,22 @@ def test_chi2_kernel(sample_dim, num_samples, gamma):
     _test_func_is_valid_kernel(chi2, sample_dim, num_samples)
 
 
+def test_chi2_kernel_misc():
+    """Tests specific for Laplacian kernel."""
+
+    chi2 = Chi2Kernel()
+    x = gen_random_array(10)
+    y = gen_random_array(10)
+
+    neg_x = x - x.mean() # some values would be negative
+    pos_y = np.abs(y)
+
+    from kernelmethods.config import Chi2NegativeValuesException
+    with raises(Chi2NegativeValuesException):
+        chi2(neg_x, pos_y)
+    with raises(Chi2NegativeValuesException):
+        chi2(pos_y, neg_x)
+
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
               suppress_health_check=HealthCheck.all())
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
