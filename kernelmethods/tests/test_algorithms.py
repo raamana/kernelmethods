@@ -17,6 +17,10 @@ warnings.simplefilter('ignore')
 rnd = np.random.RandomState(0)
 np.set_printoptions(precision=3, linewidth=120)
 
+sample_dim = 5
+n_training = 100
+n_testing = 30
+
 all_warns = set()
 warn_line = '{dashes} IGNORED WARNING {dashes}'.format(dashes='-' * 15)
 dash_line = '-' * 50
@@ -29,9 +33,6 @@ def gen_random_sample(num_samples, sample_dim):
     return np.random.rand(num_samples, sample_dim)
 
 
-sample_dim = 5
-n_training = 100
-n_testing = 30
 def warn_dev(msg):
     if msg not in all_warns:
         print('\n\n{}\n  {}\n{}\n'.format(warn_line, msg, dash_line))
@@ -77,17 +78,18 @@ def _test_estimator_can_fit_predict(estimator, est_name=None):
             # raise TypeError('atypical failed check for {}\nMessage: {}\n'
             #                 ''.format(est_name, exc_msg))
 
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            estimator.fit(train_data, labels)
-    except:
-        raise RuntimeError('{} is unable to fit to training data!'.format(est_name))
-
-    try:
-        estimator.predict(test_data)
-    except:
-        raise RuntimeError('{} is unable to make predictions'.format(est_name))
+    # try:
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         estimator.fit(train_data, labels)
+    # except:
+    #     raise RuntimeError('{} is unable to fit to training data!'.format(
+    #     est_name))
+    #
+    # try:
+    #     estimator.predict(test_data)
+    # except:
+    #     raise RuntimeError('{} is unable to make predictions'.format(est_name))
 
 
 def test_optimal_kernel_estimators():
@@ -127,16 +129,10 @@ def test_kernel_machine():
                 raise RuntimeError('Unable to instantiate KernelMachine '
                                    'with this this ker func {}!'.format(ker_func))
 
-            print('\n{}'.format(k_machine))
+            # print('\n{}'.format(k_machine))
             try:
                 _test_estimator_can_fit_predict(
                     k_machine, 'kernel machine with ' + str(ker_func))
             except Exception as exc:
-                exc_msg = str(exc)
-                # sklearn AssertionError has no actual msg unfortunately
-                if ker_func.name=='sigmoid' and exc_msg == '':
-                    print('Ignoring Clf Accuracy > 0.83 check in sklearn')
-                else:
-                    raise
+                raise
 
-test_kernel_machine()
