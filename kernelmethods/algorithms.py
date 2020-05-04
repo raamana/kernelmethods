@@ -171,6 +171,19 @@ class BaseKernelMachine(BaseEstimator):
         return self
 
 
+    def _more_tags(self):
+        """Handling specific cases with tags"""
+
+        from kernelmethods.numeric_kernels import Chi2Kernel, SigmoidKernel, \
+            HadamardKernel
+        if isinstance(self.k_func, Chi2Kernel):
+            return {'requires_positive_X': True}
+        elif isinstance(self.k_func, (SigmoidKernel, HadamardKernel)):
+            return {'poor_score': True}
+        else:
+            return dict()
+
+
 class KernelMachine(BaseKernelMachine, ClassifierMixin):
     """Classifier version of the KernelMachine"""
 
