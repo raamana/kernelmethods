@@ -3,7 +3,7 @@ Kernel methods and classes
 ==========================
 
 .. image:: docs/logo_kernelmethods.png
-    :height: 300
+    :height: 75
 
 
 **Docs**: https://raamana.github.io/kernelmethods/
