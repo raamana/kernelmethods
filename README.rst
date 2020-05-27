@@ -2,12 +2,11 @@
 Kernel methods and classes
 ==========================
 
-
 .. image:: docs/logo_kernelmethods.png
     :height: 300
 
 
-Docs: https://raamana.github.io/kernelmethods/
+**Docs**: https://raamana.github.io/kernelmethods/
 
 Demo notebooks (no setup required) :
 
@@ -24,6 +23,11 @@ Demo notebooks (no setup required) :
 
 .. image:: https://coveralls.io/repos/github/raamana/kernelmethods/badge.svg?branch=master
     :target: https://coveralls.io/github/raamana/kernelmethods?branch=master
+
+News
+------
+
+ - Hadamard kernel is now available (which showed potential in some bioinformatics applications  like breast cancer detection).
 
 
 kernelmethods
