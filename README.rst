@@ -8,10 +8,12 @@ Kernel methods and classes
 
 **Docs**: https://raamana.github.io/kernelmethods/
 
-Demo notebooks (no setup required) :
+Demo notebooks (no setup required, click on the binder logo) :
 
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
+
+A paper presenting the design and some validation is available at https://arxiv.org/abs/2005.13483
 
 ----
 
@@ -27,7 +29,7 @@ Demo notebooks (no setup required) :
 News
 ------
 
- - Hadamard kernel is now available (which showed potential in some bioinformatics applications  like breast cancer detection).
+ - Hadamard kernel is now available (which showed potential in some bioinformatics applications like breast cancer detection).
 
 
 kernelmethods
@@ -50,12 +52,11 @@ Moreover, drop-in ``Estimator`` classes are provided, called ``KernelMachine``, 
 Docs
 ----
 
-https://raamana.github.io/kernelmethods/
+API and Usage: https://raamana.github.io/kernelmethods/
 
-Demo notebooks:
+Demo notebook: `on binder <https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb>`_.
 
-.. image:: https://mybinder.org/badge_logo.svg
- :target: https://mybinder.org/v2/gh/raamana/kernelmethods/master?filepath=demo_tutorials%2Fdemo_kernelmethods.ipynb
+A paper presenting the design and some validation is available `here <https://arxiv.org/abs/2005.13483>`_
 
 Note
 ----
