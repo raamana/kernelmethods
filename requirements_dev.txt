@@ -1,8 +1,10 @@
-scipy
-numpy
-scikit-learn
-pytest
-pytest-runner
+numpy>=2.0
+scipy>=1.11
+scikit-learn>=1.4
+pytest>=8
+hatch>=1.14
+hatchling>=1.26
+hatch-vcs>=0.4
 pyyaml
 python-coveralls
 hypothesis
@@ -12,4 +14,3 @@ watchdog
 flake8
 coverage
 Sphinx
-twine
