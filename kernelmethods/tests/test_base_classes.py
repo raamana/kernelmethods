@@ -70,7 +70,7 @@ def test_KernelMatrix_design():
 
     _ = km_lin[1, :]
     _ = km_lin[:, 1]
-    for invalid_index in (-1, np.Inf, np.NaN):
+    for invalid_index in (-1, np.inf, np.nan):
         with raises(KMAccessError):
             _ = km_lin[:, invalid_index]
 
@@ -128,7 +128,7 @@ def test_km_precomputed():
         pre = KernelMatrixPrecomputed([[1, 2+4j], [9+2j, 3]])
 
     with raises(KMAccessError):
-        _= pre[np.Inf, 0]
+        _= pre[np.inf, 0]
 
 
 def test_composite_kernels():

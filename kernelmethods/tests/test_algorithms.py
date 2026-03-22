@@ -3,16 +3,12 @@ import warnings
 import numpy as np
 from pytest import raises
 from sklearn.datasets import make_classification
-from sklearn.utils.estimator_checks import check_estimator
 
 from kernelmethods.algorithms import (KernelMachine, KernelMachineRegressor,
                                       OptimalKernelSVC, OptimalKernelSVR)
-from kernelmethods.config import (Chi2NegativeValuesException, KMNormError,
-                                  KernelMethodsException, KernelMethodsWarning)
+from kernelmethods.config import Chi2NegativeValuesException
 from kernelmethods.numeric_kernels import DEFINED_KERNEL_FUNCS
 from kernelmethods.sampling import make_kernel_bucket
-
-warnings.simplefilter('ignore')
 
 rnd = np.random.RandomState(0)
 np.set_printoptions(precision=3, linewidth=120)
@@ -33,12 +29,6 @@ def gen_random_sample(num_samples, sample_dim):
     return np.random.rand(num_samples, sample_dim)
 
 
-def warn_dev(msg):
-    if msg not in all_warns:
-        print('\n\n{}\n  {}\n{}\n'.format(warn_line, msg, dash_line))
-        all_warns.add(msg)
-
-
 def _test_estimator_can_fit_predict(estimator, est_name=None):
     # fresh data for each call
     train_data, labels = make_classification(n_features=sample_dim,
@@ -52,44 +42,11 @@ def _test_estimator_can_fit_predict(estimator, est_name=None):
     if est_name is None:
         est_name = str(estimator.__class__)
 
-    try:
-        check_estimator(estimator)
-    except (KMNormError, Chi2NegativeValuesException,
-            KernelMethodsException, KernelMethodsWarning,
-            RuntimeError) as kme:
-        warn_dev('KernelMethodsException encountered during estimator checks - '
-                 'ignoring it!\n Estimator: {}'.format(est_name))
-        # traceback.print_exc()
-        # pass
-    except Exception as exc:
-        exc_msg = str(exc)
-        # Given unresolved issues with sklearn estimator checks, not enforcing them!
-        if '__dict__' in exc_msg:
-            warn_dev('Ignoring the sklearn __dict__ check')
-            pass
-        elif 'not greater than' in exc_msg:
-            warn_dev('Ignoring accuracy check from sklearn')
-        elif "the number of features at training time" in exc_msg:
-            if 'OptimalKernel' in est_name:
-                warn_dev('Ignoring shape mismatch between train and test for '
-                         'OptimalKernel estimators (need for two-sample KM product)')
-        else:
-            raise exc
-            # raise TypeError('atypical failed check for {}\nMessage: {}\n'
-            #                 ''.format(est_name, exc_msg))
-
-    # try:
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore")
-    #         estimator.fit(train_data, labels)
-    # except:
-    #     raise RuntimeError('{} is unable to fit to training data!'.format(
-    #     est_name))
-    #
-    # try:
-    #     estimator.predict(test_data)
-    # except:
-    #     raise RuntimeError('{} is unable to make predictions'.format(est_name))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        estimator.fit(train_data, labels)
+        predicted = estimator.predict(test_data)
+    assert predicted.shape == (n_testing,)
 
 
 def test_optimal_kernel_estimators():
@@ -107,7 +64,6 @@ def test_optimal_kernel_estimators():
         except:
             raise RuntimeError('Unable to instantiate OptimalKernelSVR!')
 
-        # disabling sklearn checks to avoid headaches with their internal checks
         _test_estimator_can_fit_predict(ok_est)
 
         for invalid_value in (np.random.randint(10), 10.1, ('tuple')):
@@ -135,4 +91,3 @@ def test_kernel_machine():
                     k_machine, 'kernel machine with ' + str(ker_func))
             except Exception as exc:
                 raise
-

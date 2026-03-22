@@ -6,11 +6,12 @@ import numpy as np
 from pytest import raises, warns
 
 kb = make_kernel_bucket()
+sample = np.random.rand(10, 4)
+kb.attach_to(sample)
 
 def test_misc():
 
     raises(TypeError, find_optimal_kernel, 'bucket', None, None)
 
-    with raises(NotImplementedError):
-        rank_kernels(kb, None, method='align/corr')
-
+    scores = rank_kernels(kb, np.ones(sample.shape[0]), method='align/corr')
+    assert scores.ndim == 1

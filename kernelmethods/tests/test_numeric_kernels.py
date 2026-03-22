@@ -105,7 +105,7 @@ def _test_func_is_valid_kernel(kernel, sample_dim, num_samples):
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.integers(range_polynomial_degree[0], range_polynomial_degree[1]),
@@ -121,7 +121,7 @@ def test_polynomial_kernel(sample_dim, num_samples,
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.floats(min_value=0, max_value=1e6,
@@ -134,7 +134,7 @@ def test_gaussian_kernel(sample_dim, num_samples, sigma):
     _test_func_is_valid_kernel(gaussian, sample_dim, num_samples)
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]))
 def test_linear_kernel(sample_dim, num_samples):
@@ -146,7 +146,7 @@ def test_linear_kernel(sample_dim, num_samples):
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.floats(min_value=0, max_value=1e6,
@@ -160,7 +160,7 @@ def test_laplacian_kernel(sample_dim, num_samples, gamma):
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.floats(min_value=0, max_value=1e6,
@@ -177,7 +177,7 @@ def test_sigmoid_kernel(sample_dim, num_samples, gamma, offset):
 
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.integers(range_num_samples[0], range_num_samples[1]),
        strategies.floats(min_value=0, max_value=1e6,
@@ -207,7 +207,7 @@ def test_chi2_kernel_misc():
         chi2(pos_y, neg_x)
 
 @hyp_settings(max_examples=num_tests_psd_kernel, deadline=None,
-              suppress_health_check=HealthCheck.all())
+              suppress_health_check=list(HealthCheck))
 @given(strategies.integers(range_feature_dim[0], range_feature_dim[1]),
        strategies.floats(min_value=1, max_value=1e6,
                          allow_nan=False, allow_infinity=False))
