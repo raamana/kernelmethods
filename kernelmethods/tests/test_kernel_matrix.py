@@ -1,5 +1,4 @@
 
-
 import numpy as np
 np.set_printoptions(linewidth=120, precision=4)
 from scipy.sparse import issparse
@@ -10,35 +9,40 @@ from kernelmethods.numeric_kernels import PolyKernel, GaussianKernel, LinearKern
 from kernelmethods import KernelMatrix, KMAccessError, KernelMethodsException
 from kernelmethods.base import ConstantKernelMatrix
 from kernelmethods.operations import is_PSD
+from kernelmethods.tests.conftest import make_numeric_sample
 
-num_samples = np.random.randint(30, 100)
-sample_dim = np.random.randint(3, 10) # 2
+num_samples = 40
+sample_dim = 6
 target_label_set = [1, 2]
 
-num_samples_two = np.random.randint(30, 100)
+num_samples_two = 45
 sample_two_dim = sample_dim
 
-sample_data = np.random.rand(num_samples, sample_dim)
-target_labels = np.random.choice(target_label_set, num_samples)
-
 poly = PolyKernel(degree=2, skip_input_checks=True)
-# suffix 1 to indicate one sample case
-km1 = KernelMatrix(poly)
-km1.attach_to(sample_data)
-
 max_num_elements = max_num_ker_eval = num_samples * (num_samples + 1) / 2
 
+
+def make_km():
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
+    km = KernelMatrix(poly)
+    km.attach_to(sample_data)
+    return km, sample_data
+
 def test_symmetry():
+    km1, _ = make_km()
 
     if not np.isclose(km1.full, km1.full.T).all():
         print('KM not symmetric')
 
 def test_PSD():
+    km1, _ = make_km()
 
     if not is_PSD(km1.full):
         raise ValueError('this kernel matrix is not PSD!')
 
 def test_normalization():
+    km1, sample_data = make_km()
 
     km1.normalize(method='cosine')
     if not hasattr(km1, 'normed_km'):
@@ -61,19 +65,20 @@ def test_normalization():
         _ = KernelMatrix(poly, normalized='True')
 
 def test_centering():
-
+    _, sample_data = make_km()
     km2 = KernelMatrix(poly)
     km2.attach_to(sample_data)
     assert km2.centered.shape == km2.shape
 
 def test_get_item():
+    km1, _ = make_km()
 
     for invalid_index in [-1, num_samples+1]:
         # out of range indices must raise an error on any dim
         with raises(KMAccessError):
-            print(km1[invalid_index, :])
+            _ = km1[invalid_index, :]
         with raises(KMAccessError):
-            print(km1[:, invalid_index])
+            _ = km1[:, invalid_index]
 
     # max 2 dims allowed for access
     # TODO no restriction on float: float indices will be rounded down towards 0
@@ -83,7 +88,7 @@ def test_get_item():
                            ( ((0, 1), 2), (3, 4)), # no tuple of tuples for a single dim
                            ]:
         with raises((KMAccessError, TypeError)):
-            print(km1[invalid_access])
+            _ = km1[invalid_access]
 
     with raises(KMAccessError):
         km1[1, 2, 3] # no 3-dim access
@@ -108,11 +113,13 @@ def test_get_item():
 
 
 def test_random_submatrix_access():
+    km1, _ = make_km()
+    rng = np.random.default_rng(42)
 
     # for trial in range(10):
 
-    subset_len1 = np.random.choice(np.arange(num_samples - 1) + 1, 2)
-    subset_len2 = np.random.choice(np.arange(num_samples - 1) + 1, 2)
+    subset_len1 = rng.choice(np.arange(num_samples - 1) + 1, 2)
+    subset_len2 = rng.choice(np.arange(num_samples - 1) + 1, 2)
     subset_len1.sort()
     subset_len2.sort()
 
@@ -128,6 +135,7 @@ def test_random_submatrix_access():
         raise ValueError('error in KM access implementation')
 
 def test_size_properties():
+    km1, _ = make_km()
 
     if len(km1.diagonal()) != num_samples:
         raise ValueError('KM diagonal does not have N elements!')
@@ -139,18 +147,19 @@ def test_size_properties():
         raise ValueError('KM size does not match N^2, invalid internal representation!')
 
 def test_sparsity():
-
+    _, sample_data = make_km()
     km = KernelMatrix(poly, normalized=False)
     km.attach_to(sample_data)
     # when normalized=True, full KM won't be sparse!
     if not km._keep_normed and not issparse(km.full_sparse):
         raise TypeError('error in sparse format access of KM : it is not sparse')
 
+    km1, _ = make_km()
     if issparse(km1.full):
         raise TypeError('error in dense format access of KM : it is sparse!')
 
 def test_reset_flags_on_new_attach():
-
+    km1, sample_data = make_km()
     km1.attach_to(sample_data)
     if km1._populated_fully:
         raise ValueError('flag _populated_fully not set to False upon reset')
@@ -164,7 +173,7 @@ def test_reset_flags_on_new_attach():
         raise ValueError('internal dict not empty upon reset!')
 
 def test_internal_flags_on_recompute():
-
+    km1, sample_data = make_km()
     km1.attach_to(sample_data) # reset first
     new_dense = km1.full # recompute
     if not km1._populated_fully:
@@ -186,17 +195,17 @@ def test_attach_to_two_samples():
     0. it is not necessarily symmetric
 
     """
-
-    sample_two = np.random.rand(num_samples_two, sample_two_dim)
-    targets_two = np.random.choice(target_label_set, num_samples_two)
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
+    sample_two = make_numeric_sample(rng, num_samples_two, sample_two_dim)
 
     for kernel in DEFINED_KERNEL_FUNCS:
         km2 = KernelMatrix(kernel=kernel, normalized=False)
         km2.attach_to(sample_data, name_one='S1', sample_two=sample_two, name_two='S2')
         km2_dense = km2.full  # this will force computation of full KM
 
-        rand_ix_one = np.random.choice(range(num_samples), 5)
-        rand_ix_two = np.random.choice(range(num_samples_two), 5)
+        rand_ix_one = rng.choice(range(num_samples), 5)
+        rand_ix_two = rng.choice(range(num_samples_two), 5)
         for ix_one, ix_two in zip(rand_ix_one, rand_ix_two):
             external_eval = kernel(sample_data[ix_one,:], sample_two[ix_two,:])
             if not np.isclose(km2[ix_one, ix_two], external_eval):
@@ -239,9 +248,9 @@ def test_attributes():
 
 
 def test_constant_km():
-
-    rand_val = np.random.random()
-    rand_size = np.random.randint(50)
+    rng = np.random.default_rng(42)
+    rand_val = rng.random()
+    rand_size = int(rng.integers(1, 50))
 
     const = ConstantKernelMatrix(num_samples=rand_size,
                                  value=rand_val)
@@ -254,11 +263,11 @@ def test_constant_km():
     assert const.shape == (rand_size, rand_size)
 
     for _ in range(min(5, rand_size)):
-        indices = np.random.randint(0, rand_size, 2)
+        indices = rng.integers(0, rand_size, 2)
         assert all(const[indices[0], indices[1]] == rand_val)
 
     for invalid_index in ('index', ':',
-                          [np.Inf, ], [ 1,-rand_size-2],
+                          [np.inf, ], [ 1,-rand_size-2],
                           [], [None, 2]):
         with raises(KMAccessError):
             const[invalid_index]
@@ -269,8 +278,3 @@ def test_constant_km():
 
     expected = np.full((rand_size, rand_size), fill_value=rand_val)
     assert np.isclose(const.full, expected).all()
-
-
-# test_attributes()
-# test_constant_km()
-test_get_item()

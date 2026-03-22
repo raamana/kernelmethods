@@ -1,4 +1,3 @@
-
 import numpy as np
 from pytest import raises
 
@@ -6,26 +5,19 @@ from kernelmethods.base import KMSetAdditionError, KernelMatrix, KernelSet, \
     BaseKernelFunction
 from kernelmethods.numeric_kernels import GaussianKernel, LinearKernel, PolyKernel
 from kernelmethods.sampling import make_kernel_bucket
+from kernelmethods.tests.conftest import make_labels, make_numeric_sample
 
 num_samples = 50 # 9
 sample_dim = 3 # 2
 target_label_set = [1, 2]
 
-sample_data = np.random.rand(num_samples, sample_dim)
-target_labels = np.random.choice(target_label_set, (num_samples, 1))
 
-IdealKM = target_labels.dot(target_labels.T)
+def build_kset():
+    rbf = KernelMatrix(GaussianKernel(sigma=10, skip_input_checks=True))
+    lin = KernelMatrix(LinearKernel(skip_input_checks=True))
+    poly = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
+    return KernelSet([lin, poly, rbf])
 
-rbf = KernelMatrix(GaussianKernel(sigma=10, skip_input_checks=True))
-lin = KernelMatrix(LinearKernel(skip_input_checks=True))
-poly = KernelMatrix(PolyKernel(degree=2, skip_input_checks=True))
-
-# lin.attach_to(sample_data)
-# rbf.attach_to(sample_data)
-# poly.attach_to(sample_data)
-
-kset = KernelSet([lin, poly, rbf])
-print(kset)
 
 def test_creation():
 
@@ -38,7 +30,8 @@ def test_creation():
         ks = KernelSet(km_list='blah')
 
 def test_size_property_mismatch():
-
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
     ks = KernelSet(num_samples=sample_data.shape[0]+1)
     lin = KernelMatrix(LinearKernel(skip_input_checks=True))
     lin.attach_to(sample_data)
@@ -47,23 +40,25 @@ def test_size_property_mismatch():
 
 
 def test_size():
-
+    kset = build_kset()
     assert kset.size == 3
     assert len(kset) == 3
 
 def test_get_item():
     """access by index"""
+    kset = build_kset()
 
     for invalid_index in [-1, kset.size]:
         with raises(IndexError):
-            print(kset[invalid_index])
+            _ = kset[invalid_index]
 
     for invalid_index in [-1.0, '1']:
         with raises(ValueError):
-            print(kset[invalid_index])
+            _ = kset[invalid_index]
 
 
 def test_get_ker_funcs():
+    kset = build_kset()
 
     for index in (0, 1):
         kf_list = kset.get_kernel_funcs([index, ])
@@ -73,12 +68,14 @@ def test_get_ker_funcs():
 
 def test_take():
     """access by index"""
+    rng = np.random.default_rng(42)
+    kset = build_kset()
 
     for invalid_index in [-1, kset.size]:
         with raises(IndexError):
-            print(kset.take([invalid_index]))
+            _ = kset.take([invalid_index])
 
-    for valid_index in np.random.randint(0, min(kset.size, 3), 3):
+    for valid_index in rng.integers(0, min(kset.size, 3), 3):
         _ks = kset.take(valid_index)
         if not isinstance(_ks, KernelSet):
             raise TypeError('.take not returning KernelSet')
@@ -91,6 +88,8 @@ def test_take():
     assert k2.size == 2
 
 def test_extend():
+    kset = build_kset()
+    poly, rbf, lin = list(kset)
 
     kset1 = KernelSet([poly, rbf, lin])
     kset2 = KernelSet([poly, rbf])
@@ -108,13 +107,17 @@ def test_extend():
 
 
 def test_attributes():
-
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
+    target_labels = make_labels(rng, num_samples, target_label_set).reshape(-1, 1)
+    _ = target_labels.dot(target_labels.T)
+    kset = build_kset()
     kset.set_attr('name', 'linear')
     for km in kset:
         assert km.get_attr('name') == 'linear'
         assert km.get_attr('noname', '404') == '404'
 
-    values = np.random.rand(kset.size)
+    values = rng.random(kset.size)
     kset.set_attr('weight', values)
     for ii, km in enumerate(kset):
         assert km.get_attr('weight') == values[ii]
@@ -126,12 +129,3 @@ def test_attributes():
         kb.set_attr('a', ['value']*(kb.size-1))
 
     kb.get_attr('a')
-
-#
-# print('Alignment to Ideal Kernel:')
-# ag = np.zeros(kb.size)
-# for ix, km in enumerate(kb):
-#     ag[ix] = alignment_centered(km.full, IdealKM)
-#     print('{:4} {:>60} : {:10.5f}'.format(ix, str(km),ag[ix]))
-
-test_take()

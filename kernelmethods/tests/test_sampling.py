@@ -8,16 +8,11 @@ from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
 from kernelmethods.sampling import (KernelBucket, correlation_km, ideal_kernel,
                                     make_kernel_bucket, pairwise_similarity)
 from pytest import raises, warns
+from kernelmethods.tests.conftest import make_numeric_sample
 
 num_samples = 50  # 9
 sample_dim = 3  # 2
 target_label_set = [1, 2]
-
-sample_data = np.random.rand(num_samples, sample_dim)
-target_labels = np.random.choice(target_label_set, (num_samples, 1))
-
-A = np.random.rand(4, 4)
-B = np.random.rand(4, 4)
 
 
 def gen_random_array(dim):
@@ -34,11 +29,11 @@ def gen_random_sample(num_samples, sample_dim):
     return np.random.rand(num_samples, sample_dim)
 
 
-kset = make_kernel_bucket('light')
-kset.attach_to(sample_data)
-
-
 def test_make_bucket():
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
+    kset = make_kernel_bucket('light')
+    kset.attach_to(sample_data)
     with warns(UserWarning):
         _ = make_kernel_bucket(kset)
 
@@ -86,6 +81,10 @@ def test_correlation_km():
 
 
 def test_pairwise_similarity():
+    rng = np.random.default_rng(42)
+    sample_data = make_numeric_sample(rng, num_samples, sample_dim)
+    kset = make_kernel_bucket('light')
+    kset.attach_to(sample_data)
     ps = pairwise_similarity(kset)
     if ps.shape != (kset.size, kset.size):
         raise ValueError('invalid shape for pairwise_similarity computation')
