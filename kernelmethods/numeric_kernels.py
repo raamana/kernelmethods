@@ -70,7 +70,10 @@ class HadamardKernel(BaseKernelFunction):
         abs_x_a = np.power(np.abs(x), self.alpha)
         abs_y_a = np.power(np.abs(y), self.alpha)
 
-        return np.dot((abs_x_a * abs_y_a), 2 * (abs_x_a + abs_y_a))
+        denominator = 2 * (abs_x_a + abs_y_a)
+        valid_terms = denominator > 0
+        return np.sum((abs_x_a[valid_terms] * abs_y_a[valid_terms]) /
+                      denominator[valid_terms])
 
 
     def __str__(self):

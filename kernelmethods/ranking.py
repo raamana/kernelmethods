@@ -10,11 +10,12 @@ metrics, such as
 
 import numpy as np
 from kernelmethods import config as cfg
+from kernelmethods.operations import alignment_centered
 from kernelmethods.sampling import KernelBucket
 from kernelmethods.utils import min_max_scale
 
 
-def find_optimal_kernel(kernel_bucket, sample, targets, method='align/corr',
+def find_optimal_kernel(kernel_bucket, sample, targets, method='cv_risk',
                         **method_params):
     """
     Finds the optimal kernel for the current sample given their labels.
@@ -139,7 +140,14 @@ def alignment_ranking(kernel_bucket, targets, **method_params):
 
     """
 
-    raise NotImplementedError()
+    targets = np.asarray(targets)
+    target_kernel = np.outer(targets, targets)
+    method_params.setdefault('value_if_zero_division', 0.0)
+
+    return np.array([
+        alignment_centered(km.full, target_kernel, **method_params)
+        for km in kernel_bucket
+    ])
 
 
 def get_estimator(learner_id='svm'):

@@ -11,8 +11,6 @@ __all__ = ['KernelMatrix',
            'KernelBucket', 'KernelSet',
            'KernelMachine', 'OptimalKernelSVC', 'OptimalKernelSVR', ]
 
-from kernelmethods.algorithms import (KernelMachine, KernelMachineRegressor,
-                                      OptimalKernelSVC, OptimalKernelSVR)
 from kernelmethods.base import BaseKernelFunction, KernelMatrix, KernelSet
 from kernelmethods.config import (KMAccessError, KMNormError, KMSetAdditionError,
                                   KernelMethodsException)
@@ -20,10 +18,34 @@ from kernelmethods.numeric_kernels import (Chi2Kernel, GaussianKernel,
                                            LaplacianKernel, LinearKernel, PolyKernel,
                                            SigmoidKernel, HadamardKernel)
 from kernelmethods.sampling import KernelBucket
-from ._version import get_versions
-
-__version__ = get_versions()['version']
-del get_versions
+from ._version import __version__
 
 __author__ = """Pradeep Reddy Raamana"""
 __email__ = 'raamana@gmail.com'
+
+
+def __getattr__(name):
+    """Lazily expose estimator classes to keep import-time dependencies light."""
+
+    if name in {
+        'KernelMachine',
+        'KernelMachineRegressor',
+        'OptimalKernelSVC',
+        'OptimalKernelSVR',
+    }:
+        from kernelmethods.algorithms import (
+            KernelMachine,
+            KernelMachineRegressor,
+            OptimalKernelSVC,
+            OptimalKernelSVR,
+        )
+
+        exports = {
+            'KernelMachine': KernelMachine,
+            'KernelMachineRegressor': KernelMachineRegressor,
+            'OptimalKernelSVC': OptimalKernelSVC,
+            'OptimalKernelSVR': OptimalKernelSVR,
+        }
+        return exports[name]
+
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
