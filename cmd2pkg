@@ -1,9 +1,6 @@
-
-rm -rf dist build kernelmethods.egg-info 
-
-python setup.py sdist bdist_wheel
-
-twine upload dist/*
-
 rm -rf dist build kernelmethods.egg-info
 
+hatch build
+hatch publish
+
+rm -rf dist build kernelmethods.egg-info
