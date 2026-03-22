@@ -43,7 +43,7 @@ class BaseKernelMachine(BaseEstimator):
 
 
     def __init__(self,
-                 k_func=GaussianKernel(),
+                 k_func=None,
                  learner_id='SVC',
                  normalized=False):
         """
@@ -64,7 +64,7 @@ class BaseKernelMachine(BaseEstimator):
             Default: False
         """
 
-        self.k_func = k_func
+        self.k_func = GaussianKernel() if k_func is None else k_func
         self.learner_id = learner_id
         self.normalized = normalized
 
@@ -102,7 +102,7 @@ class BaseKernelMachine(BaseEstimator):
 
         if is_regressor(self):
             self._train_X, self._train_y = check_X_y(X, y, y_numeric=True)
-            self._train_y = self._train_y.astype(np.float_)
+            self._train_y = self._train_y.astype(np.float64)
         else:
             self._train_X, self._train_y = check_X_y(X, y)
 
@@ -209,7 +209,7 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
 
 
     def __init__(self,
-                 k_func=GaussianKernel(),
+                 k_func=None,
                  learner_id='SVR',
                  normalized=False):
         """
@@ -230,7 +230,7 @@ class KernelMachineRegressor(BaseKernelMachine, RegressorMixin):
             Default: False
         """
 
-        self.k_func = k_func
+        self.k_func = GaussianKernel() if k_func is None else k_func
         self.learner_id = learner_id
         self.normalized = normalized
 

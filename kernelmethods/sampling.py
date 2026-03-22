@@ -9,7 +9,7 @@ from kernelmethods.numeric_kernels import (GaussianKernel, LaplacianKernel,
                                            LinearKernel, PolyKernel, SigmoidKernel)
 from kernelmethods.operations import alignment_centered
 from kernelmethods.utils import is_iterable_but_not_str
-from scipy.stats.stats import pearsonr
+from scipy.stats import pearsonr
 
 
 class KernelBucket(KernelSet):

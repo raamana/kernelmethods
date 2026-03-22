@@ -651,14 +651,17 @@ class KernelMatrix(object):
             indices = list(range(*_slice_index_list))  # *list expands it as args
         elif isinstance(index_obj_per_dim, Iterable) and \
             not isinstance(index_obj_per_dim, str):
-            # TODO no restriction on float: float indices will be rounded down
-            #  towards 0
-            indices = list(map(int, index_obj_per_dim))
+            indices = list(index_obj_per_dim)
         else:
             raise KMAccessError('Invalid index method/indices for kernel matrix '
                                 'of shape : {km_shape}.'
                                 ' Only int, slice or iterable objects are allowed!'
                                 ''.format(km_shape=self.shape))
+
+        for index in indices:
+            if not np.issubdtype(type(index), np.integer):
+                raise KMAccessError('Indices must be integers or slices. '
+                                    'Received {}'.format(type(index).__name__))
 
         # enforcing constraints
         if any([index >= self.shape[dim] or index < 0 or np.isnan(index)
@@ -689,7 +692,7 @@ class KernelMatrix(object):
 
         return np.array([self._eval_kernel(idx_one, idx_two)
                          for idx_one, idx_two in iter_product(set_one, set_two)],
-                        dtype=self._sample.dtype).reshape(len(set_one), len(set_two))
+                        dtype=cfg.km_dtype).reshape(len(set_one), len(set_two))
 
 
     def _populate_fully(self, dense_fmt=False, fill_lower_tri=False):

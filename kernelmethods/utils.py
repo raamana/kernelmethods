@@ -78,11 +78,22 @@ def ensure_ndarray_size(array, ensure_dtype=np.number, ensure_num_dim=1):
                          'It has {} dims with shape {} '
                          ''.format(ensure_num_dim, array.ndim, array.shape))
 
-    if not np.issubdtype(ensure_dtype, array.dtype):
+    if ensure_dtype is not None and not np.issubdtype(array.dtype, ensure_dtype):
         prev_dtype = array.dtype
         try:
-            array = array.astype(ensure_dtype)
-        except:
+            target_dtype = np.dtype(ensure_dtype)
+            array = array.astype(target_dtype)
+        except TypeError:
+            if np.issubdtype(ensure_dtype, np.number):
+                try:
+                    array = array.astype(np.float64)
+                except (TypeError, ValueError):
+                    raise ValueError('Unable to recast input dtype from {} to required {}!'
+                                     ''.format(prev_dtype, ensure_dtype))
+            else:
+                raise ValueError('Unable to recast input dtype from {} to required {}!'
+                                 ''.format(prev_dtype, ensure_dtype))
+        except ValueError:
             raise ValueError('Unable to recast input dtype from {} to required {}!'
                              ''.format(prev_dtype, ensure_dtype))
 
@@ -145,7 +156,10 @@ def min_max_scale(array):
 
     array = np.array(array)
     min_val = array.min()
-    return (array - min_val) / (np.max(array) - min_val)
+    spread = np.max(array) - min_val
+    if np.isclose(spread, 0.0):
+        return np.zeros_like(array, dtype=np.float64)
+    return (array - min_val) / spread
 
 
 def contains_nan_inf(matrix):
